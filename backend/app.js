@@ -6,4 +6,4 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.listen(3000);
+app.listen(process.env.PORT);
