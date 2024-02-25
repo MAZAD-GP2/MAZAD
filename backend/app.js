@@ -7,5 +7,5 @@ app.use(cors());
 app.use(express.json());
 
 app.listen(process.env.PORT,()=>{
-    console.log('app listenting to port',process.env.PORT)
+  console.log(`app listenting to port ${process.env.PORT}`);
 });
