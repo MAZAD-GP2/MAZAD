@@ -9,14 +9,14 @@ const Message = sequelize.define("Message", {
     allowNull: false,
     autoIncrement: true,
   },
-  Content:{
-    type:DataTypes.STRING,
-    allowNull:false
+  Content: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
-  isSeen:{
+  isSeen: {
     type: DataTypes.BOOLEAN,
-    defaultValue:false    
-  }
+    defaultValue: false,
+  },
 });
 
 module.exports = Message;
