@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize").Sequelize;
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+const Item = require("./Item");
 
 const User = sequelize.define("User", {
   id: {
@@ -9,7 +10,7 @@ const User = sequelize.define("User", {
     allowNull: false,
     primaryKey: true,
   },
-  username:{
+  username: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
@@ -33,7 +34,9 @@ const User = sequelize.define("User", {
   isAdmin: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
-  }
+  },
 });
+
+User.hasMany(Item, { as: 'items', onDelete: 'CASCADE' });
 
 module.exports = User;
