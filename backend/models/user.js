@@ -1,9 +1,6 @@
 const Sequelize = require("sequelize").Sequelize;
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const Item = require("./Item");
-const Bid = require("./Bid");
-
 const User = sequelize.define("User", {
   id: {
     type: DataTypes.INTEGER,
@@ -38,6 +35,4 @@ const User = sequelize.define("User", {
   },
 });
 
-User.hasMany(Item, { as: "items", onDelete: "CASCADE" });
-User.hasMany(Bid, { as: "bids", onDelete: "CASCADE" });
 module.exports = User;

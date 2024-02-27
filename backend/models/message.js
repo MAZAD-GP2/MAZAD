@@ -1,7 +1,6 @@
 const Sequelize = require("sequelize").Sequelize;
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const User = require("./User");
 
 const Message = sequelize.define("Message", {
   id: {
@@ -19,5 +18,4 @@ const Message = sequelize.define("Message", {
     defaultValue: false,
   },
 });
-Message.belongsTo(User, { as: "sender", onDelete: "CASCADE" });
 module.exports = Message;
