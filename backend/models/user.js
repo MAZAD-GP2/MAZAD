@@ -37,6 +37,6 @@ const User = sequelize.define("User", {
   },
 });
 
-User.hasMany(Item, { as: 'items', onDelete: 'CASCADE' });
+User.hasMany(Item, { as: "items", onDelete: "CASCADE" });
 
 module.exports = User;

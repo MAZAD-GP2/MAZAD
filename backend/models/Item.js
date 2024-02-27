@@ -23,6 +23,4 @@ const Item = sequelize.define("Item", {
   },
 });
 
-
-
 module.exports = Item;
