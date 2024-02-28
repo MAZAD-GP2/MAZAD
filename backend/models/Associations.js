@@ -4,6 +4,7 @@ const Bid = require("./Bid");
 const Auction = require("./Auction");
 const Category = require("./Category");
 const Comment = require("./Comment");
+const Message = require("./Message");
 
 function relations() {
   User.hasMany(Item, { foreignKey: "userId", onDelete: "CASCADE" });
