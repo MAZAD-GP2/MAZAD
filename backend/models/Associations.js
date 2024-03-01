@@ -10,6 +10,8 @@ const Comment = require("./Comment");
 const Message = require("./Message");
 const Interest = require("./Interest");
 const Chat_room = require("./Chat_room");
+const Image = require("./Image");
+const Tag = require("./Tag");
 
 function relations() {
   User.hasMany(Item, { foreignKey: "userId", onDelete: "CASCADE" });
@@ -96,6 +98,20 @@ function relations() {
   const User_ChatRoom = sequelize.define("User_ChatRoom");
   User.belongsToMany(Chat_room, { through: User_ChatRoom });
   Chat_room.belongsToMany(User, { through: User_ChatRoom });
+
+  Item.hasMany(Image, {
+    foreignKey: "itemId",
+    onDelete: "CASCADE",
+  });
+  Image.belongsTo(Item, {
+    foreignKey: "itemId",
+    onDelete: "CASCADE",
+  });
+
+  const Item_tag = sequelize.define("Item_tag");
+  Item.belongsToMany(Tag, { through: Item_tag });
+  Tag.belongsToMany(Item, { through: Item_tag });
+
 }
 
 module.exports = relations;
