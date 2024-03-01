@@ -95,10 +95,6 @@ function relations() {
     onDelete: "CASCADE",
   });
 
-  const User_ChatRoom = sequelize.define("User_ChatRoom");
-  User.belongsToMany(Chat_room, { through: User_ChatRoom });
-  Chat_room.belongsToMany(User, { through: User_ChatRoom });
-
   Item.hasMany(Image, {
     foreignKey: "itemId",
     onDelete: "CASCADE",
@@ -108,10 +104,13 @@ function relations() {
     onDelete: "CASCADE",
   });
 
+  const User_ChatRoom = sequelize.define("User_ChatRoom");
+  User.belongsToMany(Chat_room, { through: User_ChatRoom });
+  Chat_room.belongsToMany(User, { through: User_ChatRoom });
+
   const Item_tag = sequelize.define("Item_tag");
   Item.belongsToMany(Tag, { through: Item_tag });
   Tag.belongsToMany(Item, { through: Item_tag });
-
 }
 
 module.exports = relations;
