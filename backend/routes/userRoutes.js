@@ -59,11 +59,7 @@ module.exports.register = async (req, res) => {
       phoneNumber,
     });
 
-    const token = await generateJWT({
-      email: newUser.email,
-      id: newUser.id,
-      role: newUser.isAdmin,
-    });
+    const token = await generateJWT({...newUser.dataValues});
 
     return res.status(201).json({ ...newUser.dataValues, token });
   } catch (err) {
