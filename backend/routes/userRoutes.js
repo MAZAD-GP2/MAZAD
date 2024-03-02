@@ -2,6 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const generateJWT = require("../utils/generateJWT");
 require("dotenv").config();
+const { Op } = require("sequelize");
 
 module.exports.getAllUsers = async (req, res) => {
   try {
@@ -28,23 +29,8 @@ module.exports.register = async (req, res) => {
   try {
     const { username, password, email, phoneNumber } = req.body;
 
-    const usernameExists = await User.findOne({
-      where: { username: username },
-    });
-    if (usernameExists) {
-      throw new Error("Username already used");
-    }
-    const emailExists = await User.findOne({
-      where: { email: email },
-    });
-    if (emailExists) {
-      throw new Error("Email already used");
-    }
-    const phoneNumberExsits = await User.findOne({
-      where: { phoneNumber: phoneNumber },
-    });
-    if (phoneNumberExsits) {
-      throw new Error("PhoneNumber already used");
+    if (!password) {
+      return res.status(400).send("password missing");
     }
 
     hashedPassword = await bcrypt.hash(
@@ -59,9 +45,36 @@ module.exports.register = async (req, res) => {
       phoneNumber,
     });
 
-    const token = await generateJWT({...newUser.dataValues});
+    const token = await generateJWT({ ...newUser.dataValues });
 
     return res.status(201).json({ ...newUser.dataValues, token });
+  } catch (err) {
+    return res.send(err.errors[0].message);
+  }
+};
+
+module.exports.login = async (req, res) => {
+  try {
+    const { usernameOrEmail, password } = req.body;
+
+    const user = await User.findOne({
+      where: {
+        [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+      },
+    });
+
+    if (!user) {
+      throw new Error("login credentials are incorrect");
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error("login credentials are incorrect");
+    }
+
+    const token = await generateJWT({ ...user.dataValues });
+
+    return res.status(200).json({ ...user.dataValues, token });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
