@@ -1,30 +1,108 @@
-import React, { useState } from 'react';
-
+import React, { useState } from "react";
+import "./register.css";
+import axios from "axios";
 
 function Register() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    alert(`Username: ${username}, Password: ${password}`);
-  }
+    await axios
+      .post("http://localhost:3000/user/register", {
+        username,
+        password,
+        email,
+        phoneNumber,
+      })
+      .then(() => alert("nb3tat")).catch(
+        ()=>alert("errrrr")
+      )
+    setEmail("")
+    setPhoneNumber("")
+    setUsername("")
+    setPassword("");
+  };
 
   return (
-    <div className="row d-flex justify-content-center">
-      <h2>Sign Up</h2>
-      <form className='form-group' method='post'>
-        <div className='d-flex flex-column justify-content-start align-elements-center'>
-          <label className='form-label '>Username: </label>
-          <input className='form-control' type='text'></input>
-          <label className='form-label'>Password: </label>
-          <input className='form-control' type='password'></input>
-          <label className='form-label'>Email: </label>
-          <input className='form-control' type='text'></input>
-          <label className='form-label'>Phone number: </label>
-          <input className='form-control' type='text'></input>
-        </div>
-      </form>
+    <div className="container mt-5 mb-5 d-flex justify-content-center">
+      <div className="card px-1 py-4">
+        <form className="card-body" onSubmit={handleSubmit}>
+          <h1 className="information mt-4">Sign up</h1>
+          <div className="row">
+            <div className="col-sm-12">
+              <div className="form-group">
+                <input
+                  className="form-control"
+                  type="text"
+                  placeholder="Name"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-sm-12">
+              <div className="form-group">
+                <div className="input-group">
+                  <input
+                    className="form-control"
+                    type="text"
+                    placeholder="Phone Number"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-sm-12">
+              <div className="form-group">
+                <div className="input-group">
+                  <input
+                    className="form-control"
+                    type="text"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-sm-12">
+              <div className="form-group">
+                <div className="input-group">
+                  <input
+                    className="form-control"
+                    type="password"
+                    placeholder="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className=" d-flex flex-column text-center px-5 mt-3 mb-3">
+            <a href="/login" className="terms">
+              Already have an account
+            </a>
+          </div>
+          <button className="btn btn-primary btn-block confirm-button">
+            Confirm
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
