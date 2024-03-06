@@ -15,7 +15,7 @@ module.exports.getAllUsers = async (req, res) => {
 
 module.exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findByPk(res.params.id);
+    const user = await User.findByPk(req.params.id);
     if (!user) {
       throw new Error("User not found");
     }
