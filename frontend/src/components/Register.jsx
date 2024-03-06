@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import "./register.css";
 import axios from "axios";
+import { useSnackbar } from "notistack";
 
 function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -17,13 +19,18 @@ function Register() {
         email,
         phoneNumber,
       })
-      .then(() => alert("nb3tat")).catch(
-        ()=>alert("errrrr")
-      )
-    setEmail("")
-    setPhoneNumber("")
-    setUsername("")
-    setPassword("");
+      .then(() => {
+        // alert("nb3tat");
+        setEmail("");
+        setPhoneNumber("");
+        setUsername("");
+        setPassword("");
+        enqueueSnackbar("User Created Successfully", { variant: "success" });
+      })
+      .catch(() => {
+        // alert("errrrr");
+        enqueueSnackbar("Error", { variant: "error" });
+      });
   };
 
   return (

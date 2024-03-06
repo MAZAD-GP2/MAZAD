@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import "./register.css";
 import axios from "axios";
+import { useSnackbar } from "notistack";
 
 function Login() {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -14,11 +16,15 @@ function Login() {
         password,
       })
       .then(() => {
-        alert("nb3tat login");
+        // alert("nb3tat login");
+        enqueueSnackbar("Login Successfully", { variant: "success" });
         setUsernameOrEmail("");
         setPassword("");
       })
-      .catch(() => alert("errrrr"));
+      .catch(() => {
+        // alert("errrrr");
+        enqueueSnackbar("Error", { variant: "error" });
+      });
   };
 
   return (
