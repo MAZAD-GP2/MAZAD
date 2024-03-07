@@ -1,0 +1,14 @@
+:root {
+  --primary-light: #3a3845;
+  --secondary-light: #f7ccac;
+  --tertiary-light: #826f66;
+
+  --primary-dark: #1e1e2e;
+  --secondary-dark: #f7ccac;
+  --tertiary-dark: #ffe2cc;
+}
+
+.link {
+  text-decoration: underline;
+  transition: color 0.3s;
+}

@@ -1,0 +1,38 @@
+/* import file global.css */
+
+.terms {
+  font-size: 12px;
+  text-decoration: none;
+  color: #039be5;
+}
+
+.information {
+  background-image: linear-gradient(
+    to right,
+    var(--tertiary-light),
+    var(--secondary-light)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+
+#main-container {
+  background-image: url("/src/assets/images/wavy bg.png");
+  background-size: 150%;
+  background-color: var(--primary-light);
+  clip-path: polygon(0 10%, 100% 10%, 100% 90%, 0 90%);
+  height: 100vh;
+}
+
+#logo-container {
+  display: block;
+}
+
+/* hide the logo for phones */
+@media (max-width: 992px) {
+  #logo-container {
+    display: none;
+  }
+}

@@ -1,9 +1,11 @@
 const User = require("../models/User");
+const ResetPasswordToken = require("../models/ResetPasswordToken");
 const bcrypt = require("bcrypt");
 const generateJWT = require("../utils/generateJWT");
 require("dotenv").config();
 const { Op } = require("sequelize");
-
+const { v4: uuidv4 } = require("uuid");
+const nodemailer = require("nodemailer");
 module.exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll();
@@ -27,16 +29,29 @@ module.exports.getUserById = async (req, res) => {
 
 module.exports.register = async (req, res) => {
   try {
-    const { username, password, email, phoneNumber } = req.body;
+    const { username, password, confirmPassword, email, phoneNumber } =
+      req.body;
 
     if (!password) {
       return res.status(400).send("password missing");
     }
 
-    hashedPassword = await bcrypt.hash(
-      password,
-      parseInt(process.env.BCRYPT_SALT)
-    );
+    if (!confirmPassword || password !== confirmPassword) {
+      return res.status(400).send("Passwords don't match");
+    }
+
+    // Ensure password is a string
+    if (typeof password !== "string") {
+      return res.status(400).send("Password must be a string");
+    }
+
+    const saltRounds = parseInt(process.env.BCRYPT_SALT);
+
+    if (isNaN(saltRounds)) {
+      return res.status(500).send("Invalid BCRYPT_SALT value");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     let newUser = await User.create({
       username,
@@ -49,7 +64,8 @@ module.exports.register = async (req, res) => {
 
     return res.status(201).json({ ...newUser.dataValues, token });
   } catch (err) {
-    return res.send(err.errors[0].message);
+    console.error(err);
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -75,6 +91,110 @@ module.exports.login = async (req, res) => {
     const token = await generateJWT({ ...user.dataValues });
 
     return res.status(200).json({ ...user.dataValues, token });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const token = uuidv4();
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+    let expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 7);
+    expirationDate = expirationDate.toDateString();
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: "_MAZAD_ Password Reset",
+      text: `Click the following link to reset your password: http://localhost:PORT/reset-password?token=${token} \n\n**This link expires on ${expirationDate}**`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    
+    await ResetPasswordToken.create({
+      userId: user.id,
+      token,
+    });
+
+    return res.status(200).send("Email sent");
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports.resetPassword = async (req, res) => {
+  try {
+    const { token, password, confirmPassword } = req.body;
+
+    const resetPasswordToken = await ResetPasswordToken.findOne({
+      where: {
+        token,
+      },
+    });
+
+    if (!resetPasswordToken) {
+      throw new Error("Token not found");
+    }
+    // check if the password is older than 1 week
+    const tokenDate = new Date(resetPasswordToken.createdAt);
+    const currentDate = new Date();
+    const difference = currentDate - tokenDate;
+    const daysDifference = difference / (1000 * 60 * 60 * 24); // to days
+    if (daysDifference > 7) {
+      // delete the token
+      await ResetPasswordToken.destroy({
+        where: {
+          token,
+        },
+      });
+      throw new Error("Token not found");
+    }
+
+    if (!password || !confirmPassword || password !== confirmPassword) {
+      throw new Error("Passwords don't match");
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      password,
+      parseInt(process.env.BCRYPT_SALT)
+    );
+
+    await User.update(
+      { password: hashedPassword },
+      {
+        where: {
+          id: resetPasswordToken.userId,
+        },
+      }
+    );
+
+    await ResetPasswordToken.destroy({
+      where: {
+        token,
+      },
+    });
+
+    return res.status(200).send("Password reset successfully");
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
