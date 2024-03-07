@@ -22,7 +22,9 @@ function Login() {
         setPassword("");
       })
       .catch(() => {
-        enqueueSnackbar("Credentials don't mach any in our records", { variant: "error" });
+        enqueueSnackbar("Credentials don't mach any in our records", {
+          variant: "error",
+        });
       });
   };
 
@@ -57,7 +59,9 @@ function Login() {
                     type="text"
                     placeholder="Username or Email"
                     value={usernameOrEmail}
-                    onChange={(e) => setUsernameOrEmail(e.target.value)}
+                    onChange={(e) =>
+                      setUsernameOrEmail(e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -73,7 +77,10 @@ function Login() {
                     required
                   />
                   {/* a forgot passwoerd label */}
-                  <a href="/forgot-password" className="blockquote-footer">
+                  <a
+                    href="/forgot-password"
+                    className="blockquote-footer"
+                  >
                     Forgot Password?
                   </a>
                 </div>

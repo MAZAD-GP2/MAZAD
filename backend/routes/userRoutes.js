@@ -29,8 +29,13 @@ module.exports.getUserById = async (req, res) => {
 
 module.exports.register = async (req, res) => {
   try {
-    const { username, password, confirmPassword, email, phoneNumber } =
-      req.body;
+    const {
+      username,
+      password,
+      confirmPassword,
+      email,
+      phoneNumber,
+    } = req.body;
 
     if (!password) {
       return res.status(400).send("password missing");
@@ -75,7 +80,10 @@ module.exports.login = async (req, res) => {
 
     const user = await User.findOne({
       where: {
-        [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+        [Op.or]: [
+          { username: usernameOrEmail },
+          { email: usernameOrEmail },
+        ],
       },
     });
 
@@ -83,7 +91,10 @@ module.exports.login = async (req, res) => {
       throw new Error("login credentials are incorrect");
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user.password
+    );
     if (!isPasswordValid) {
       throw new Error("login credentials are incorrect");
     }
@@ -109,6 +120,14 @@ module.exports.forgotPassword = async (req, res) => {
       throw new Error("User not found");
     }
 
+    const alreadyHasToken = await ResetPasswordToken.findOne({
+      where: { userId: user.id },
+    });
+
+    if(alreadyHasToken) {
+      await alreadyHasToken.destroy();
+    }
+
     const token = uuidv4();
 
     const transporter = nodemailer.createTransport({
@@ -130,7 +149,7 @@ module.exports.forgotPassword = async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
-    
+
     await ResetPasswordToken.create({
       userId: user.id,
       token,
@@ -161,16 +180,15 @@ module.exports.resetPassword = async (req, res) => {
     const difference = currentDate - tokenDate;
     const daysDifference = difference / (1000 * 60 * 60 * 24); // to days
     if (daysDifference > 7) {
-      // delete the token
-      await ResetPasswordToken.destroy({
-        where: {
-          token,
-        },
-      });
+      await resetPasswordToken.destroy();
       throw new Error("Token not found");
     }
 
-    if (!password || !confirmPassword || password !== confirmPassword) {
+    if (
+      !password ||
+      !confirmPassword ||
+      password !== confirmPassword
+    ) {
       throw new Error("Passwords don't match");
     }
 
@@ -188,11 +206,7 @@ module.exports.resetPassword = async (req, res) => {
       }
     );
 
-    await ResetPasswordToken.destroy({
-      where: {
-        token,
-      },
-    });
+    await resetPasswordToken.destroy();
 
     return res.status(200).send("Password reset successfully");
   } catch (err) {
