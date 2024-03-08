@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize").Sequelize;
-const { DataTypes, Association } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 const User = require("./User");
 const Item = require("./Item");
@@ -13,7 +13,7 @@ const Chat_room = require("./Chat_room");
 const Image = require("./Image");
 const Tag = require("./Tag");
 
-function Associations() {
+function relations() {
   User.hasMany(Item, { foreignKey: "userId", onDelete: "CASCADE" });
   Item.belongsTo(User, { foreignKey: "userId", onDelete: "CASCADE" });
 
@@ -113,4 +113,4 @@ function Associations() {
   Tag.belongsToMany(Item, { through: Item_tag });
 }
 
-module.exports = Associations;
+module.exports = relations;

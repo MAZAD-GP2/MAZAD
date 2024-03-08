@@ -12,5 +12,7 @@ router.route("/user/forgot-password").post(userRoutes.forgotPassword);
 router.route("/user/reset-password").post(userRoutes.resetPassword);
 
 router.route("/item/create").post(verifyToken, itemRoutes.createItem);
+router.route('/item/user').get(verifyToken,itemRoutes.getAllItemsByUserId)
+router.route('/item').get(itemRoutes.getAllItems)
 
 module.exports = router;
