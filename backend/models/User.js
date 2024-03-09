@@ -37,7 +37,7 @@ const User = sequelize.define("User", {
   profilePicture: {
     type: DataTypes.STRING,
     defaultValue: "",
-  }
+  },
 });
 
 module.exports = User;
