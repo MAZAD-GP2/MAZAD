@@ -22,7 +22,6 @@
   background-image: url("/src/assets/images/wavy bg.png");
   background-size: 150%;
   background-color: var(--primary-light);
-  clip-path: polygon(0 10%, 100% 10%, 100% 90%, 0 90%);
   height: 100vh;
 }
 

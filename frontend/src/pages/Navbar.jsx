@@ -2,7 +2,7 @@ import React from 'react'
 
 const Navbar = () => {
   return (
-    <nav className="navbar d-flex bg-primary shadow navbar-expand-lg navbar-light bg-light mb-5 p-1">
+    <nav className="navbar d-flex bg-primary bg-gradient pb-4 shadow navbar-expand-lg navbar-light bg-light mb-5 p-1">
     <h4 className='p-lg-3'>
       <i className="text-white user-select-none ">_MAZAD_</i>
     </h4>
@@ -10,7 +10,7 @@ const Navbar = () => {
     <span className="navbar-toggler-icon"></span>
   </button>
 
-    <div className="collapse navbar-collapse d-flex justify-content-center p-lg-1 gap-2" id="navbarSupportedContent">
+    <div className="collapse navbar-collapse d-flex flex-row justify-content-center p-lg-1 gap-2" id="navbarSupportedContent">
       <ul className="navbar-nav mr-auto"></ul>
 
       <form className="form-inline my-2 my-lg-0 w-50">

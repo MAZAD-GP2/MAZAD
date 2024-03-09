@@ -20,6 +20,9 @@ function Login() {
         enqueueSnackbar("Login Successfully", { variant: "success" });
         setUsernameOrEmail("");
         setPassword("");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
       })
       .catch(() => {
         enqueueSnackbar("Credentials don't mach any in our records", {

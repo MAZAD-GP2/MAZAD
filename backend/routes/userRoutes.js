@@ -6,6 +6,7 @@ require("dotenv").config();
 const { Op } = require("sequelize");
 const { v4: uuidv4 } = require("uuid");
 const nodemailer = require("nodemailer");
+
 module.exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll();
@@ -29,33 +30,10 @@ module.exports.getUserById = async (req, res) => {
 
 module.exports.register = async (req, res) => {
   try {
-    const {
-      username,
-      password,
-      confirmPassword,
-      email,
-      phoneNumber,
-    } = req.body;
-
-    if (!password) {
-      return res.status(400).send("password missing");
-    }
-
-    if (!confirmPassword || password !== confirmPassword) {
-      return res.status(400).send("Passwords don't match");
-    }
-
-    // Ensure password is a string
-    if (typeof password !== "string") {
-      return res.status(400).send("Password must be a string");
-    }
+    const { username, password, confirmPassword, email, phoneNumber } =
+      req.body;
 
     const saltRounds = parseInt(process.env.BCRYPT_SALT);
-
-    if (isNaN(saltRounds)) {
-      return res.status(500).send("Invalid BCRYPT_SALT value");
-    }
-
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     let newUser = await User.create({
@@ -76,14 +54,13 @@ module.exports.register = async (req, res) => {
 
 module.exports.login = async (req, res) => {
   try {
-    const { usernameOrEmail, password } = req.body;
+    let { usernameOrEmail, password } = req.body;
+
+    usernameOrEmail = usernameOrEmail.trim();
 
     const user = await User.findOne({
       where: {
-        [Op.or]: [
-          { username: usernameOrEmail },
-          { email: usernameOrEmail },
-        ],
+        [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       },
     });
 
@@ -91,10 +68,7 @@ module.exports.login = async (req, res) => {
       throw new Error("login credentials are incorrect");
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      user.password
-    );
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       throw new Error("login credentials are incorrect");
     }
@@ -124,7 +98,7 @@ module.exports.forgotPassword = async (req, res) => {
       where: { userId: user.id },
     });
 
-    if(alreadyHasToken) {
+    if (alreadyHasToken) {
       await alreadyHasToken.destroy();
     }
 
@@ -184,11 +158,7 @@ module.exports.resetPassword = async (req, res) => {
       throw new Error("Token not found");
     }
 
-    if (
-      !password ||
-      !confirmPassword ||
-      password !== confirmPassword
-    ) {
+    if (!password || !confirmPassword || password !== confirmPassword) {
       throw new Error("Passwords don't match");
     }
 

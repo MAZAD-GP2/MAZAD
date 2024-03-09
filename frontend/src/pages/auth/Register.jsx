@@ -116,7 +116,7 @@ function Register() {
 
         enqueueSnackbar("User Created Successfully", { variant: "success" });
         setTimeout(() => {
-          window.location.href = "/login";
+          window.location.href = "/";
         }, 1000);
       })
       .catch((res) => {
