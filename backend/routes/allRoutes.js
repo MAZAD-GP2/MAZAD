@@ -19,4 +19,7 @@ router.route("/item/create").post(verifyToken, validateItemCreation, itemRoutes.
 router.route("/item/user").get(verifyToken, itemRoutes.getAllItemsByUserId);
 router.route("/item").get(itemRoutes.getAllItems);
 
+router.route('/category').get(categoryRoutes.getAllCategories);
+router.route('/category/create').post(categoryRoutes.createCategory)
+
 module.exports = router;
