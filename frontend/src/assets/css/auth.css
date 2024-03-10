@@ -38,11 +38,19 @@
 }
 
 /* hide the logo for phones */
-@media (max-width: 992px) {
+@media (max-width: 1000px) {
+  #form-container {
+    width: 90% !important;
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 780px) {
   #logo-container {
     display: none;
   }
   #seperator {
+    margin: 0 !important;
     display: none;
   }
 }
