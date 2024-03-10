@@ -189,7 +189,7 @@ module.exports.updateUser = async (req, res) => {
     const saltRounds = parseInt(process.env.BCRYPT_SALT);
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const user = await User.findOne({ where: { id: userId } });
+    const user = await User.findByPk(userId);
 
     await user.update({ username, email, password: hashedPassword, phoneNumber });
 
