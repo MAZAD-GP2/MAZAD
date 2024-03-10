@@ -23,10 +23,13 @@ function ForgotPassword() {
       })
       .then(() => {
         setEmail("");
-        enqueueSnackbar("If the email exists in our records, an email with instructions will be sent to it", {
-          variant: "success",
-          autoHideDuration: 5000,
-        });
+        enqueueSnackbar(
+          "If the email exists in our records, an email with instructions will be sent to it",
+          {
+            variant: "success",
+            autoHideDuration: 5000,
+          }
+        );
       });
   };
 
@@ -50,6 +53,8 @@ function ForgotPassword() {
               className="logo w-100 h-100"
             /> */}
           </div>
+
+          <div id="seperator" style={{ height: 234.24 }}></div>
 
           <form className="card-body" onSubmit={handleSubmit}>
             <h1 className="information py-2">Forgot password</h1>

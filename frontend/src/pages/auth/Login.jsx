@@ -52,6 +52,8 @@ function Login() {
             /> */}
           </div>
 
+          <div id="seperator" style={{ height: 270.72 }}></div>
+
           <form className="card-body" onSubmit={handleSubmit}>
             <h1 className="information py-2">WELCOME BACK</h1>
             <div className="col-sm-12 col-md-12 col-lg-9 d-flex flex-column gap-3">
@@ -62,9 +64,7 @@ function Login() {
                     type="text"
                     placeholder="Username or Email"
                     value={usernameOrEmail}
-                    onChange={(e) =>
-                      setUsernameOrEmail(e.target.value)
-                    }
+                    onChange={(e) => setUsernameOrEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -80,10 +80,7 @@ function Login() {
                     required
                   />
                   {/* a forgot passwoerd label */}
-                  <a
-                    href="/forgot-password"
-                    className="blockquote-footer"
-                  >
+                  <a href="/forgot-password" className="blockquote-footer">
                     Forgot Password?
                   </a>
                 </div>

@@ -3,7 +3,6 @@ import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import axios from "axios";
 
-
 function Register() {
   const [username, setUsername] = useState({ value: "", isValid: true });
   const [phoneNumber, setPhoneNumber] = useState({ value: "", isValid: true });
@@ -70,7 +69,7 @@ function Register() {
     // Add password regex validation here
 
     const regex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
-    
+
     if (!regex.test(password.value)) {
       enqueueSnackbar(
         "Password must contain at least 8 characters, including at least one letter and one number",
@@ -80,7 +79,7 @@ function Register() {
         }
       );
       setPassword({ ...password, isValid: false });
-      return
+      return;
     }
 
     if (
@@ -129,7 +128,10 @@ function Register() {
       className="position-absolute d-flex flex-row justify-content-center align-items-center w-100 h-100"
       id="main-container"
     >
-      <div className="card px-1 py-4 col-lg-6 col-md-8 col-sm-12" id="form-container">
+      <div
+        className="card px-1 py-4 col-lg-6 col-md-8 col-sm-12"
+        id="form-container"
+      >
         <div className="d-flex flex-row align-items-center justify-content-center">
           <div
             className="col-sm-12 col-md-3 col-lg-4 text-center"
@@ -144,7 +146,9 @@ function Register() {
               className="logo w-100 h-100"
             /> */}
           </div>
-            
+
+          <div id="seperator" style={{ height: 420.16 }}></div>
+
           <form className="card-body" onSubmit={handleSubmit}>
             <h1 className="information py-2">Sign up</h1>
             <div className="col-sm-12 col-md-12 col-lg-9 d-flex flex-column gap-3">
