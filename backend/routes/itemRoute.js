@@ -1,6 +1,6 @@
 require("dotenv").config();
 const Item = require("../models/Item");
-const User=require('../models/User')
+const User = require("../models/User");
 
 module.exports.createItem = async (req, res) => {
   //res.send(req.currentUser);
@@ -20,10 +20,10 @@ module.exports.getAllItemsByUserId = async (req, res) => {
   try {
     const userId = req.currentUser.id;
     const items = await Item.findAll({
-    where: {
-      userId,
-    },
-     });
+      where: {
+        userId,
+      },
+    });
     // const items=await User.findAll({include: [Item]})
     // const items=await Item.findAll({include: [User]})
 
@@ -33,12 +33,11 @@ module.exports.getAllItemsByUserId = async (req, res) => {
   }
 };
 
-module.exports.getAllItems=async(req,res)=>{
-  try{
-    const items=await Item.findAll()
-    res.send(items)
+module.exports.getAllItems = async (req, res) => {
+  try {
+    const items = await Item.findAll();
+    res.send(items);
+  } catch (er) {
+    res.send(er);
   }
-    catch(er){
-      res.send(er)
-    }
-}
+};
