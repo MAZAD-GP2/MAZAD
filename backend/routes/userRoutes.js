@@ -30,8 +30,7 @@ module.exports.getUserById = async (req, res) => {
 
 module.exports.register = async (req, res) => {
   try {
-    const { username, password, confirmPassword, email, phoneNumber } =
-      req.body;
+    const { username, password, email, phoneNumber } = req.body;
 
     const saltRounds = parseInt(process.env.BCRYPT_SALT);
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -162,10 +161,7 @@ module.exports.resetPassword = async (req, res) => {
       throw new Error("Passwords don't match");
     }
 
-    const hashedPassword = await bcrypt.hash(
-      password,
-      parseInt(process.env.BCRYPT_SALT)
-    );
+    const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT));
 
     await User.update(
       { password: hashedPassword },
@@ -181,5 +177,38 @@ module.exports.resetPassword = async (req, res) => {
     return res.status(200).send("Password reset successfully");
   } catch (err) {
     return res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports.updateUser = async (req, res) => {
+  try {
+    const { username, email, password, phoneNumber } = req.body;
+
+    const userId = req.currentUser.id;
+
+    const saltRounds = parseInt(process.env.BCRYPT_SALT);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const user = await User.findOne({ where: { id: userId } });
+
+    await user.update({ username, email, password: hashedPassword, phoneNumber });
+
+    return res.json({ user });
+  } catch (err) {
+    return res.send(err);
+  }
+};
+
+module.exports.deleteUser = async (req, res) => {
+  try {
+    const userid = req.params.id;
+    const user = await User.findByPk(userid);
+    if (!user) {
+      throw new Error("user not found");
+    }
+    await user.destroy();
+    return res.send("successfully");
+  } catch (err) {
+    return res.send(err);
   }
 };
