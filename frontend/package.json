@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@loadable/component": "^5.16.3",
     "@popperjs/core": "^2.11.8",
     "@reduxjs/toolkit": "^2.2.1",
     "axios": "^1.6.7",
@@ -25,6 +26,8 @@
     "redux": "^5.0.1"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/preset-react": "^7.23.3",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react": "^4.2.1",

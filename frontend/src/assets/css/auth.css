@@ -17,10 +17,11 @@
   color: transparent;
 }
 
+
 #main-container {
   background-image: url("/src/assets/images/wavy bg.png");
   background-size: 150%;
-  background-color: var(--primary-light);
+  background-color: black;
   height: 100vh;
 }
 
@@ -33,8 +34,8 @@
   border-radius: 30px;
   /*height: 200px;
   */
-  margin: 0px 20px;
   background-color: gray;
+  
 }
 
 /* hide the logo for phones */
@@ -44,6 +45,7 @@
     margin: 0 !important;
   }
 }
+
 
 @media (max-width: 780px) {
   #logo-container {

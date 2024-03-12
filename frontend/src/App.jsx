@@ -1,9 +1,17 @@
 import { Routes, Route } from "react-router-dom";
-import Register from "./pages/auth/Register.jsx";
-import Login from "./pages/auth/Login.jsx";
-import Home from "./pages/Home.jsx";
-import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
-import ResetPassword from "./pages/auth/ResetPassword.jsx";
+// import Register from "./pages/auth/Register.jsx";
+// import Login from "./pages/auth/Login.jsx";
+// import Home from "./pages/Home.jsx";
+// import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
+// import ResetPassword from "./pages/auth/ResetPassword.jsx";
+import loadable from '@loadable/component'
+
+const Home = loadable(() => import('./pages/Home.jsx'));
+const Register = loadable(() => import('./pages/auth/Register.jsx'));
+const Login = loadable(() => import('./pages/auth/Login.jsx'));
+const ForgotPassword = loadable(() => import('./pages/auth/ForgotPassword.jsx'));
+const  ResetPassword = loadable(() => import('./pages/auth/ResetPassword.jsx'));
+
 
 function App() {
 

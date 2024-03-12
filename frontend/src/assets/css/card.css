@@ -1,0 +1,76 @@
+.card {
+    width: 25rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px transparent;
+    border-radius: 25%;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.item-card {
+    width: 25rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px transparent;
+    border-radius: 25%;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.item-card:hover {
+    background-color: #e4c9af;
+}
+
+.image {
+    border-radius: 4%;
+    display: block;
+    margin: 7px;
+    box-shadow: 1px 4px 8px rgba(0, 0, 0, 0.4);
+    border-radius: 4%;
+}
+
+.card-body { 
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    opacity: 80%;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.card-title {
+    margin-top: 4px;
+}
+
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.tag {
+    font-size: 13px;
+    opacity: 80%;
+    border: 1px rgba(0, 0, 0, 0.2) solid;
+    border-radius: 100px;
+    padding: 1px 10px;
+    margin: 3px 3px;
+    margin-left: 1px;
+    background-color: white;
+}
+
+.category {
+    opacity: 80%;
+    font-weight: bold;
+}
+
+@media only screen and (max-width: 600px) {
+    .card {
+        width: 100%; /* Adjust the width for smaller screens */
+        box-shadow: none; /* Remove box-shadow for smaller screens if needed */
+    }
+
+    .card:hover {
+        width: 100%;
+    }
+}

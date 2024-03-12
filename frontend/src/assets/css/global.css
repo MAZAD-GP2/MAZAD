@@ -8,6 +8,10 @@
   --tertiary-dark: #ffe2cc;
 }
 
+body {
+  font-family: "Poppins", sans-serif;
+}
+
 .link {
   text-decoration: underline;
   transition: color 0.3s;
