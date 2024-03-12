@@ -1,0 +1,115 @@
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: black;
+    color: white;
+    box-shadow: 0 1px 8px #ddd;
+}
+header a ,#dropd{
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease 0s;
+    
+}
+
+a:hover, #dropd:hover{
+    color: #00E175;
+}
+#login-signip {
+    width: 20%;
+}
+header li {
+    list-style: none;
+    display: inline-block;
+    padding: 0 1vw;
+    font-size: 1vw;
+}
+#logo{
+    font-size:3vw;
+    width: 20%;
+}
+#search-create-nav-container{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin:0% 3%;
+
+}
+#search-create-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+form{
+    width: 70%;
+    display: flex;
+}
+#nav-container{
+    font-size: 1vw;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content:space-around;
+}
+#nav-container> a ,#dropd{
+    margin: 1%;
+}
+.dropdown-toggle::after {
+    /*display: none !important;*/ 
+}
+
+button{
+    background-color: #00E175;
+    font-size: 1vw ;
+    border-width: 0;
+    border-radius: 20px !important;
+    padding: 0.5vw 1vw;
+    height:2.6vw;
+}
+button:hover{
+    color: white;
+}
+input{
+    width:35vw;
+    height:2.6vw;
+    padding-left: 5%;
+    font-size: 1vw ;
+    border-radius: 20px;
+}
+input::placeholder{
+    font-size: 1vw;
+    text-align: center;
+}
+
+@media(max-width:903px){
+    input::placeholder{   
+        font-size: 2vw;
+    }
+    input{
+        font-size: 2vw!important;
+        height: 4vw;
+    }
+    #nav-container{
+        font-size: 2vw;
+    }
+    button{
+        font-size: 2vw!important;
+        height: 4vw;
+    }
+    header li{
+        font-size: 1.7vw;
+    }
+    #logo{
+        width: 20%;
+    }
+    #search-create-nav-container{
+        width: 70%;
+    }
+    #search-create-container{
+        align-content: center;
+    }
+}
+

@@ -69,6 +69,8 @@ function ResetPassword() {
             /> */}
           </div>
 
+          <div id="seperator" style={{ height: 251.52 }}></div>
+
           <form className="card-body" onSubmit={handleSubmit}>
             <h1 className="information py-2">Forgot password</h1>
             <div className="col-sm-12 col-md-12 col-lg-9 d-flex flex-column gap-3">
