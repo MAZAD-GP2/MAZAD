@@ -64,12 +64,12 @@ module.exports.login = async (req, res) => {
     });
 
     if (!user) {
-      throw new Error("login credentials are incorrect");
+      throw new Error("username or email doesn't exist");
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error("login credentials are incorrect");
+      throw new Error("password are incorrect");
     }
 
     const token = await generateJWT({ ...user.dataValues });

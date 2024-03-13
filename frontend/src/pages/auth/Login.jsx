@@ -23,24 +23,18 @@ function Login() {
           window.location.href = "/";
         }, 1000);
       })
-      .catch(() => {
-        enqueueSnackbar("Credentials don't mach any in our records", {
+      .catch((err) => {
+        enqueueSnackbar(err.response.data.message, {
           variant: "error",
         });
       });
   };
 
   return (
-    <div
-      className="position-absolute d-flex justify-content-center align-items-center w-100 h-100"
-      id="main-container"
-    >
+    <div className="position-absolute d-flex justify-content-center align-items-center w-100 h-100" id="main-container">
       <div className="card px-1 py-4 w-50" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center">
-          <div
-            className="col-sm-12 col-md-3 col-lg-4 text-center"
-            id="logo-container"
-          >
+          <div className="col-sm-12 col-md-3 col-lg-4 text-center" id="logo-container">
             <h1>
               <i>_MAZAD_</i>
             </h1>
@@ -86,9 +80,7 @@ function Login() {
               </div>
 
               <div className="d-flex flex-row align-items-center justify-content-start gap-3 mt-3">
-                <button className="col-auto px-4 btn btn-secondary btn-block confirm-button">
-                  Submit
-                </button>
+                <button className="col-auto px-4 btn btn-secondary btn-block confirm-button">Submit</button>
                 <a href="/register" className="terms col-6">
                   Don't have an account
                 </a>
