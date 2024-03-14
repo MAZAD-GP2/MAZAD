@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import Card from "./Card";
-import axios from "axios";
+import * as api from "../api/index"
+import { useDispatch, useSelector } from "react-redux";
 
 const Home = () => {
   const [items, setItems] = useState([]);
@@ -10,7 +11,7 @@ const Home = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/item");
+        const response = await api.getAllItems();
         setItems(response.data);
       } catch (err) {
         console.error(err);
@@ -21,6 +22,7 @@ const Home = () => {
 
     fetchItems();
   }, []);
+  console.log(isAdmin);
 
   return (
     <>

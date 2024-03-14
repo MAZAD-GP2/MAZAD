@@ -1,21 +1,24 @@
 import React, { useState } from "react";
 import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import * as api from "../../api/index";
 
 function Login() {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
+  const isAdmin = useSelector((state) => state.auth.isAdmin);
+  const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await axios
-      .post("http://localhost:3000/user/login", {
-        usernameOrEmail,
-        password,
-      })
-      .then(() => {
+    await api
+      .login({ usernameOrEmail, password })
+      .then((result) => {
+        localStorage.setItem("user", JSON.stringify(result.data.token));
+        result.data.isAdmin ? dispatch({ type: "isAdmin" }) : dispatch({ type: "notAdmin" });
+        // dispatch(result.data.isAdmin ? "isAdmin" : "notAdmin");
         enqueueSnackbar("Login Successfully", { variant: "success" });
         setUsernameOrEmail("");
         setPassword("");
