@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import axios from "axios";
+import * as api from "../../api/index";
 
 function Register() {
   const [username, setUsername] = useState({ value: "", isValid: true });
@@ -71,55 +72,46 @@ function Register() {
     const regex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
 
     if (!regex.test(password.value)) {
-      enqueueSnackbar(
-        "Password must contain at least 8 characters, including at least one letter and one number",
-        {
-          variant: "error",
-          hideIconVariant: true,
-        }
-      );
+      enqueueSnackbar("Password must contain at least 8 characters, including at least one letter and one number", {
+        variant: "error",
+        hideIconVariant: true,
+      });
       setPassword({ ...password, isValid: false });
       return;
     }
 
-    if (
-      !confirmPassword.isValid ||
-      !confirmPassword.value ||
-      confirmPassword.value !== password.value
-    ) {
+    if (!confirmPassword.isValid || !confirmPassword.value || confirmPassword.value !== password.value) {
       setConfirmPassword({ ...confirmPassword, isValid: false });
       success = false;
-      enqueueSnackbar(
-        "Password and Confirm Password don't match or are not valid",
-        {
-          variant: "error",
-        }
-      );
+      enqueueSnackbar("Password and Confirm Password don't match or are not valid", {
+        variant: "error",
+      });
     }
     if (!success) return;
 
-    await axios
-      .post("http://localhost:3000/user/register", {
+    api
+      .register({
         username: username.value,
         email: email.value,
         phoneNumber: phoneNumber.value,
         password: password.value,
         confirmPassword: confirmPassword.value,
       })
-      .then((res) => {
+      .then((result) => {
         setUsername({ value: "", isValid: true });
         setPhoneNumber({ value: "", isValid: true });
         setEmail({ value: "", isValid: true });
         setPassword({ value: "", isValid: true });
         setConfirmPassword({ value: "", isValid: true });
 
+        localStorage.setItem("user", JSON.stringify(result.data.token));
         enqueueSnackbar("User Created Successfully", { variant: "success" });
         setTimeout(() => {
           window.location.href = "/";
         }, 1000);
       })
-      .catch((res) => {
-        enqueueSnackbar(res.message, { variant: "error" });
+      .catch((err) => {
+        enqueueSnackbar(err.response.data.message, { variant: "error" });
       });
   };
 
@@ -128,15 +120,9 @@ function Register() {
       className="position-absolute d-flex flex-row justify-content-center align-items-center w-100 h-100"
       id="main-container"
     >
-      <div
-        className="card px-1 py-4 col-lg-6 col-md-8 col-sm-12"
-        id="form-container"
-      >
+      <div className="card px-1 py-4 col-lg-6 col-md-8 col-sm-12" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center">
-          <div
-            className="col-sm-12 col-md-3 col-lg-4 text-center"
-            id="logo-container"
-          >
+          <div className="col-sm-12 col-md-3 col-lg-4 text-center" id="logo-container">
             <h1>
               <i>_MAZAD_</i>
             </h1>
@@ -156,9 +142,7 @@ function Register() {
                 <div className="col-sm-12">
                   <div className="form-group">
                     <input
-                      className={`form-control ${
-                        !username.isValid ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${!username.isValid ? "is-invalid" : ""}`}
                       type="text"
                       placeholder="Name"
                       id="name"
@@ -178,9 +162,7 @@ function Register() {
                   <div className="form-group">
                     <div className="input-group">
                       <input
-                        className={`form-control ${
-                          !email.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!email.isValid ? "is-invalid" : ""}`}
                         type="text"
                         placeholder="Email"
                         id="email"
@@ -200,9 +182,7 @@ function Register() {
                   <div className="form-group">
                     <div className="input-group">
                       <input
-                        className={`form-control ${
-                          !phoneNumber.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!phoneNumber.isValid ? "is-invalid" : ""}`}
                         type="text"
                         placeholder="Phone Number"
                         id="phone-number"
@@ -222,9 +202,7 @@ function Register() {
                   <div className="form-group">
                     <div className="input-group">
                       <input
-                        className={`form-control ${
-                          !password.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!password.isValid ? "is-invalid" : ""}`}
                         type="password"
                         placeholder="password"
                         id="password"
@@ -244,9 +222,7 @@ function Register() {
                   <div className="form-group">
                     <div className="input-group">
                       <input
-                        className={`form-control ${
-                          !confirmPassword.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!confirmPassword.isValid ? "is-invalid" : ""}`}
                         type="password"
                         placeholder="Confirm password"
                         id="confirm-password"
@@ -261,9 +237,7 @@ function Register() {
                   </div>
                 </div>
               </div>
-              <button className="btn btn-secondary btn-block confirm-button">
-                Create account
-              </button>
+              <button className="btn btn-secondary btn-block confirm-button">Create account</button>
               <div className=" d-flex flex-column text-center px-5 mt-3 mb-3">
                 <a href="/login" className="terms">
                   Already have an account
