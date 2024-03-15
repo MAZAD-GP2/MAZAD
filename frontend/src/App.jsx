@@ -51,9 +51,9 @@ function App() {
         <Route exact path="/reset-password" element={<ResetPassword />} />
 
         {/* Restricted Routes */}
-        {isLoggedIn && isAdmin && (
+        {/* {isLoggedIn && isAdmin && (
           <Route exact path="/admin" element={<AdminPage />} />
-        )}
+        )} */}
         {/* {isLoggedIn && <Route exact path="/user" element={<UserPage />} />} */}
 
         {/* Redirect to login if user tries to access restricted routes */}

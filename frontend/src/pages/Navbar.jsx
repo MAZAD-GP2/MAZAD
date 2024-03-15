@@ -80,7 +80,7 @@ const Navbar = () => {
             <div className="px-3 py-2 nav-item">
               <a
                 className="link d-inline-block w-auto"
-                href="/interestingItems"
+                href="/Popular"
               >
                 Popular Items
               </a>
