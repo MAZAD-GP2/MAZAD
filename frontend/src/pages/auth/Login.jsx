@@ -3,22 +3,24 @@ import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import * as api from "../../api/index";
+import { Spinner } from 'react-bootstrap';
 
 function Login() {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false); // Track login status
   const isAdmin = useSelector((state) => state.auth.isAdmin);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoggingIn(true); // Set login status to true when login button is clicked
     await api
       .login({ usernameOrEmail, password })
       .then((result) => {
-        localStorage.setItem("user", JSON.stringify(result.data.token));
+        localStorage.setItem("userToken", result.data.token);
         result.data.isAdmin ? dispatch({ type: "isAdmin" }) : dispatch({ type: "notAdmin" });
-        // dispatch(result.data.isAdmin ? "isAdmin" : "notAdmin");
         enqueueSnackbar("Login Successfully", { variant: "success" });
         setUsernameOrEmail("");
         setPassword("");
@@ -30,6 +32,9 @@ function Login() {
         enqueueSnackbar(err.response.data.message, {
           variant: "error",
         });
+      })
+      .finally(() => {
+        setIsLoggingIn(false); // Set login status back to false after login attempt is complete
       });
   };
 
@@ -41,11 +46,6 @@ function Login() {
             <h1>
               <i>_MAZAD_</i>
             </h1>
-            {/* <img
-              src="logo.png"
-              border="0"
-              className="logo w-100 h-100"
-            /> */}
           </div>
 
           <div id="seperator" style={{ height: 270.72 }}></div>
@@ -75,7 +75,6 @@ function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                  {/* a forgot passwoerd label */}
                   <a href="/forgot-password" className="blockquote-footer">
                     Forgot Password?
                   </a>
@@ -83,7 +82,12 @@ function Login() {
               </div>
 
               <div className="d-flex flex-row align-items-center justify-content-start gap-3 mt-3">
-                <button className="col-auto px-4 btn btn-secondary btn-block confirm-button">Submit</button>
+                <button 
+                  className="col-auto px-4 btn btn-secondary btn-block confirm-button"
+                  disabled={isLoggingIn} // Disable button while logging in
+                >
+                  {isLoggingIn ? <Spinner animation="border" size="sm" /> : "Submit"}
+                </button>
                 <a href="/register" className="terms col-6">
                   Don't have an account
                 </a>

@@ -23,54 +23,72 @@ const Navbar = () => {
     fetchItems();
   }, []);
   return (
-    <header>
-      <h1 id="logo">Mazad</h1>
-      <div id="search-create-nav-container">
-        <div id="search-create-container">
-          <form>
-            <input
-              type="search"
-              placeholder="Search Items, tags or categories"
-              aria-label="Search"
-            />
-          </form>
-          <button
-            type="submit"
-          >
-           New Mazad
-          </button>
-        </div>
-        <div id="nav-container">
-          <a href="/">Home</a>
+    <div className="d-flex flex-row w-100 gap-5 bg-black">
+      <div className="d-flex flex-column w-100 gap-1">
+        <div className="row w-100 d-flex flex-row w-100 gap-5 mt-3 px-4">
+          <span id="logo" className="col-md-auto col-1 text-secondary">
+            Mazad
+          </span>
+          <div id="search-create-nav-container" className="col">
+            <div
+              id="search-create-container"
+              className="d-flex flex-row gap-3 form-group"
+            >
+              <input
+                type="search"
+                placeholder="Search Items, tags or categories"
+                aria-label="Search"
+                className="form-control col"
+              />
+              <button type="submit" className="btn btn-secondary col-auto">
+                New Mazad
+              </button>
 
-          <a id="dropd"><NavDropdown title="Categories" >
-            {categories.length > 0 ? (
-              categories.map((category) => (
-                <NavDropdown.Item key={category.id} href={`#${category.name}`}>
-                  {category.name}
-                </NavDropdown.Item>
-              ))
-            ) : (
-              <NavDropdown.Item disabled>No categories found</NavDropdown.Item>
-            )}
-          </NavDropdown>
-          </a>
-          <a id='liveMazad' href="/liveMazads">Live Mazads</a>
-          <a href="/interestingItems">Popular Items</a>
+              <div className="col-auto d-flex flex-row gap-3 form-group">
+                <a href="/register" role="button" className="btn btn-secondary">
+                  Sign up
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className="d-flex flex-row justify-content-center align-items-center gap-3 text-center">
+            <div className="px-3 py-2 nav-item active">
+              <a className="link d-inline-block w-auto" href="/">
+                Home
+              </a>
+            </div>
+            <div className="px-3 py-2 nav-item">
+              <a
+                className="link d-inline-block w-auto"
+                id="categories"
+                href="/categories"
+              >
+                Categories <i className="fas fa-caret-down"></i>
+              </a>
+            </div>
+            <div className="px-3 py-2 nav-item">
+              <a
+                className="link d-inline-block w-auto"
+                id="liveMazad"
+                href="/liveMazads"
+              >
+                Live Mazads
+              </a>
+            </div>
+            <div className="px-3 py-2 nav-item">
+              <a
+                className="link d-inline-block w-auto"
+                href="/interestingItems"
+              >
+                Popular Items
+              </a>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="login-signup">
-        <ul>
-          <li>
-            <a href="/login">Login</a>
-          </li>
-          <li>
-            <a href="/register">Sign up</a>
-          </li>
-        </ul>
-      </div>
-    </header>
-
+    </div>
   );
 };
 

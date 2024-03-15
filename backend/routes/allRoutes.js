@@ -3,6 +3,7 @@ const router = express.Router();
 const userRoutes = require("./userRoutes");
 const itemRoutes = require("./itemRoute");
 const categoryRoutes = require("./categoryRoutes");
+const authRoutes = require("./authRoutes");
 const verifyToken = require("../middlewares/verfiytoken");
 const checkAdmin = require("../middlewares/checkAdmin");
 const {
@@ -10,7 +11,9 @@ const {
   validateUserUpdate,
 } = require("../utils/validators/userValidator");
 const { validateItemCreation } = require("../utils/validators/itemValidator");
-
+// auth
+router.route("/decode-token").post(authRoutes.decodeToken);
+// user
 router.route("/user").get(verifyToken, checkAdmin, userRoutes.getAllUsers);
 router.route("/user/register").post(validateUserCreation, userRoutes.register);
 router.route("/user/login").post(userRoutes.login);
@@ -22,7 +25,7 @@ router
 router
   .route("/user/delete/:id")
   .delete(verifyToken, checkAdmin, userRoutes.deleteUser);
-
+// item
 router
   .route("/item/create")
   .post(verifyToken, validateItemCreation, itemRoutes.createItem);

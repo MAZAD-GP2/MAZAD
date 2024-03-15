@@ -28,7 +28,7 @@ const Home = () => {
       <Navbar />
       <div className="d-flex flex-row flex-wrap gap-5 p-5 p-lg-5">
         {isFetching ? (
-          <div className="text-center w-100 mt-5">
+          <div className=" text-center w-100 mt-5">
             <div className="spinner-border text-primary opacity-25" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>

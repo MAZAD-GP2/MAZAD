@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import axios from "axios";
+import { Spinner } from "react-bootstrap";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isResetting, setIsResetting] = useState(false); // Track reset password status
   const { enqueueSnackbar } = useSnackbar();
 
   const handlePasswordChange = (event) => {
@@ -20,6 +22,7 @@ function ResetPassword() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsResetting(true); // Set reset password status to true when reset password button is clicked
     const regex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
     if (!regex.test(password)) {
       enqueueSnackbar(
@@ -28,12 +31,14 @@ function ResetPassword() {
           variant: "error",
         }
       );
+      setIsResetting(false); // Set reset password status back to false
       return;
     }
     if (password !== confirmPassword) {
       enqueueSnackbar("Passwords don't match", {
         variant: "error",
       });
+      setIsResetting(false); // Set reset password status back to false
       return;
     }
 
@@ -45,6 +50,12 @@ function ResetPassword() {
       })
       .then(() => {
         window.location.href = "/login";
+      })
+      .catch((err) => {
+        enqueueSnackbar(err.response.data.message, { variant: "error" });
+      })
+      .finally(() => {
+        setIsResetting(false); // Set reset password status back to false
       });
   };
 
@@ -62,11 +73,6 @@ function ResetPassword() {
             <h1>
               <i>_MAZAD_</i>
             </h1>
-            {/* <img
-              src="logo.png"
-              border="0"
-              className="logo w-100 h-100"
-            /> */}
           </div>
 
           <div id="seperator" style={{ height: 251.52 }}></div>
@@ -113,8 +119,15 @@ function ResetPassword() {
                 </div>
               </div>
               <div className="d-flex flex-row align-items-center justify-content-start gap-3 mt-3">
-                <button className="col-auto px-4 btn btn-secondary btn-block confirm-button">
-                  Reset password
+                <button
+                  className="col-auto px-4 btn btn-secondary btn-block confirm-button"
+                  disabled={isResetting} // Disable button while resetting password
+                >
+                  {isResetting ? (
+                    <Spinner animation="border" size="sm" />
+                  ) : (
+                    "Reset password"
+                  )}
                 </button>
                 <a href="/login" className="terms col-6">
                   back log in

@@ -42,9 +42,21 @@ module.exports.register = async (req, res) => {
       phoneNumber,
     });
 
-    const token = await generateJWT({ ...newUser.dataValues });
+    // exclude the hashed password from the user object
+    const token = await generateJWT({
+      id: newUser.id,
+      username: newUser.username,
+      email: newUser.email,
+      isAdmin: newUser.isAdmin,
+      phoneNumber: newUser.phoneNumber,
+    });
 
-    return res.status(201).json({ ...newUser.dataValues, token });
+    const userData = {
+      token,
+      isAdmin: newUser.isAdmin,
+    };
+
+    return res.status(201).json(userData);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: err.message });
@@ -64,17 +76,29 @@ module.exports.login = async (req, res) => {
     });
 
     if (!user) {
-      throw new Error("username or email doesn't exist");
+      throw new Error("Username or email doesn't exist");
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error("password are incorrect");
+      throw new Error("Password is incorrect");
     }
 
-    const token = await generateJWT({ ...user.dataValues });
+    // exclude the hashed password from the user object
+    const token = await generateJWT({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      phoneNumber: user.phoneNumber,
+    });
 
-    return res.status(200).json({ ...user.dataValues, token });
+    const userData = {
+      token,
+      isAdmin: user.isAdmin,
+    };
+
+    return res.status(200).json(userData);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -161,7 +185,10 @@ module.exports.resetPassword = async (req, res) => {
       throw new Error("Passwords don't match");
     }
 
-    const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT));
+    const hashedPassword = await bcrypt.hash(
+      password,
+      parseInt(process.env.BCRYPT_SALT)
+    );
 
     await User.update(
       { password: hashedPassword },
@@ -191,7 +218,12 @@ module.exports.updateUser = async (req, res) => {
 
     const user = await User.findByPk(userId);
 
-    await user.update({ username, email, password: hashedPassword, phoneNumber });
+    await user.update({
+      username,
+      email,
+      password: hashedPassword,
+      phoneNumber,
+    });
 
     return res.json({ user });
   } catch (err) {

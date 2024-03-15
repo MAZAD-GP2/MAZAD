@@ -2,22 +2,13 @@
     width: 25rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px transparent;
-    border-radius: 25%;
-    cursor: pointer;
-    transition: .25s;
-}
-
-.item-card {
-    width: 25rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px transparent;
-    border-radius: 25%;
     cursor: pointer;
     transition: .25s;
 }
 
 .item-card:hover {
-    background-color: #e4c9af;
+    /* background-color: #e4c9af; */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .image {

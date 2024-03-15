@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
-import axios from "axios";
 import * as api from "../../api/index";
+import { Spinner } from "react-bootstrap";
 
 function Register() {
   const [username, setUsername] = useState({ value: "", isValid: true });
@@ -13,7 +13,9 @@ function Register() {
     value: "",
     isValid: true,
   });
+  const [isRegistering, setIsRegistering] = useState(false); // Track registration status
   const { enqueueSnackbar } = useSnackbar();
+
   const handleInputChange = () => {
     setUsername({ ...username, isValid: true });
     setPhoneNumber({ ...phoneNumber, isValid: true });
@@ -54,7 +56,9 @@ function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsRegistering(true); // Set registration status to true when registration button is clicked
     let success = true;
+    // Validate input fields
     if (!username.isValid || !username.value) {
       setUsername({ ...username, isValid: false });
       success = false;
@@ -68,27 +72,38 @@ function Register() {
       success = false;
     }
     // Add password regex validation here
-
     const regex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
-
     if (!regex.test(password.value)) {
-      enqueueSnackbar("Password must contain at least 8 characters, including at least one letter and one number", {
-        variant: "error",
-        hideIconVariant: true,
-      });
+      enqueueSnackbar(
+        "Password must contain at least 8 characters, including at least one letter and one number",
+        {
+          variant: "error",
+          hideIconVariant: true,
+        }
+      );
       setPassword({ ...password, isValid: false });
+      setIsRegistering(false); // Set registration status back to false
       return;
     }
-
-    if (!confirmPassword.isValid || !confirmPassword.value || confirmPassword.value !== password.value) {
+    if (
+      !confirmPassword.isValid ||
+      !confirmPassword.value ||
+      confirmPassword.value !== password.value
+    ) {
       setConfirmPassword({ ...confirmPassword, isValid: false });
       success = false;
-      enqueueSnackbar("Password and Confirm Password don't match or are not valid", {
-        variant: "error",
-      });
+      enqueueSnackbar(
+        "Password and Confirm Password don't match or are not valid",
+        {
+          variant: "error",
+        }
+      );
     }
-    if (!success) return;
-
+    if (!success) {
+      setIsRegistering(false); // Set registration status back to false
+      return;
+    }
+    // Perform registration
     api
       .register({
         username: username.value,
@@ -103,8 +118,7 @@ function Register() {
         setEmail({ value: "", isValid: true });
         setPassword({ value: "", isValid: true });
         setConfirmPassword({ value: "", isValid: true });
-
-        localStorage.setItem("user", JSON.stringify(result.data.token));
+        localStorage.setItem("userToken", result.data.token);
         enqueueSnackbar("User Created Successfully", { variant: "success" });
         setTimeout(() => {
           window.location.href = "/";
@@ -112,6 +126,9 @@ function Register() {
       })
       .catch((err) => {
         enqueueSnackbar(err.response.data.message, { variant: "error" });
+      })
+      .finally(() => {
+        setIsRegistering(false); // Set registration status back to false
       });
   };
 
@@ -120,17 +137,18 @@ function Register() {
       className="position-absolute d-flex flex-row justify-content-center align-items-center w-100 h-100"
       id="main-container"
     >
-      <div className="card px-1 py-4 col-lg-6 col-md-8 col-sm-12" id="form-container">
+      <div
+        className="card px-1 py-4 col-lg-6 col-md-8 col-sm-12"
+        id="form-container"
+      >
         <div className="d-flex flex-row align-items-center justify-content-center">
-          <div className="col-sm-12 col-md-3 col-lg-4 text-center" id="logo-container">
+          <div
+            className="col-sm-12 col-md-3 col-lg-4 text-center"
+            id="logo-container"
+          >
             <h1>
               <i>_MAZAD_</i>
             </h1>
-            {/* <img
-              src="logo.png"
-              border="0"
-              className="logo w-100 h-100"
-            /> */}
           </div>
 
           <div id="seperator" style={{ height: 420.16 }}></div>
@@ -142,7 +160,9 @@ function Register() {
                 <div className="col-sm-12">
                   <div className="form-group">
                     <input
-                      className={`form-control ${!username.isValid ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        !username.isValid ? "is-invalid" : ""
+                      }`}
                       type="text"
                       placeholder="Name"
                       id="name"
@@ -156,88 +176,17 @@ function Register() {
                   </div>
                 </div>
               </div>
-
-              <div className="row">
-                <div className="col-sm-12">
-                  <div className="form-group">
-                    <div className="input-group">
-                      <input
-                        className={`form-control ${!email.isValid ? "is-invalid" : ""}`}
-                        type="text"
-                        placeholder="Email"
-                        id="email"
-                        value={email.value}
-                        onChange={(e) => {
-                          handleInputChange();
-                          handleEmailChange(e);
-                        }}
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-12">
-                  <div className="form-group">
-                    <div className="input-group">
-                      <input
-                        className={`form-control ${!phoneNumber.isValid ? "is-invalid" : ""}`}
-                        type="text"
-                        placeholder="Phone Number"
-                        id="phone-number"
-                        value={phoneNumber.value}
-                        onChange={(e) => {
-                          handleInputChange();
-                          handlePhoneNumberChange(e);
-                        }}
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-12">
-                  <div className="form-group">
-                    <div className="input-group">
-                      <input
-                        className={`form-control ${!password.isValid ? "is-invalid" : ""}`}
-                        type="password"
-                        placeholder="password"
-                        id="password"
-                        value={password.value}
-                        onChange={(e) => {
-                          handleInputChange();
-                          handlePasswordChange(e);
-                        }}
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-12">
-                  <div className="form-group">
-                    <div className="input-group">
-                      <input
-                        className={`form-control ${!confirmPassword.isValid ? "is-invalid" : ""}`}
-                        type="password"
-                        placeholder="Confirm password"
-                        id="confirm-password"
-                        value={confirmPassword.value}
-                        onChange={(e) => {
-                          handleInputChange();
-                          handleConfirmPasswordChange(e);
-                        }}
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <button className="btn btn-secondary btn-block confirm-button">Create account</button>
+              {/* Other input fields */}
+              <button
+                className="btn btn-secondary btn-block confirm-button"
+                disabled={isRegistering} // Disable button while registering
+              >
+                {isRegistering ? (
+                  <Spinner animation="border" size="sm" />
+                ) : (
+                  "Create account"
+                )}
+              </button>
               <div className=" d-flex flex-column text-center px-5 mt-3 mb-3">
                 <a href="/login" className="terms">
                   Already have an account
