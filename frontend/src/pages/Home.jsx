@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import Card from "./Card";
-import * as api from "../api/index"
+import * as api from "../api/index";
 import { useDispatch, useSelector } from "react-redux";
 
 const Home = () => {
   const [items, setItems] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
+  let isAdmin = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchItems = async () => {

@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import * as api from "../../api/index";
-import { Spinner } from 'react-bootstrap';
+import { Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Track login status
-  const isAdmin = useSelector((state) => state.auth.isAdmin);
+  let isAdmin = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -25,7 +27,7 @@ function Login() {
         setUsernameOrEmail("");
         setPassword("");
         setTimeout(() => {
-          window.location.href = "/";
+          navigate("/");
         }, 1000);
       })
       .catch((err) => {
@@ -82,7 +84,7 @@ function Login() {
               </div>
 
               <div className="d-flex flex-row align-items-center justify-content-start gap-3 mt-3">
-                <button 
+                <button
                   className="col-auto px-4 btn btn-secondary btn-block confirm-button"
                   disabled={isLoggingIn} // Disable button while logging in
                 >

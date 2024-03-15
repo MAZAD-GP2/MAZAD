@@ -4,6 +4,8 @@ import { useSnackbar } from "notistack";
 import * as api from "../../api/index";
 import { Spinner } from "react-bootstrap";
 import "bootstrap";
+import { useNavigate } from "react-router-dom";
+
 function Register() {
   const [username, setUsername] = useState({ value: "", isValid: true });
   const [phoneNumber, setPhoneNumber] = useState({ value: "", isValid: true });
@@ -15,6 +17,7 @@ function Register() {
   });
   const [isRegistering, setIsRegistering] = useState(false); // Track registration status
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const handleInputChange = () => {
     setUsername({ ...username, isValid: true });
@@ -121,7 +124,7 @@ function Register() {
         localStorage.setItem("userToken", result.data.token);
         enqueueSnackbar("User Created Successfully", { variant: "success" });
         setTimeout(() => {
-          window.location.href = "/";
+          navigate('/');
         }, 1000);
       })
       .catch((err) => {

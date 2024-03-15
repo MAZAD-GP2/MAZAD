@@ -3,7 +3,7 @@ import axios from "axios";
 const API = axios.create({ baseURL: `http://localhost:${import.meta.env.VITE_PORT}` });
 
 API.interceptors.request.use((req) => {
-  if (localStorage.getItem("user")) {
+  if (localStorage.getItem("userToken")) {
     req.headers.Authorization = `Bearer ${localStorage.getItem("userToken")}`;
   }
 

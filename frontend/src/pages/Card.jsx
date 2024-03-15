@@ -17,7 +17,12 @@ const Card = ({ item }) => {
           <p className="tag">item tag</p>
         </div>
         <h5 className="card-title">{item.name}</h5>
-        <p className="card-text text-truncate d-block">{item.description}</p>
+        {/* <p className="card-text text-truncate">{item.description}</p> */}
+        <p className="card-text">
+          {item.description.length > 150
+            ? item.description.substring(0, 150).split(" ").slice(0, -1).join(" ") + "..."
+            : item.description}
+        </p>
       </div>
     </div>
   );
