@@ -3,7 +3,7 @@ import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import * as api from "../../api/index";
 import { Spinner } from "react-bootstrap";
-
+import "bootstrap";
 function Register() {
   const [username, setUsername] = useState({ value: "", isValid: true });
   const [phoneNumber, setPhoneNumber] = useState({ value: "", isValid: true });
@@ -164,7 +164,7 @@ function Register() {
                         !username.isValid ? "is-invalid" : ""
                       }`}
                       type="text"
-                      placeholder="Name"
+                      placeholder="Username"
                       id="name"
                       value={username.value}
                       onChange={(e) => {
@@ -176,7 +176,86 @@ function Register() {
                   </div>
                 </div>
               </div>
-              {/* Other input fields */}
+              <div className="row">
+                <div className="col-sm-12">
+                  <div className="form-group">
+                    <input
+                      className={`form-control ${
+                        !email.isValid ? "is-invalid" : ""
+                      }`}
+                      type="text"
+                      placeholder="Email"
+                      id="email"
+                      value={email.value}
+                      onChange={(e) => {
+                        handleInputChange();
+                        handleEmailChange(e);
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-sm-12">
+                  <div className="form-group">
+                    <input
+                      className={`form-control ${
+                        !phoneNumber.isValid ? "is-invalid" : ""
+                      }`}
+                      type="text"
+                      placeholder="Phone Number"
+                      id="phone-number"
+                      value={phoneNumber.value}
+                      onChange={(e) => {
+                        handleInputChange();
+                        handlePhoneNumberChange(e);
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-sm-12">
+                  <div className="form-group">
+                    <input
+                      className={`form-control ${
+                        !password.isValid ? "is-invalid" : ""
+                      }`}
+                      type="password"
+                      placeholder="Password"
+                      id="password"
+                      value={password.value}
+                      onChange={(e) => {
+                        handleInputChange();
+                        handlePasswordChange(e);
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-sm-12">
+                  <div className="form-group">
+                    <input
+                      className={`form-control ${
+                        !confirmPassword.isValid ? "is-invalid" : ""
+                      }`}
+                      type="password"
+                      placeholder="Confirm password"
+                      id="confirm-password"
+                      value={confirmPassword.value}
+                      onChange={(e) => {
+                        handleInputChange();
+                        handleConfirmPasswordChange(e);
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
               <button
                 className="btn btn-secondary btn-block confirm-button"
                 disabled={isRegistering} // Disable button while registering

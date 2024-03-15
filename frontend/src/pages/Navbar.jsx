@@ -23,7 +23,7 @@ const Navbar = () => {
     fetchItems();
   }, []);
   return (
-    <div className="d-flex flex-row w-100 gap-5 bg-black">
+    <div className="d-flex flex-row w-100 gap-5 bg-primary">
       <div className="d-flex flex-column w-100 gap-1">
         <div className="row w-100 d-flex flex-row w-100 gap-5 mt-3 px-4">
           <span id="logo" className="col-md-auto col-1 text-secondary">
@@ -38,7 +38,7 @@ const Navbar = () => {
                 type="search"
                 placeholder="Search Items, tags or categories"
                 aria-label="Search"
-                className="form-control col"
+                className="form-control col bg-dark text-white"
               />
               <button type="submit" className="btn btn-secondary col-auto">
                 New Mazad
@@ -78,10 +78,7 @@ const Navbar = () => {
               </a>
             </div>
             <div className="px-3 py-2 nav-item">
-              <a
-                className="link d-inline-block w-auto"
-                href="/Popular"
-              >
+              <a className="link d-inline-block w-auto" href="/Popular">
                 Popular Items
               </a>
             </div>

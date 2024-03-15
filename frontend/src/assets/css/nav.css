@@ -24,7 +24,14 @@
 
 .nav-item a {
   text-decoration: none;
+  color: white;
+}
+
+.nav-item a:hover {
   color: var(--secondary-light);
+}
+::placeholder {
+  color: var(--muted-light) !important;
 }
 
 /* header {
