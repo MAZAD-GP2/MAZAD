@@ -2,7 +2,6 @@ require("dotenv").config();
 const Category = require("../models/Category");
 
 module.exports.getAllCategories = async (req, res) => {
-  console.log("test");
   try {
     const categories = await Category.findAll();
     res.send(categories);

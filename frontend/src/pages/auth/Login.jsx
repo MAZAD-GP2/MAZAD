@@ -21,7 +21,7 @@ function Login() {
     await api
       .login({ usernameOrEmail, password })
       .then((result) => {
-        localStorage.setItem("userToken", result.data.token);
+        sessionStorage.setItem("user", JSON.stringify(result.data));
         result.data.isAdmin ? dispatch({ type: "isAdmin" }) : dispatch({ type: "notAdmin" });
         enqueueSnackbar("Login Successfully", { variant: "success" });
         setUsernameOrEmail("");

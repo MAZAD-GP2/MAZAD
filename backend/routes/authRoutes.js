@@ -13,6 +13,6 @@ module.exports.decodeToken = async (req, res) => {
         let decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
         return res.send(decodedToken);
     } catch (err) {
-        return res.status(500).json({ message: err });
+        return res.status(500).json({ message: err.message });
     }
 };

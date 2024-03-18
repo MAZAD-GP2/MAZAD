@@ -4,11 +4,14 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import axios from "axios";
 import "../assets/css/nav.css";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const isAdmin = useSelector((state) => state.auth.isAdmin);
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -40,15 +43,38 @@ const Navbar = () => {
                 aria-label="Search"
                 className="form-control col bg-dark text-white"
               />
-              <button type="submit" className="btn btn-secondary col-auto">
-                New MAZAD
-              </button>
-
-              <div className="col-auto d-flex flex-row gap-3 form-group">
-                <a href="/register" role="button" className="btn btn-secondary">
-                  Sign up
+              {user ? (
+                <button type="submit" className="btn btn-secondary col-auto">
+                  New Mazad
+                </button>
+              ) : (
+                <button type="submit" className="btn btn-secondary col-auto" onClick={() => navigate("/login")}>
+                  Log in
+                </button>
+              )}
+              {user ? (
+                // <div className="rounded-circle img-fluid">
+                //   <div
+                //     className="rounded-circle img-fluid btn btn-secondary col-auto"
+                //     onClick={() => navigate("/login")}
+                //     style={{
+                //       backgroundImage: `url("${"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"}")`,
+                //       backgroundSize: "cover",
+                //       width: "100%",
+                //       height: "100%",
+                //     }}
+                //   ></div>
+                // </div>
+                <div className="col-auto d-flex flex-row gap-3 form-group">
+                  <a href="/register" role="button" className="btn btn-secondary">
+                    Profile
+                  </a>
+                </div>
+              ) : (
+                <a className="btn btn-secondary col-auto" href="/register" role="button">
+                  Sign Up
                 </a>
-              </div>
+              )}
             </div>
           </div>
         </div>

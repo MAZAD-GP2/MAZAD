@@ -121,7 +121,7 @@ function Register() {
         setEmail({ value: "", isValid: true });
         setPassword({ value: "", isValid: true });
         setConfirmPassword({ value: "", isValid: true });
-        localStorage.setItem("userToken", result.data.token);
+        sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("User Created Successfully", { variant: "success" });
         setTimeout(() => {
           navigate('/');

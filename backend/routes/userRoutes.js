@@ -52,8 +52,12 @@ module.exports.register = async (req, res) => {
     });
 
     const userData = {
-      token,
+      id: newUser.id,
+      username: newUser.username,
+      email: newUser.email,
       isAdmin: newUser.isAdmin,
+      phoneNumber: newUser.phoneNumber,
+      token,
     };
 
     return res.status(201).json(userData);
@@ -94,8 +98,12 @@ module.exports.login = async (req, res) => {
     });
 
     const userData = {
-      token,
+      id: user.id,
+      username: user.username,
+      email: user.email,
       isAdmin: user.isAdmin,
+      phoneNumber: user.phoneNumber,
+      token,
     };
 
     return res.status(200).json(userData);

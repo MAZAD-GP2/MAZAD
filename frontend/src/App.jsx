@@ -2,12 +2,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import * as api from "./api/index";
 import { useNavigate } from "react-router-dom";
-
-// import Register from "./pages/auth/Register.jsx";
-// import Login from "./pages/auth/Login.jsx";
-// import Home from "./pages/Home.jsx";
-// import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
-// import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import loadable from "@loadable/component";
 
 // const navigate = useNavigate();
@@ -20,11 +14,11 @@ const ResetPassword = loadable(() => import("./pages/auth/ResetPassword.jsx"));
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Checking user data 1");
-    const token = localStorage.getItem("userToken");
-    if (token) {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (user) {
       api
         .decodeToken()
         .then((result) => {
@@ -32,10 +26,10 @@ function App() {
           result.data.isAdmin ? setIsAdmin(true) : setIsAdmin(false);
         })
         .catch((err) => {
-          setIsLoggedIn(true);
-          setIsAdmin(false);
+          console.log(err);
         });
     } else {
+      sessionStorage.clear();
       setIsLoggedIn(false);
       setIsAdmin(false);
     }
