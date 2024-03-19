@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "./Navbar";
 import "../assets/css/addItem.css";
 import { useState,useRef } from "react";
 import * as api from "../api/index";
 import { useNavigate } from "react-router-dom";
+import moment from 'moment'
 
 const AddItem = () => {
   const [tags, setTags] = useState([]);
@@ -16,11 +17,11 @@ const AddItem = () => {
   const [desclength, setDescLength] = useState(0);
   
   const [startDate, setStartDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  
   const [endDate, setEndDate] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [showWarning, setShowWarning] = useState(false);
+  
+  const [startTimeWarning, setStartTimeWarning] = useState(false);
+  const [endTimeWarning, setEndTimeWarning] = useState(false);
+
   const [submitValid,setSubmitValid] = useState(true);
 
   const handleAddTag = () => {
@@ -44,22 +45,13 @@ const AddItem = () => {
 
   const handleStartDateChange = (event) => {
     setStartDate(event.target.value);
-    handleTimeWarning();
+    handleStartTimeWarning();
+    handleEndTimeWarning();
   };
 
   const handleEndDateChange = (event) => {
     setEndDate(event.target.value);
-    handleTimeWarning();
-  };
-
-  const handleStartTimeChange = (event) => {
-    setStartTime(event.target.value);
-    handleTimeWarning();
-  };
-
-  const handleEndTimeChange = (event) => {
-    setEndTime(event.target.value);
-    handleTimeWarning();
+    handleEndTimeWarning();
   };
   
   const handleTagEditStart = (index) => {
@@ -70,21 +62,30 @@ const AddItem = () => {
     setEditingIndex(-1);
   };
 
-  const handleTimeWarning = () => {
-      if (startDate > endDate) {
-        setShowWarning(true);
-      } else if (startDate === endDate && startTime >= endTime) {
-        setShowWarning(true);
-      } else setShowWarning(false);
+  const handleStartTimeWarning = () => {
+    const currentDate = new Date().toISOString().slice(0,16);
+
+    if (startDate <= currentDate) {
+        setStartTimeWarning(true);
+    } else {
+        setStartTimeWarning(false);
+    }
+  }
+
+  const handleEndTimeWarning = () => {
+      if (startDate >= endDate) {
+        setEndTimeWarning(true);
+      } else setEndTimeWarning(false);
   };
 
   const handleSubmit = async () => {
-    console.log(!!itemName, !!description, !!startDate, !!startTime, !!endDate, !!endTime, !!showWarning);
-    if(!itemName || !description || !startDate || !startTime || !endDate || !endTime || showWarning) {
+    if(!itemName || !description || !startDate  || !endDate || startTimeWarning) {
 			setSubmitValid(false);
 		}
     else {
 			setSubmitValid(true);
+      const newTags = tags.filter((tag) => tag.trim() !== "");
+      setTags(newTags);
       await api
       .addItem({itemName,description})
       .then(() => {
@@ -95,7 +96,6 @@ const AddItem = () => {
           navigate("/");
         }, 1000);
       })
-      // rest of auction addition logic
     }
 		
   };
@@ -123,21 +123,15 @@ const AddItem = () => {
               <span className="mb-3">
                 <h5>Auction start date-time</h5>
                 <input
-                  type="date"
-                  className="form-control w-25 mx-1 d-inline"
+                  type="datetime-local"
+                  className="time-input form-control mx-1 d-inline"
                   value={startDate}
                   onChange={handleStartDateChange}
                 />
-                <input
-                  type="time"
-                  className="form-control w-25 mx-1 d-inline"
-                  value={startTime}
-                  onChange={handleStartTimeChange}
-                />
-                {/* Display warning message if necessary */}
-                {showWarning && (
+
+                {startTimeWarning && (
                   <p style={{ color: "red", fontSize: '15px'  }}>
-                    Start date must be before end date!
+                    Start time must be greater than current date and time 
                   </p>
                 )}
               </span>
@@ -145,21 +139,15 @@ const AddItem = () => {
               <span>
                 <h5>Auction end date-time</h5>
                 <input
-                  type="date"
-                  className="form-control w-25 d-inline"
+                  type="datetime-local"
+                  className="time-input form-control d-inline"
                   value={endDate}
                   onChange={handleEndDateChange}
                 />
-                <input
-                  type="time"
-                  className="form-control w-25 mx-1 d-inline"
-                  value={endTime}
-                  onChange={handleEndTimeChange}
-                />
 
-                {showWarning && (
+                {endTimeWarning && (
                   <p style={{ color: "red", fontSize: '15px' }}>
-                    Start date must be before end date!
+                    End time must be greater than start date and time
                   </p>
                 )}
               </span>
@@ -184,7 +172,7 @@ const AddItem = () => {
             ) : ( // Render paragraph if not editing
               <p
                 key={index}
-                onClick={() => handleTagEditStart(index)} // Start editing when clicked
+                onClick={() => handleTagEditStart(index)}
                 className="tag-input d-inline"
               >
                 {tag}
