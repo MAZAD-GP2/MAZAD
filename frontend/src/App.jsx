@@ -1,16 +1,14 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import * as api from "./api/index";
-import { useNavigate } from "react-router-dom";
 import loadable from "@loadable/component";
-import AddItem from "./pages/AddItem.jsx";
 
-// const navigate = useNavigate();
 const Home = loadable(() => import("./pages/Home.jsx"));
 const Register = loadable(() => import("./pages/auth/Register.jsx"));
 const Login = loadable(() => import("./pages/auth/Login.jsx"));
 const ForgotPassword = loadable(() => import("./pages/auth/ForgotPassword.jsx"));
 const ResetPassword = loadable(() => import("./pages/auth/ResetPassword.jsx"));
+const AddItem = loadable(() => import("./pages/AddItem.jsx"));
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
