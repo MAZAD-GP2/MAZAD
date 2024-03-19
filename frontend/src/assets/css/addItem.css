@@ -1,0 +1,115 @@
+#image-details {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 40%;
+    margin-top: 2%;
+    margin-left: 1%;
+}
+
+#main {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+    margin-left: 40px;
+}
+
+#image {
+    flex: 1;
+    /* border: 1px solid #ccc; */
+    border-radius: 1%;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+    /* padding: 10px; */
+    width: 80%;
+    height: 45%;
+}
+
+#details {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 1px;
+    width: 79%;
+    padding: 10px;
+}
+
+#desc-add {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    padding: 10px; 
+    width: 57%;
+    align-items: center;
+}
+
+.inp {
+    padding: 10px;
+    border-radius: 5px;
+    width: 700px;
+    height: 250px;
+    resize: none;
+    overflow: hidden; /* Show scrollbars when content overflows */
+    border: 1px rgba(0, 0, 0, 0.1) solid;
+    padding: 10px;
+    font-size: 17px;
+    line-height: 1.5;
+    background-color: rgb(240, 238, 238);
+}
+
+.inp::placeholder {
+    opacity: 1;
+}
+
+
+#desc:focus {
+  border: 1px solid #e6e3e3;
+  overflow: auto
+}
+
+
+.tag {
+    font-size: 13px;
+    opacity: 80%;
+    border: 1px rgba(0, 0, 0, 0.1) solid;
+    border-radius: 100px;
+    padding: 1px 10px;
+    margin: 3px 3px;
+    margin-left: 1px;
+    background-color: rgb(226, 222, 222);
+}
+
+.tag-input {
+    font-size: 13px;
+    opacity: 80%;
+    border: 1px rgba(0, 0, 0, 0.1) solid;
+    border-radius: 100px;
+    padding: 1px 10px;
+    margin: 3px 3px;
+    margin-left: 1px;
+    background-color: rgb(226, 222, 222);;
+    width: 60px;
+    /* Additional styling for input */
+}
+
+
+#add-tag {
+    display: inline;
+    user-select: none;
+    cursor: pointer;
+    transition: .15s;
+    border:none;
+}
+
+#add-tag:hover {
+    background-color: darkgray;
+}
+
+.submit-button {
+    border-radius: 5%;
+    margin-top: 100px;
+    border: 1px transparent;
+    width: 15%;
+    align-self: center;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+}
+

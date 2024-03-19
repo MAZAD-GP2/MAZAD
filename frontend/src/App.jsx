@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import * as api from "./api/index";
 import { useNavigate } from "react-router-dom";
 import loadable from "@loadable/component";
+import AddItem from "./pages/AddItem.jsx";
 
 // const navigate = useNavigate();
 const Home = loadable(() => import("./pages/Home.jsx"));
@@ -43,6 +44,7 @@ function App() {
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/forgot-password" element={<ForgotPassword />} />
         <Route exact path="/reset-password" element={<ResetPassword />} />
+        <Route exact path="/add-item" element={<AddItem />} />
 
         {/* Restricted Routes */}
         {/* {isLoggedIn && isAdmin && (
