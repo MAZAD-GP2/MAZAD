@@ -31,6 +31,7 @@ router
   .post(verifyToken, validateItemCreation, itemRoutes.createItem);
 router.route("/item/user").get(verifyToken, itemRoutes.getAllItemsByUserId);
 router.route("/item").get(itemRoutes.getAllItems);
+router.route("/item/category/:id").get(itemRoutes.getAllItemsByCategory);
 
 router.route("/category").get(categoryRoutes.getAllCategories);
 router.route("/category/create").post(categoryRoutes.createCategory);

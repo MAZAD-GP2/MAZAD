@@ -1,43 +1,72 @@
 require("dotenv").config();
 const Item = require("../models/Item");
 const User = require("../models/User");
-const Category=require("../models/Category")
-const Tag=require("../models/Tag")
+const Category = require("../models/Category");
+const Tag = require("../models/Tag");
+
+const { ref, uploadBytes, getDownloadURL } = require("firebase/storage");
+const app = require("../firebaseConfig");
+const { getStorage } = require("firebase/storage");
+const storage = getStorage(app);
 
 module.exports.createItem = async (req, res) => {
-  //res.send(req.currentUser);
+  console.log("aaa");
+  console.log(req.currentUser.id);
+  
   try {
-    const { name, description, categoryName} = req.body;
-    let {tagNames}=req.body
-
+    console.log(req.body);
+    const { name, description, startDate, endDate} = req.body;
+    const { tagNames, images } = req.body; // assuming images is an array of files
+    
     const userId = req.currentUser.id;
 
-    const category = await Category.findOne({ where: { name: categoryName } });//checking if category exists
-    const tags = await Promise.all(tagNames.map(tagName => Tag.findOrCreate({ where: { name: tagName } })));
-
+    // Step 1: Upload images to Firebase Storage and obtain URLs
+    const imageURLs = await Promise.all(
+      images.map(async (image) => {
+        const storageRef = ref(storage, `images/${image.name}`);
+        await uploadBytes(storageRef, image);
+        return getDownloadURL(storageRef);
+      })
+    );
+    const category = await Category.findOne({ where: { id: 2 } });
     if (!category) {
       return res.status(404).send("Category not found");
     }
-    const item = await Item.create({ name, description, categoryId: category.id, userId });
-  /*  //console.log("AAAAAAAAAAAAAAAAAAAAAAAA",tagNames[0],tagNames[0].toString().length)
-    tagNames=tagNames.filter((tag)=>{
-      return tag.toString().trim().length!=0
-    })
-    //console.log(Object.keys(tagNames))
-    tagNames=tagNames.filter((shit)=>
-      shit.trim().length!=0
-    )
-    console.log(typeof(tagNames[0]))
-    console.log(tagNames)
-    if (tagNames && Array.isArray(tagNames) && tagNames.length > 0) {
-      if(tagNames.length>3)
-      tagNames=tagNames.slice(0,3)
-      const tags = await Promise.all(tagNames.map(tagName => Tag.findOrCreate({ where: { name: tagName } })));
+    // Step 2: Create a new item in the Items table
+    const item = await Item.create({
+      name,
+      description,
+      startDate,
+      endDate,
+      userId,
+      category,
+    });
 
-      await item.addTags(tags.map(([tag]) => tag));
-    }
-    //console.log(item)
-*/    
+    // Step 3: Insert records into image_items table
+    await Promise.all(
+      imageURLs.map(async (url) => {
+        await ImageItem.create({
+          url,
+          itemId: item.id,
+        });
+      })
+    );
+
+    // Step 4: Insert records into item_tags table
+
+    const tags = await Promise.all(
+      tagNames.map((tagName) => Tag.findOrCreate({ where: { name: tagName } }))
+    );
+
+    await Promise.all(
+      tags.map(async ([tag]) => {
+        await ItemTag.create({
+          tagId: tag.id,
+          itemId: item.id,
+        });
+      })
+    );
+
     res.send(item);
   } catch (err) {
     res.send(err);
@@ -63,15 +92,8 @@ module.exports.getAllItemsByUserId = async (req, res) => {
 
 module.exports.getAllItemsByCategory = async (req, res) => {
   try {
-    const {categoryId}=req.params
-    const category = await Category.findByPk(categoryId);
-
-    if (!category) {
-      return res.status(404).send("Category not found");
-    }
-    const items = await Item.findAll({
-      where: { categoryId: category.id },
-    });
+    const categoryId = req.params.id;
+    const items = await Category.findByPk(categoryId, { include: [Item] });
 
     res.send(items);
   } catch (er) {

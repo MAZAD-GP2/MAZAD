@@ -2,7 +2,8 @@ const { body, validationResult } = require('express-validator');
 const Item = require('../../models/Item');
 
 // Validation middleware for item creation
-exports.validateItemCreation = [
+
+exports.validateItemCreation = [  
   body('name').trim().notEmpty().withMessage('Name is required'),
   body('description').optional().trim(),
   //body('isRare').optional().isBoolean().withMessage('isRare must be a boolean value'),
