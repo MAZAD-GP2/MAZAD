@@ -95,8 +95,6 @@ const AddItem = () => {
       setSubmitValid(false);
     } else {
       setSubmitValid(true);
-      const newTags = tags.filter((tag) => tag.trim() !== "");
-      setTags(newTags);
 
       // Create a FormData object
       const formData = new FormData();
@@ -104,7 +102,8 @@ const AddItem = () => {
       formData.append("description", description);
       formData.append("startDate", startDate);
       formData.append("endDate", endDate);
-      
+      formData.append("tags", tags);
+
       droppedFiles.forEach((file) => {
         formData.append("images", file);
       });
@@ -167,10 +166,7 @@ const AddItem = () => {
       <Navbar />
       <div id="main">
         <div id="image-details">
-          <div
-            id="image-upload-container"
-            className="d-flex flex-column justify-content-center align-items-center"
-          >
+          <div id="image-upload-container" className="d-flex flex-column justify-content-center align-items-center">
             <div className="w-100">
               <Dropzone
                 onDrop={handleUpload}
@@ -183,18 +179,8 @@ const AddItem = () => {
                 minSize={1024}
                 maxSize={6830020}
               >
-                {({
-                  getRootProps,
-                  getInputProps,
-                  isDragActive,
-                  isDragAccept,
-                  isDragReject,
-                }) => {
-                  const additionalClass = isDragAccept
-                    ? "accept"
-                    : isDragReject
-                    ? "reject"
-                    : "";
+                {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject }) => {
+                  const additionalClass = isDragAccept ? "accept" : isDragReject ? "reject" : "";
 
                   return (
                     <div
@@ -207,18 +193,9 @@ const AddItem = () => {
                       <div className="image-preview">
                         {droppedFiles.map((file, index) => (
                           <div key={file.name} className="image-container">
-                            <img
-                              src={URL.createObjectURL(file)}
-                              alt={file.name}
-                            />
-                            <button
-                              className="remove-button"
-                              onClick={handleRemoveClick(file)}
-                            >
-                              <i
-                                className="fa-solid fa-x fa-sm"
-                                style={{ color: "white" }}
-                              ></i>
+                            <img src={URL.createObjectURL(file)} alt={file.name} />
+                            <button className="remove-button" onClick={handleRemoveClick(file)}>
+                              <i className="fa-solid fa-x fa-sm" style={{ color: "white" }}></i>
                             </button>
                           </div>
                         ))}
@@ -250,9 +227,7 @@ const AddItem = () => {
               />
 
               {startTimeWarning && (
-                <p style={{ color: "red", fontSize: "15px" }}>
-                  Start time must be greater than current date and time
-                </p>
+                <p style={{ color: "red", fontSize: "15px" }}>Start time must be greater than current date and time</p>
               )}
             </span>
 
@@ -266,9 +241,7 @@ const AddItem = () => {
               />
 
               {endTimeWarning && (
-                <p style={{ color: "red", fontSize: "15px" }}>
-                  End time must be greater than start date and time
-                </p>
+                <p style={{ color: "red", fontSize: "15px" }}>End time must be greater than start date and time</p>
               )}
             </span>
             <br />
@@ -286,18 +259,12 @@ const AddItem = () => {
                     ref={inputRef}
                     autoFocus
                     style={{
-                      width: inputRef.current
-                        ? inputRef.current.offsetWidth + "px"
-                        : "auto",
+                      width: inputRef.current ? inputRef.current.offsetWidth + "px" : "auto",
                     }}
                   />
                 ) : (
                   // Render paragraph if not editing
-                  <p
-                    key={index}
-                    onClick={() => handleTagEditStart(index)}
-                    className="tag-input d-inline"
-                  >
+                  <p key={index} onClick={() => handleTagEditStart(index)} className="tag-input d-inline">
                     {tag}
                   </p>
                 )
@@ -320,17 +287,10 @@ const AddItem = () => {
           />
           <p id="desc-len">{desclength}/255</p>
 
-          <button
-            className="submit-button btn btn-secondary "
-            onClick={handleSubmit}
-          >
+          <button className="submit-button btn btn-secondary " onClick={handleSubmit}>
             Start Mazad
           </button>
-          {!submitValid && (
-            <p style={{ color: "red", fontSize: "15px" }}>
-              Fill in all input fields!
-            </p>
-          )}
+          {!submitValid && <p style={{ color: "red", fontSize: "15px" }}>Fill in all input fields!</p>}
         </div>
       </div>
     </>

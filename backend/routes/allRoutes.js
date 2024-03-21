@@ -11,6 +11,10 @@ const {
   validateUserUpdate,
 } = require("../utils/validators/userValidator");
 const { validateItemCreation } = require("../utils/validators/itemValidator");
+const multer = require("multer");
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage }).array('images');
+
 // auth
 router.route("/decode-token").post(authRoutes.decodeToken);
 // user
@@ -28,7 +32,7 @@ router
 // item
 router
   .route("/item/create")
-  .post(verifyToken, validateItemCreation, itemRoutes.createItem);
+  .post(upload, verifyToken, validateItemCreation, itemRoutes.createItem);
 router.route("/item/user").get(verifyToken, itemRoutes.getAllItemsByUserId);
 router.route("/item").get(itemRoutes.getAllItems);
 router.route("/item/category/:id").get(itemRoutes.getAllItemsByCategory);
