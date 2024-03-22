@@ -1,7 +1,7 @@
 /* import file global.css */
-#logo{
+#logo {
   font-family: "Amiri";
-  font-size: 5rem;
+  font-size: 7rem;
 }
 .terms {
   font-size: 12px;
@@ -20,7 +20,6 @@
   color: transparent;
 }
 
-
 #main-container {
   background-image: url("/src/assets/images/wavy bg.png");
   background-size: 150%;
@@ -38,17 +37,15 @@
   /*height: 200px;
   */
   background-color: gray;
-  
 }
 
 /* hide the logo for phones */
-@media (max-width: 1000px) {
+@media (max-width: 1020px) {
   #form-container {
     width: 90% !important;
     margin: 0 !important;
   }
 }
-
 
 @media (max-width: 780px) {
   #logo-container {
