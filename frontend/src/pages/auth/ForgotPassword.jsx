@@ -44,8 +44,8 @@ function ForgotPassword() {
             className="col-sm-12 col-md-3 col-lg-4 text-center"
             id="logo-container"
           >
-            <h1>
-              <i>_MAZAD_</i>
+            <h1 id="logo">
+            مَزَاد
             </h1>
             {/* <img
               src="logo.png"

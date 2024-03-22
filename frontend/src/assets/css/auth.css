@@ -1,5 +1,8 @@
 /* import file global.css */
-
+#logo{
+  font-family: "Amiri";
+  font-size: 5rem;
+}
 .terms {
   font-size: 12px;
   text-decoration: none;

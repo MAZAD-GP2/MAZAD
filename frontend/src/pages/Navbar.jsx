@@ -33,7 +33,7 @@ const Navbar = () => {
       <div className="d-flex flex-column w-100 gap-1">
         <div className="row w-100 d-flex flex-row w-100 gap-5 mt-3 px-4">
           <span id="logo" className="col-md-auto col-1 text-secondary">
-            Mazad
+            مَزَاد
           </span>
           <div id="search-create-nav-container" className="col">
             <div id="search-create-container" className="d-flex flex-row gap-3 form-group">
