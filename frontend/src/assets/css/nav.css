@@ -34,6 +34,15 @@
 ::placeholder {
   color: var(--muted-light) !important;
 }
+#navdropdown:link{
+  color: white;
+}
+.dropdown-menu{
+  background-color: var(--primary-light);
+}
+.dropdown-menu>a:hover{
+  background-color: var(--primary-light);
+}
 
 /* header {
   display: flex;

@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import Nav from 'react-bootstrap/Nav';
 import NavDropdown from "react-bootstrap/NavDropdown";
 import axios from "axios";
 import "../assets/css/nav.css";
@@ -44,7 +45,7 @@ const Navbar = () => {
                 className="form-control col bg-dark text-white"
               />
               {user ? (
-                <button type="submit" className="btn btn-secondary col-auto">
+                <button type="submit" className="btn btn-secondary col-auto" onClick={() => navigate("/add-item")}>
                   New Mazad
                 </button>
               ) : (
@@ -85,11 +86,24 @@ const Navbar = () => {
                 Home
               </a>
             </div>
-            <div className="px-3 py-2 nav-item">
-              <a className="link d-inline-block w-auto" id="categories" href="/categories">
+            <Nav >
+            <NavDropdown
+              title="Categories"
+              id="navdropdown"              
+            >
+              {/* <a className="link d-inline-block w-auto" id="categories" href="/categories">
                 Categories <i className="fas fa-caret-down"></i>
-              </a>
-            </div>
+              </a> */}
+            {
+              categories.map((category) => (
+                <NavDropdown.Item key={category.id} href={`#${category.name}`}>
+                  {category.name}
+                </NavDropdown.Item>
+              ))
+            }
+          </NavDropdown>
+
+            </Nav>
             <div className="px-3 py-2 nav-item">
               <a className="link d-inline-block w-auto" id="liveMazad" href="/liveMazads">
                 Live Mazads
