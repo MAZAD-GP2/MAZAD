@@ -36,7 +36,6 @@ const AddItem = () => {
   // const [file, setFiles] = useState([]);
 
   const handleAddTag = () => {
-    console.log(droppedFiles);
     setTags([...tags, ""]);
   };
 
@@ -149,7 +148,6 @@ const AddItem = () => {
       return newImages;
     });
 
-    console.log(droppedFiles);
   };
 
   const handleRemove = (fileToRemove) => {

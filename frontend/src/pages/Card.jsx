@@ -11,10 +11,12 @@ const Card = ({ item }) => {
       />
       <div className="card-body">
         <div className="tag-container">
-          <p className="category tag">Category</p>
-          <p className="tag">item tag</p>
-          <p className="tag">item tag</p>
-          <p className="tag">item tag</p>
+          <p className="category tag">{item.Category.name}</p>
+          {item.Tags.map((tag) => (
+            <p key={tag.id} className="tag">
+              {tag.name}
+            </p>
+          ))}
         </div>
         <h5 className="card-title">{item.name}</h5>
         {/* <p className="card-text text-truncate">{item.description}</p> */}
