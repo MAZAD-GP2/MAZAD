@@ -5,12 +5,15 @@ import { useState, useRef } from "react";
 import * as api from "../api/index";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import axios from "axios";
 import Dropzone from "react-dropzone";
 // import storage from "../../../backend/firebaseConfig";
 // import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import moment from "moment";
+import Tag from "./Tag";
 
 const AddItem = () => {
   // const storage = getStorage();
@@ -23,7 +26,9 @@ const AddItem = () => {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [desclength, setDescLength] = useState(0);
+  
+  const categories = ['hse','h','agawf','awashnt','agawfa','hsafawd','houseware','arf'];
+  const [category, setCategory] = useState("");
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -34,6 +39,12 @@ const AddItem = () => {
   const [submitValid, setSubmitValid] = useState(true);
   const [droppedFiles, setDroppedFiles] = useState([]);
   // const [file, setFiles] = useState([]);
+
+  const [dropdownToggled, setDropdownToggled] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownToggled(!dropdownToggled);
+  };
 
   const handleAddTag = () => {
     setTags([...tags, ""]);
@@ -51,7 +62,6 @@ const AddItem = () => {
 
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
-    setDescLength(event.target.value.length);
   };
 
   const handleStartDateChange = (event) => {
@@ -166,6 +176,7 @@ const AddItem = () => {
         <div id="image-details">
           <div id="image-upload-container" className="d-flex flex-column justify-content-center align-items-center">
             <div className="w-100">
+              <h3>Images</h3>
               <Dropzone
                 onDrop={handleUpload}
                 accept={{
@@ -205,8 +216,9 @@ const AddItem = () => {
             </div>
             <span>{droppedFiles.length}/5</span>
           </div>
+          <div className="d-flex flex-row">
           <div id="details">
-            <div className="d-flex align-content-between gap-10">
+            <div className="d-flex">
               <h4>Item Name</h4>
             </div>
             <input
@@ -219,7 +231,7 @@ const AddItem = () => {
               <h5>Auction start date-time</h5>
               <input
                 type="datetime-local"
-                className="time-input form-control mx-1 d-inline"
+                className="time-input form-control mx-1 d-inline w-25"
                 value={startDate}
                 onChange={handleStartDateChange}
               />
@@ -233,7 +245,7 @@ const AddItem = () => {
               <h5>Auction end date-time</h5>
               <input
                 type="datetime-local"
-                className="time-input form-control d-inline"
+                className="time-input form-control d-inline w-25"
                 value={endDate}
                 onChange={handleEndDateChange}
               />
@@ -243,49 +255,44 @@ const AddItem = () => {
               )}
             </span>
             <br />
-            <h5>Add tags</h5>
-            <span>
-              {tags.map((tag, index) =>
-                index === editingIndex ? ( // Render input field if editing
-                  <input
-                    key={index}
-                    type="text"
-                    value={tag}
-                    onChange={(event) => handleTagChange(index, event)}
-                    onBlur={handleTagEditEnd} // End editing when focus is lost
-                    className="tag-input d-inline"
-                    ref={inputRef}
-                    autoFocus
-                    style={{
-                      width: inputRef.current ? inputRef.current.offsetWidth + "px" : "auto",
-                    }}
-                  />
-                ) : (
-                  // Render paragraph if not editing
-                  <p key={index} onClick={() => handleTagEditStart(index)} className="tag-input d-inline">
-                    {tag}
-                  </p>
-                )
+          </div>
+          <div className="dropdown">
+            <h4>Category</h4>
+            <p id="dropdown-select" className={dropdownToggled ? 'open' : ''} onClick={toggleDropdown}>
+              {category ? category : <>Select Category</>} <FontAwesomeIcon icon="fa-solid fa-caret-down"/>
+            </p>
+            <div className={`dropdown ${dropdownToggled ? 'show' : ''}`}>
+              {dropdownToggled && (
+                <ul>
+                  {categories.map((category) => (
+                    <li 
+                      key={category}
+                      onClick={() => {
+                        setCategory(category);
+                        toggleDropdown();
+                      }}>
+                      {category}
+                      </li>
+                  ))}
+                </ul>
               )}
-              {tags.length <= 2 && (
-                <button className="tag" id="add-tag" onClick={handleAddTag}>
-                  +
-                </button>
-              )}
-            </span>
+            </div>
+          </div>
           </div>
         </div>
         <div id="desc-add">
-          <h4>Description</h4>
+          <h4 style={{ marginRight: '68%' }}>Description</h4>
           <textarea
             className="inp"
             placeholder="Enter item description..."
             maxLength="255"
             onChange={handleDescriptionChange}
           />
-          <p id="desc-len">{desclength}/255</p>
+          <p>{description.length}/255</p>
+          
+          <Tag tags={tags} setTags={setTags} />
 
-          <button className="submit-button btn btn-secondary " onClick={handleSubmit}>
+          <button className="submit-button btn btn-secondary" onClick={handleSubmit}>
             Start Mazad
           </button>
           {!submitValid && <p style={{ color: "red", fontSize: "15px" }}>Fill in all input fields!</p>}
