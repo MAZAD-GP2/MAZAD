@@ -12,6 +12,7 @@
   flex-direction: row;
   margin-top: 10px;
   margin-left: 40px;
+  gap: 10px;
 }
 
 #image {
@@ -27,18 +28,18 @@
 #details {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  /* flex: .97; */
+  width: 85%;
   gap: 1px;
-  width: 100%;
   padding: 10px;
 }
 
 #desc-add {
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
+  margin-top: 25px;
   padding: 10px;
-  width: 57%;
+  width: 50%;
   align-items: center;
 }
 
@@ -61,55 +62,18 @@
 }
 
 #desc:focus {
-  border: 1px solid #e6e3e3;
   overflow: auto;
-}
-
-.tag {
-  font-size: 13px;
-  opacity: 80%;
-  border: 1px rgba(0, 0, 0, 0.1) solid;
-  border-radius: 100px;
-  padding: 1px 10px;
-  margin: 3px 3px;
-  margin-left: 1px;
-  background-color: rgb(226, 222, 222);
-  min-width: 15px;
-}
-
-.tag-input {
-  font-size: 13px;
-  opacity: 80%;
-  border: 1px rgba(0, 0, 0, 0.1) solid;
-  border-radius: 100px;
-  padding: 1px 10px;
-  margin: 3px 3px;
-  margin-left: 1px;
-  background-color: rgb(226, 222, 222);
-  width: 60px;
-  min-width: 15px;
-  /* Additional styling for input */
-}
-
-#add-tag {
-  display: inline;
-  user-select: none;
-  cursor: pointer;
-  transition: 0.15s;
-  border: none;
-}
-
-#add-tag:hover {
-  background-color: darkgray;
 }
 
 .submit-button {
   border-radius: 5%;
-  margin-top: 100px;
+  margin-top: 70px;
   border: 1px transparent;
-  width: 15%;
+  width: 20%;
+  padding: 10px;
   align-self: center;
   box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+  font-size: large;
 }
 
 .time-input {
@@ -181,4 +145,44 @@
 .remove-button:hover {
   color: red;
   transition: 0.15s;
+}
+
+
+
+.dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 5px;
+  box-shadow: 5px 30px 30px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown ul li {
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  padding: 10px 10px;
+  border-radius: 5px;
+  color: rgb(83,83,83);
+  background-color: rgb(241, 241, 241);
+}
+
+.dropdown ul li:hover {
+  background-color: #29f392;
+}
+
+#dropdown-select {
+  cursor: pointer;
+  user-select: none;
+  padding: 10px 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  /* background-color: rgb(241, 241, 241); */
+  transition: .25s;
+  width: 150px;
+  text-align: center;
+}
+
+#dropdown-select:hover {
+  background-color: #29f392;
 }
