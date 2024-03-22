@@ -5,6 +5,8 @@ import * as api from "../../api/index";
 import { Spinner } from "react-bootstrap";
 import "bootstrap";
 import { useNavigate } from "react-router-dom";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
 
 function Register() {
   const [username, setUsername] = useState({ value: "", isValid: true });
@@ -18,6 +20,30 @@ function Register() {
   const [isRegistering, setIsRegistering] = useState(false); // Track registration status
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  //tool tips messages
+  const popoverUsername = (
+    <Popover id="popover-basic">
+      <Popover.Body>
+        The username must be comprised of 3 to 64 characters, consisting only of
+        english letters, numbers, underscores, dots, and spaces.
+      </Popover.Body>
+    </Popover>
+  );
+
+  const popoverPhoneNumber = (
+    <Popover id="popover-basic">
+      <Popover.Body>Phone number must be jordanian</Popover.Body>
+    </Popover>
+  );
+  const popoverPassword = (
+    <Popover id="popover-basic">
+      <Popover.Body>
+        The password should be between 8 and 64 characters in length, and it
+        must include at least one lowercase letter, one uppercase letter, and
+        one number.
+      </Popover.Body>
+    </Popover>
+  );
 
   const handleInputChange = () => {
     setUsername({ ...username, isValid: true });
@@ -124,7 +150,7 @@ function Register() {
         sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("User Created Successfully", { variant: "success" });
         setTimeout(() => {
-          navigate('/');
+          navigate("/");
         }, 1000);
       })
       .catch((err) => {
@@ -149,10 +175,7 @@ function Register() {
             className="col-sm-12 col-md-3 col-lg-4 text-center"
             id="logo-container"
           >
-            <h1 id="logo">
-              
-            مَزَاد
-            </h1>
+            <h1 id="logo">مَزَاد</h1>
           </div>
 
           <div id="seperator" style={{ height: 420.16 }}></div>
@@ -163,20 +186,26 @@ function Register() {
               <div className="row">
                 <div className="col-sm-12">
                   <div className="form-group">
-                    <input
-                      className={`form-control ${
-                        !username.isValid ? "is-invalid" : ""
-                      }`}
-                      type="text"
-                      placeholder="Username"
-                      id="name"
-                      value={username.value}
-                      onChange={(e) => {
-                        handleInputChange();
-                        handleUsernameChange(e);
-                      }}
-                      required
-                    />
+                    <OverlayTrigger
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverUsername}
+                    >
+                      <input
+                        className={`form-control ${
+                          !username.isValid ? "is-invalid" : ""
+                        }`}
+                        type="text"
+                        placeholder="Username"
+                        id="name"
+                        value={username.value}
+                        onChange={(e) => {
+                          handleInputChange();
+                          handleUsernameChange(e);
+                        }}
+                        required
+                      />
+                    </OverlayTrigger>
                   </div>
                 </div>
               </div>
@@ -203,40 +232,53 @@ function Register() {
               <div className="row">
                 <div className="col-sm-12">
                   <div className="form-group">
-                    <input
-                      className={`form-control ${
-                        !phoneNumber.isValid ? "is-invalid" : ""
-                      }`}
-                      type="text"
-                      placeholder="Phone Number"
-                      id="phone-number"
-                      value={phoneNumber.value}
-                      onChange={(e) => {
-                        handleInputChange();
-                        handlePhoneNumberChange(e);
-                      }}
-                      required
-                    />
+                    <OverlayTrigger
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverPhoneNumber}
+                    >
+                      <input
+                        className={`form-control ${
+                          !phoneNumber.isValid ? "is-invalid" : ""
+                        }`}
+                        type="text"
+                        placeholder="Phone Number"
+                        id="phone-number"
+                        value={phoneNumber.value}
+                        onChange={(e) => {
+                          handleInputChange();
+                          handlePhoneNumberChange(e);
+                        }}
+                        required
+                      />
+                    </OverlayTrigger>
                   </div>
                 </div>
               </div>
               <div className="row">
                 <div className="col-sm-12">
                   <div className="form-group">
-                    <input
-                      className={`form-control ${
-                        !password.isValid ? "is-invalid" : ""
-                      }`}
-                      type="password"
-                      placeholder="Password"
-                      id="password"
-                      value={password.value}
-                      onChange={(e) => {
-                        handleInputChange();
-                        handlePasswordChange(e);
-                      }}
-                      required
-                    />
+                    <OverlayTrigger
+                      className="overlay"
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverPassword}
+                    >
+                      <input
+                        className={`form-control ${
+                          !password.isValid ? "is-invalid" : ""
+                        }`}
+                        type="password"
+                        placeholder="Password"
+                        id="password"
+                        value={password.value}
+                        onChange={(e) => {
+                          handleInputChange();
+                          handlePasswordChange(e);
+                        }}
+                        required
+                      />
+                    </OverlayTrigger>
                   </div>
                 </div>
               </div>
