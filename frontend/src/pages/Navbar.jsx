@@ -5,7 +5,7 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import axios from "axios";
 import "../assets/css/nav.css";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as api from "../api/index";
 
 const Navbar = () => {
@@ -15,6 +15,7 @@ const Navbar = () => {
   const isAdmin = useSelector((state) => state.auth.isAdmin);
   const user = JSON.parse(sessionStorage.getItem("user"));
   const navigate = useNavigate();
+  const location = useLocation();
 
   const showDropdown = (e) => {
     setShow(!show);
@@ -51,10 +52,7 @@ const Navbar = () => {
             مَزَاد
           </span>
           <div id="search-create-nav-container" className="col">
-            <div
-              id="search-create-container"
-              className="d-flex flex-row gap-3 form-group"
-            >
+            <div id="search-create-container" className="d-flex flex-row gap-3 form-group">
               <input
                 type="search"
                 placeholder="Search Items, tags or categories"
@@ -62,19 +60,11 @@ const Navbar = () => {
                 className="form-control col bg-dark text-white"
               />
               {user ? (
-                <button
-                  type="submit"
-                  className="btn btn-secondary col-auto"
-                  onClick={() => navigate("/add-item")}
-                >
+                <button type="submit" className="btn btn-secondary col-auto" onClick={() => navigate("/add-item")}>
                   New Mazad
                 </button>
               ) : (
-                <button
-                  type="submit"
-                  className="btn btn-secondary col-auto"
-                  onClick={() => navigate("/login")}
-                >
+                <button type="submit" className="btn btn-secondary col-auto" onClick={() => navigate("/login")}>
                   Log in
                 </button>
               )}
@@ -82,20 +72,12 @@ const Navbar = () => {
                 //<img src="https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D"
                 // width={"40px"} style={{borderRadius:"90px"}}></img>
                 <div className="col-auto d-flex flex-row gap-3 form-group">
-                  <a
-                    href="/register"
-                    role="button"
-                    className="btn btn-secondary"
-                  >
+                  <a href="/register" role="button" className="btn btn-secondary">
                     Profile
                   </a>
                 </div>
               ) : (
-                <a
-                  className="btn btn-secondary col-auto"
-                  href="/register"
-                  role="button"
-                >
+                <a className="btn btn-secondary col-auto" href="/register" role="button">
                   Sign Up
                 </a>
               )}
@@ -104,8 +86,12 @@ const Navbar = () => {
         </div>
         <div>
           <div className="d-flex flex-row justify-content-center align-items-center gap-3 text-center">
-            <div className="px-3 py-2 nav-item active">
-              <a className="link d-inline-block w-auto" href="/">
+            <div className={"px-3 py-2 nav-item" + (location.pathname === "/" ? " active" : "")}>
+              <a
+                className="link d-inline-block w-auto"
+                /*href="/"*/ onClick={() => navigate("/")}
+                style={{ cursor: "pointer" }}
+              >
                 Home
               </a>
             </div>
@@ -116,31 +102,28 @@ const Navbar = () => {
                 show={show}
                 onMouseEnter={showDropdown}
                 onMouseLeave={hideDropdown}
+                className={"nav-item" + (location.pathname.includes("/category-item/") ? " active" : "")}
               >
                 {/* <a className="link d-inline-block w-auto" id="categories" href="/categories">
                 Categories <i className="fas fa-caret-down"></i>
               </a> */}
                 {categories.map((category) => (
-                  <NavDropdown.Item
-                    key={category.id}
-                    onClick={() => navigate(`/category-item/${category.id}`)}
-                  >
+                  <NavDropdown.Item key={category.id} onClick={() => navigate(`/category-item/${category.id}`)}>
                     {category.name}
                   </NavDropdown.Item>
                 ))}
               </NavDropdown>
             </Nav>
-            <div className="px-3 py-2 nav-item">
-              <a
-                className="link d-inline-block w-auto"
-                id="liveMazad"
-                href="/liveMazads"
-              >
+            <div className={"px-3 py-2 nav-item" + (location.pathname === "/liveMazads" ? " active" : "")}>
+              <a className="link d-inline-block w-auto" id="liveMazad" href="/liveMazads">
                 Live Mazads
               </a>
             </div>
             <div className="px-3 py-2 nav-item">
-              <a className="link d-inline-block w-auto" href="/Popular">
+              <a
+                className={"link d-inline-block w-auto" + (location.pathname === "/Popular" ? " active" : "")}
+                href="/Popular"
+              >
                 Popular Items
               </a>
             </div>

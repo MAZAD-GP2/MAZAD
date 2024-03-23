@@ -17,7 +17,6 @@
     "@reduxjs/toolkit": "^2.2.1",
     "axios": "^1.6.7",
     "bootstrap": "^5.3.3",
-    "firebase": "^10.9.0",
     "font-awesome": "^4.7.0",
     "mdb-react-ui-kit": "^7.2.0",
     "moment": "^2.30.1",
