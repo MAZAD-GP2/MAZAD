@@ -9,7 +9,7 @@ const Image = sequelize.define("Image", {
     allowNull: false,
     primaryKey: true,
   },
-  imgURL: {
+imgURL: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true
