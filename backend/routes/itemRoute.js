@@ -5,7 +5,12 @@ const Category = require("../models/Category");
 const Tag = require("../models/Tag");
 const Image = require("../models/Image");
 const admin = require("firebase-admin");
-const { getStorage, ref, uploadBytes, getDownloadURL } = require("firebase/storage");
+const {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} = require("firebase/storage");
 const app = require("../config/firebaseConfig");
 const storage = getStorage(app);
 const { readFileAsDataURL, dataURLtoBlob } = require("../utils/imageHandle");
@@ -43,7 +48,7 @@ module.exports.createItem = async (req, res) => {
       startDate,
       endDate,
       userId,
-      categoryId: 2,
+      categoryId: 1,
     });
 
     // Step 3: Insert records into image_items table
@@ -58,7 +63,9 @@ module.exports.createItem = async (req, res) => {
 
     // Step 4: Insert records into item_tags table
 
-    const ttags = await Promise.all(tags.map((tag) => Tag.findOrCreate({ where: { name: tag } })));
+    const ttags = await Promise.all(
+      tags.map((tag) => Tag.findOrCreate({ where: { name: tag } }))
+    );
 
     await Promise.all(
       ttags.map(async (tag) => {
@@ -95,7 +102,16 @@ module.exports.getAllItemsByUserId = async (req, res) => {
 module.exports.getAllItemsByCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
-    const items = await Category.findByPk(categoryId, { include: [Item] });
+    const items = await Item.findAll({
+      where: { categoryId },
+      include: [
+        Category,
+        {
+          model: Tag,
+          through: "Item_tag",
+        },
+      ],
+    });
 
     res.send(items);
   } catch (er) {

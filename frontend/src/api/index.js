@@ -16,6 +16,10 @@ API.interceptors.request.use((req) => {
 export const login = (data) => API.post("/user/login", data);
 export const register = (data) => API.post(`/user/register`, data);
 
+export const getAllCategories = () => API.get("/category");
+
+//export const getAllItemsByCategory=()=>API.get('/item/category/:id')
+export const getAllItemsByCategory = (id) => API.get(`/item/category/${id}`);
 export const getAllItems = () => API.get(`/item`);
 export const addItem = (data) =>
   API.post("/item/create", data, {

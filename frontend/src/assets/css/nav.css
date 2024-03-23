@@ -1,6 +1,6 @@
 #navbarlogo {
   font-size: 2rem;
-  font-family: 'Amiri';
+  font-family: "Amiri";
 }
 
 @media (max-width: 903px) {
@@ -34,14 +34,29 @@
 ::placeholder {
   color: var(--muted-light) !important;
 }
-#navdropdown:link{
+#navdropdown:link {
   color: white;
 }
-.dropdown-menu{
+#navdropdown:active {
+  color: white;
+}
+#navdropdown:visited {
+  color: white;
+}
+#navdropdown:hover {
+  color: var(--secondary-light);
+}
+
+.dropdown-menu {
+  background-color: var(--primary-light);
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+.dropdown-menu > a:hover {
   background-color: var(--primary-light);
 }
-.dropdown-menu>a:hover{
-  background-color: var(--primary-light);
+.dropdown-menu:hover {
+  display: block;
 }
 
 /* header {
