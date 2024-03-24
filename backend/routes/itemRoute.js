@@ -1,7 +1,7 @@
 require("dotenv").config();
 const sequelize = require("../config/database");
 const Item = require("../models/Item");
-const User = require("../models/User");
+const Auction = require("../models/Auction");
 const Category = require("../models/Category");
 const Tag = require("../models/Tag");
 const Image = require("../models/Image");
@@ -15,7 +15,7 @@ const QuillDeltaToHtmlConverter =
 module.exports.createItem = async (req, res) => {
   const t = await sequelize.transaction();
   try {
-    let { name, description, startDate, endDate, tags,categoryId } = req.body;
+    let { name, description, startDate, endDate, tags, categoryId } = req.body;
     const images = req.files;
     const userId = req.currentUser.id;
 
@@ -47,13 +47,13 @@ module.exports.createItem = async (req, res) => {
       {
         name,
         description,
-        startDate,
-        endDate,
         userId,
         categoryId,
       },
       { transaction: t }
     );
+
+    Auction.create({ startTime: startDate, finishTime: endDate, itemId: item.id }, { transaction: t });
 
     const imageURLs = await Promise.all(
       images.map(async (image) => {
