@@ -5,7 +5,7 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import axios from "axios";
 import "../assets/css/nav.css";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as api from "../api/index";
 
 const Navbar = () => {
@@ -15,6 +15,7 @@ const Navbar = () => {
   const isAdmin = useSelector((state) => state.auth.isAdmin);
   const user = JSON.parse(sessionStorage.getItem("user"));
   const navigate = useNavigate();
+  const location = useLocation();
 
   const showDropdown = (e) => {
     setShow(!show);
@@ -85,7 +86,7 @@ const Navbar = () => {
         </div>
         <div>
           <div className="d-flex flex-row justify-content-center align-items-center gap-3 text-center">
-            <div className="px-3 py-2 nav-item active">
+            <div className={"px-3 py-2 nav-item" + (location.pathname === "/" ? " active" : "")}>
               <a
                 className="link d-inline-block w-auto"
                 /*href="/"*/ onClick={() => navigate("/")}
@@ -101,6 +102,7 @@ const Navbar = () => {
                 show={show}
                 onMouseEnter={showDropdown}
                 onMouseLeave={hideDropdown}
+                className={"nav-item" + (location.pathname.includes("/category-item/") ? " active" : "")}
               >
                 {/* <a className="link d-inline-block w-auto" id="categories" href="/categories">
                 Categories <i className="fas fa-caret-down"></i>
@@ -112,13 +114,16 @@ const Navbar = () => {
                 ))}
               </NavDropdown>
             </Nav>
-            <div className="px-3 py-2 nav-item">
+            <div className={"px-3 py-2 nav-item" + (location.pathname === "/liveMazads" ? " active" : "")}>
               <a className="link d-inline-block w-auto" id="liveMazad" href="/liveMazads">
                 Live Mazads
               </a>
             </div>
             <div className="px-3 py-2 nav-item">
-              <a className="link d-inline-block w-auto" href="/Popular">
+              <a
+                className={"link d-inline-block w-auto" + (location.pathname === "/Popular" ? " active" : "")}
+                href="/Popular"
+              >
                 Popular Items
               </a>
             </div>

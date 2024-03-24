@@ -41,26 +41,27 @@ function App() {
     <>
       <Routes>
         <Route exact path="/" element={<Home />} />
-        <Route exact path="/register" element={<Register />} />
-        <Route exact path="/login" element={<Login />} />
-        <Route exact path="/forgot-password" element={<ForgotPassword />} />
-        <Route exact path="/reset-password" element={<ResetPassword />} />
-        <Route exact path="/add-item" element={<AddItem />} />
+
+        {isLoggedIn && <Route path="/register" element={<Home />} />}
+        {!isLoggedIn && <Route exact path="/register" element={<Register />} />}
+
+        {isLoggedIn && <Route path="/login" element={<Home />} />}
+        {!isLoggedIn && <Route exact path="/login" element={<Login />} />}
+
+        {isLoggedIn && <Route path="/forgot-password" element={<Home />} />}
+        {!isLoggedIn && (
+          <Route exact path="/forgot-password" element={<ForgotPassword />} />
+        )}
+
+        {isLoggedIn && <Route path="/reset-password" element={<Home />} />}
+        {!isLoggedIn && (
+          <Route exact path="/reset-password" element={<ResetPassword />} />
+        )}
+
+        {isLoggedIn && <Route path="/add-item" element={<AddItem />} />}
+        {!isLoggedIn && <Route exact path="/add-item" element={<Login />} />}
+
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
-
-        {/* Restricted Routes */}
-        {/* {isLoggedIn && isAdmin && (
-          <Route exact path="/admin" element={<AdminPage />} />
-        )} */}
-        {/* {isLoggedIn && <Route exact path="/user" element={<UserPage />} />} */}
-
-        {/* Redirect to login if user tries to access restricted routes */}
-        {!isLoggedIn && (
-          <Route path="/admin" element={<Navigate to="/login" />} />
-        )}
-        {!isLoggedIn && (
-          <Route path="/user" element={<Navigate to="/login" />} />
-        )}
       </Routes>
     </>
   );

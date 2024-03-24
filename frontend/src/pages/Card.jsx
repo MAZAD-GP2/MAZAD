@@ -1,5 +1,6 @@
 import React from "react";
 import "../assets/css/card.css";
+import sanitizeHtml from "sanitize-html";
 
 const Card = ({ item }) => {
   return (
@@ -18,8 +19,24 @@ const Card = ({ item }) => {
         {/* <p className="card-text text-truncate">{item.description}</p> */}
         <p className="card-text">
           {item.description.length > 150
-            ? item.description.substring(0, 150).split(" ").slice(0, -1).join(" ") + "..."
-            : item.description}
+            ? sanitizeHtml(
+                item.description
+                  .replace("><", "> <")
+                  .substring(0, 147)
+                  .split(" ")
+                  .slice(0, -1)
+                  .join(" ") + "...",
+                {
+                  allowedTags: [],
+                  allowedAttributes: {},
+                  allowedIframeHostnames: [],
+                }
+              )
+            : sanitizeHtml(item.description.replace("><", "> <"), {
+                allowedTags: [],
+                allowedAttributes: {},
+                allowedIframeHostnames: [],
+              })}
         </p>
       </div>
     </div>
