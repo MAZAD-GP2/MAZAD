@@ -25,7 +25,7 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    const fetchItems = async () => {
+    const fetchCategories = async () => {
       try {
         const response = await api.getAllCategories();
         setCategories(response.data);
@@ -36,7 +36,7 @@ const Navbar = () => {
       }
     };
 
-    fetchItems();
+    fetchCategories();
   }, []);
 
   return (

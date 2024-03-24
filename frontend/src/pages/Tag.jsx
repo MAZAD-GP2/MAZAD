@@ -52,13 +52,13 @@ const Tag = ({tags, setTags}) => {
         <p>Press enter or add a comma after each tag</p>
         <ul>
           {createTag()}
-          <input 
+          {tags.length < 3 && <input 
             type="" 
             spellCheck="false" 
             value={inputValue} 
             onChange={handleInputChange} 
             onKeyDown={addTag} 
-          />
+          />}
         </ul>
       </div>
       <div className="details">
