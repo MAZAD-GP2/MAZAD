@@ -19,6 +19,11 @@ import ItemDateRange from "../components/ItemDateRange";
 import Tag from "./Tag";
 
 const AddItem = () => {
+  const [description, setDescription] = useState([]);
+  const [quillInitialized, setQuillInitialized] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
+
   const { quill, quillRef } = useQuill({
     theme: "snow",
     placeholder: "Enter description here...",
@@ -32,25 +37,21 @@ const AddItem = () => {
       ],
     },
   });
-  const [description, setDescription] = useState([]);
-  const [quillInitialized, setQuillInitialized] = useState(false);
 
-  const handleDescriptionChange = useCallback(
-    (content, delta, source, editor) => {
-      let limit = 1000;
+  const handleDescriptionChange = useCallback((content, delta, source, editor) => {
+    let limit = 1000;
 
-      if (delta.ops[0].retain + 1 > limit) {
-        quill.formatText(limit, 5000, {
-          color: "rgb(220, 20, 60)",
-          strike: true,
-        });
-        return;
-      }
-      setDescription(delta.ops); // Setting delta directly
-      console.log(delta.ops); // Logging delta directly
-    },
-    [] // No dependencies here
-  );
+    if (delta.ops[0].retain + 1 > limit) {
+      quill.formatText(limit, 5000, {
+        color: "rgb(220, 20, 60)",
+        strike: true,
+      });
+      return;
+    }
+    console.log(delta.ops[0].insert);
+    console.log(content);
+    setDescription(delta.ops);
+  }, []);
 
   useEffect(() => {
     if (quillInitialized) {
@@ -77,18 +78,25 @@ const AddItem = () => {
 
   const [name, setName] = useState("");
 
-  const categories = [
-    { name: "People", id: 1 },
-    { name: "Pets", id: 2 },
-    { name: "Food", id: 3 },
-    { name: "Antiques", id: 4 },
-    { name: "Furniture", id: 5 },
-  ];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.getAllCategories();
+        setCategories(response.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-    console.log(selectedCategory);
   };
 
   const [submitValid, setSubmitValid] = useState(true);
@@ -125,6 +133,7 @@ const AddItem = () => {
       formData.append("description", JSON.stringify(description));
       formData.append("startDate", calendarState.selection.startDate);
       formData.append("endDate", calendarState.selection.endDate);
+      formData.append("categoryId", selectedCategory.id);
       formData.append("tags", tags);
 
       droppedFiles.forEach((file) => {
@@ -145,7 +154,9 @@ const AddItem = () => {
         }, 1000);
       } catch (error) {
         // Handle errors
-        console.error("Error:", error);
+        enqueueSnackbar(err.response.data.message, {
+          variant: "error",
+        });
       }
     }
   };
@@ -263,10 +274,7 @@ const AddItem = () => {
             />
             <small className="form-text text-muted">limited to 255</small>
           </div>
-          <div
-            id="image-details"
-            className="d-flex flex-row justify-content-between w-100 mb-1"
-          >
+          <div id="image-details" className="d-flex flex-row justify-content-between w-100 mb-1">
             <div className="d-flex flex-column justify-content-center align-items-center w-100">
               <div className="w-100 position-relative">
                 <h4>Images</h4>
@@ -281,18 +289,8 @@ const AddItem = () => {
                   minSize={1024}
                   maxSize={6830020}
                 >
-                  {({
-                    getRootProps,
-                    getInputProps,
-                    isDragActive,
-                    isDragAccept,
-                    isDragReject,
-                  }) => {
-                    const additionalClass = isDragAccept
-                      ? "accept"
-                      : isDragReject
-                      ? "reject"
-                      : "";
+                  {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject }) => {
+                    const additionalClass = isDragAccept ? "accept" : isDragReject ? "reject" : "";
 
                     return (
                       <div
@@ -305,18 +303,9 @@ const AddItem = () => {
                         <div className="image-preview">
                           {droppedFiles.map((file, index) => (
                             <div key={file.name} className="image-container">
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt={file.name}
-                              />
-                              <button
-                                className="remove-button"
-                                onClick={handleRemoveClick(file)}
-                              >
-                                <i
-                                  className="fa-solid fa-x fa-sm"
-                                  style={{ color: "white" }}
-                                ></i>
+                              <img src={URL.createObjectURL(file)} alt={file.name} />
+                              <button className="remove-button" onClick={handleRemoveClick(file)}>
+                                <i className="fa-solid fa-x fa-sm" style={{ color: "white" }}></i>
                               </button>
                             </div>
                           ))}
@@ -325,14 +314,9 @@ const AddItem = () => {
                     );
                   }}
                 </Dropzone>
-                <small className="form-text text-muted position-absolute">
-                  At least one, not more that five
-                </small>
+                <small className="form-text text-muted position-absolute">At least one, not more that five</small>
               </div>
-              <small className="form-text text-muted">
-                {" "}
-                {droppedFiles.length}/5{" "}
-              </small>
+              <small className="form-text text-muted"> {droppedFiles.length}/5 </small>
             </div>
           </div>
           <div id="details" className="d-flex flex-column gap-3">
@@ -364,9 +348,7 @@ const AddItem = () => {
                     name="start-time"
                     value={
                       calendarState.selection.startDate
-                        ? `${String(
-                            calendarState.selection.startDate.getHours()
-                          ).padStart(2, "0")}:${String(
+                        ? `${String(calendarState.selection.startDate.getHours()).padStart(2, "0")}:${String(
                             calendarState.selection.startDate.getMinutes()
                           ).padStart(2, "0")}`
                         : ""
@@ -391,9 +373,7 @@ const AddItem = () => {
                     name="end-time"
                     value={
                       calendarState.selection.endDate
-                        ? `${String(
-                            calendarState.selection.endDate.getHours()
-                          ).padStart(2, "0")}:${String(
+                        ? `${String(calendarState.selection.endDate.getHours()).padStart(2, "0")}:${String(
                             calendarState.selection.endDate.getMinutes()
                           ).padStart(2, "0")}`
                         : ""
@@ -409,21 +389,26 @@ const AddItem = () => {
             <div className="category-selector">
               <h4>Category</h4>
               <div className="row row-cols-auto">
-                {categories.map((category) => (
-                  <div
-                    key={category["id"]}
-                    className={`col p-2 border rounded mx-1 px-2 ${
-                      selectedCategory &&
-                      selectedCategory["id"] === category["id"]
-                        ? "selected"
-                        : ""
-                    }`}
-                    onClick={() => handleCategorySelect(category)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {category["name"]}
+                {isFetching ? (
+                  <div className=" text-center w-100 mt-5">
+                    <div className="spinner-border text-primary opacity-25" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
                   </div>
-                ))}
+                ) : (
+                  categories.map((category) => (
+                    <div
+                      key={category.id}
+                      className={`col p-2 border rounded mx-1 px-2 ${
+                        selectedCategory && selectedCategory["id"] === category["id"] ? "selected" : ""
+                      }`}
+                      onClick={() => handleCategorySelect(category)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {category.name}
+                    </div>
+                  ))
+                )}
               </div>
             </div>
             <Tag tags={tags} setTags={setTags} />
@@ -437,17 +422,10 @@ const AddItem = () => {
               </div>
             </div>
           </div>
-          <button
-            className="submit-button btn btn-secondary"
-            onClick={handleSubmit}
-          >
+          <button className="submit-button btn btn-secondary" onClick={handleSubmit}>
             Start Mazad
           </button>
-          {!submitValid && (
-            <p style={{ color: "red", fontSize: "15px" }}>
-              Fill in all input fields!
-            </p>
-          )}
+          {!submitValid && <p style={{ color: "red", fontSize: "15px" }}>Fill in all input fields!</p>}
         </div>
       </div>
     </>

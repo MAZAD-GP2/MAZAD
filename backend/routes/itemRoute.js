@@ -15,7 +15,9 @@ const QuillDeltaToHtmlConverter =
 module.exports.createItem = async (req, res) => {
   const t = await sequelize.transaction();
   try {
-    let { name, description, startDate, endDate, tags } = req.body;
+    let { name, description, startDate, endDate, tags,categoryId } = req.body;
+    const images = req.files;
+    const userId = req.currentUser.id;
 
     var deltaOps = JSON.parse(description);
     let descriptionText = deltaOps.map((op) => op.insert).join("");
@@ -37,19 +39,8 @@ module.exports.createItem = async (req, res) => {
       },
     });
 
-    // remove any consecutive <br/> to prevent flooding
     description = description.replace(/<br\s*\/?>\s*(<br\s*\/?>)+/g, "<br/>");
 
-    // just for debugging
-    // res.status(569).send({
-    //   description: description,
-    //   htmlDescription: htmlDescription,
-    //   deltaOps: deltaOps,
-    //   descriptionText: descriptionText,
-    // });
-
-    const images = req.files;
-    const userId = req.currentUser.id;
     tags = tags.split(",").filter((tag) => tag.trim() !== "");
 
     const item = await Item.create(
@@ -59,7 +50,7 @@ module.exports.createItem = async (req, res) => {
         startDate,
         endDate,
         userId,
-        categoryId: 2,
+        categoryId,
       },
       { transaction: t }
     );
