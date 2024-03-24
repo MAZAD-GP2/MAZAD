@@ -1,5 +1,5 @@
 require("dotenv").config();
-const sequelize = require("../config/database")
+const sequelize = require("../config/database");
 const Item = require("../models/Item");
 const User = require("../models/User");
 const Category = require("../models/Category");
@@ -7,11 +7,47 @@ const Tag = require("../models/Tag");
 const Image = require("../models/Image");
 const Item_tag = require("../models/Item_tag");
 const cloudinary = require("../config/cloudinaryConfig");
+const sanitizeHtml = require("sanitize-html");
+
+const QuillDeltaToHtmlConverter =
+  require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 
 module.exports.createItem = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     let { name, description, startDate, endDate, tags } = req.body;
+
+    var deltaOps = JSON.parse(description);
+    let descriptionText = deltaOps.map((op) => op.insert).join("");
+
+    if (descriptionText.length > 1000) {
+      return res.status(400).send("Description is too long");
+    }
+    var converter = new QuillDeltaToHtmlConverter(deltaOps, {});
+
+    let htmlDescription = converter.convert();
+    description = sanitizeHtml(htmlDescription, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+        "b",
+        "strong",
+        "i",
+      ]),
+      allowedAttributes: {
+        "*": ["style"],
+      },
+    });
+
+    // remove any consecutive <br/> to prevent flooding
+    description = description.replace(/<br\s*\/?>\s*(<br\s*\/?>)+/g, "<br/>");
+
+    // just for debugging
+    // res.status(569).send({
+    //   description: description,
+    //   htmlDescription: htmlDescription,
+    //   deltaOps: deltaOps,
+    //   descriptionText: descriptionText,
+    // });
+
     const images = req.files;
     const userId = req.currentUser.id;
     tags = tags.split(",").filter((tag) => tag.trim() !== "");
@@ -43,7 +79,9 @@ module.exports.createItem = async (req, res) => {
       { transaction: t }
     );
 
-    const tagOps = tags.map((tag) => Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t }));
+    const tagOps = tags.map((tag) =>
+      Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t })
+    );
     const createdTags = await Promise.all(tagOps);
 
     await Item_tag.bulkCreate(

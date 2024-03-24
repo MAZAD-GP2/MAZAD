@@ -12,11 +12,12 @@
 }
 
 .image {
-    border-radius: 4%;
     display: block;
     margin: 7px;
     box-shadow: 1px 4px 8px rgba(0, 0, 0, 0.4);
     border-radius: 4%;
+    max-height: 15rem;
+    object-fit: cover;
 }
 
 .card-body { 
@@ -53,6 +54,7 @@
 .category {
     opacity: 80%;
     font-weight: bold;
+    border: 1px solid var(--secondary-light);
 }
 
 @media only screen and (max-width: 600px) {

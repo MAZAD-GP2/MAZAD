@@ -53,7 +53,7 @@ const Tag = ({tags, setTags}) => {
         <ul>
           {createTag()}
           <input 
-            type="text" 
+            type="" 
             spellCheck="false" 
             value={inputValue} 
             onChange={handleInputChange} 
