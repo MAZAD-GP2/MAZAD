@@ -5,8 +5,7 @@ import * as api from "../../api/index";
 import { Spinner } from "react-bootstrap";
 import "bootstrap";
 import { useNavigate } from "react-router-dom";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 
 function Register() {
   const [username, setUsername] = useState({ value: "", isValid: true });
@@ -24,23 +23,29 @@ function Register() {
   const popoverUsername = (
     <Popover id="popover-basic">
       <Popover.Body>
-        The username must be comprised of 3 to 64 characters, consisting only of
-        english letters, numbers, underscores, dots, and spaces.
+        The username must be comprised of 3 to 64 characters, consisting only of english letters, numbers, underscores,
+        dots, and spaces.
       </Popover.Body>
     </Popover>
   );
 
   const popoverPhoneNumber = (
     <Popover id="popover-basic">
-      <Popover.Body>Phone number must be jordanian</Popover.Body>
+      <Popover.Body>Phone number must be a jordanian valid phone number</Popover.Body>
     </Popover>
   );
+
+  const popoverEmail = (
+    <Popover id="popover-basic">
+      <Popover.Body>Email must be a valid email address</Popover.Body>
+    </Popover>
+  );
+
   const popoverPassword = (
     <Popover id="popover-basic">
       <Popover.Body>
-        The password should be between 8 and 64 characters in length, and it
-        must include at least one lowercase letter, one uppercase letter, and
-        one number.
+        The password should be between 8 and 64 characters in length, and it must include at least one lowercase letter,
+        one uppercase letter, and one number.
       </Popover.Body>
     </Popover>
   );
@@ -103,30 +108,20 @@ function Register() {
     // Add password regex validation here
     const regex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
     if (!regex.test(password.value)) {
-      enqueueSnackbar(
-        "Password must contain at least 8 characters, including at least one letter and one number",
-        {
-          variant: "error",
-          hideIconVariant: true,
-        }
-      );
+      enqueueSnackbar("Password must contain at least 8 characters, including at least one letter and one number", {
+        variant: "error",
+        hideIconVariant: true,
+      });
       setPassword({ ...password, isValid: false });
       setIsRegistering(false); // Set registration status back to false
       return;
     }
-    if (
-      !confirmPassword.isValid ||
-      !confirmPassword.value ||
-      confirmPassword.value !== password.value
-    ) {
+    if (!confirmPassword.isValid || !confirmPassword.value || confirmPassword.value !== password.value) {
       setConfirmPassword({ ...confirmPassword, isValid: false });
       success = false;
-      enqueueSnackbar(
-        "Password and Confirm Password don't match or are not valid",
-        {
-          variant: "error",
-        }
-      );
+      enqueueSnackbar("Password and Confirm Password don't match or are not valid", {
+        variant: "error",
+      });
     }
     if (!success) {
       setIsRegistering(false); // Set registration status back to false
@@ -166,15 +161,9 @@ function Register() {
       className="position-absolute d-flex flex-row justify-content-center align-items-center w-100 h-100"
       id="main-container"
     >
-      <div
-        className="card px-1 py-4 col-lg-6 col-md-8 col-sm-12"
-        id="form-container"
-      >
+      <div className="card px-1 py-4 col-lg-6 col-md-8 col-sm-12" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center">
-          <div
-            className="col-sm-12 col-md-3 col-lg-4 text-center"
-            id="logo-container"
-          >
+          <div className="col-sm-12 col-md-3 col-lg-4 text-center" id="logo-container">
             <h1 id="logo">مَزَاد</h1>
           </div>
 
@@ -186,15 +175,9 @@ function Register() {
               <div className="row">
                 <div className="col-sm-12">
                   <div className="form-group">
-                    <OverlayTrigger
-                      trigger="focus"
-                      placement="top"
-                      overlay={popoverUsername}
-                    >
+                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverUsername}>
                       <input
-                        className={`form-control ${
-                          !username.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!username.isValid ? "is-invalid" : ""}`}
                         type="text"
                         placeholder="Username"
                         id="name"
@@ -212,35 +195,29 @@ function Register() {
               <div className="row">
                 <div className="col-sm-12">
                   <div className="form-group">
-                    <input
-                      className={`form-control ${
-                        !email.isValid ? "is-invalid" : ""
-                      }`}
-                      type="text"
-                      placeholder="Email"
-                      id="email"
-                      value={email.value}
-                      onChange={(e) => {
-                        handleInputChange();
-                        handleEmailChange(e);
-                      }}
-                      required
-                    />
+                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverEmail}>
+                      <input
+                        className={`form-control ${!email.isValid ? "is-invalid" : ""}`}
+                        type="text"
+                        placeholder="Email"
+                        id="email"
+                        value={email.value}
+                        onChange={(e) => {
+                          handleInputChange();
+                          handleEmailChange(e);
+                        }}
+                        required
+                      />
+                    </OverlayTrigger>
                   </div>
                 </div>
               </div>
               <div className="row">
                 <div className="col-sm-12">
                   <div className="form-group">
-                    <OverlayTrigger
-                      trigger="focus"
-                      placement="top"
-                      overlay={popoverPhoneNumber}
-                    >
+                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverPhoneNumber}>
                       <input
-                        className={`form-control ${
-                          !phoneNumber.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!phoneNumber.isValid ? "is-invalid" : ""}`}
                         type="text"
                         placeholder="Phone Number"
                         id="phone-number"
@@ -258,16 +235,9 @@ function Register() {
               <div className="row">
                 <div className="col-sm-12">
                   <div className="form-group">
-                    <OverlayTrigger
-                      className="overlay"
-                      trigger="focus"
-                      placement="top"
-                      overlay={popoverPassword}
-                    >
+                    <OverlayTrigger className="overlay" trigger="focus" placement="top" overlay={popoverPassword}>
                       <input
-                        className={`form-control ${
-                          !password.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!password.isValid ? "is-invalid" : ""}`}
                         type="password"
                         placeholder="Password"
                         id="password"
@@ -286,9 +256,7 @@ function Register() {
                 <div className="col-sm-12">
                   <div className="form-group">
                     <input
-                      className={`form-control ${
-                        !confirmPassword.isValid ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${!confirmPassword.isValid ? "is-invalid" : ""}`}
                       type="password"
                       placeholder="Confirm password"
                       id="confirm-password"
@@ -306,11 +274,7 @@ function Register() {
                 className="btn btn-secondary btn-block confirm-button"
                 disabled={isRegistering} // Disable button while registering
               >
-                {isRegistering ? (
-                  <Spinner animation="border" size="sm" />
-                ) : (
-                  "Create account"
-                )}
+                {isRegistering ? <Spinner animation="border" size="sm" /> : "Create account"}
               </button>
               <div className=" d-flex flex-column text-center px-5 mt-3 mb-3">
                 <a href="/login" className="terms">

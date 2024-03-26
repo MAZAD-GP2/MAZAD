@@ -60,9 +60,9 @@ const Navbar = () => {
                 className="form-control col bg-dark text-white"
               />
               {user ? (
-                <button type="submit" className="btn btn-secondary col-auto" onClick={() => navigate("/add-item")}>
+                <a type="submit" className="btn btn-secondary col-auto" href="/add-item">
                   New Mazad
-                </button>
+                </a>
               ) : (
                 <button type="submit" className="btn btn-secondary col-auto" onClick={() => navigate("/login")}>
                   Log in

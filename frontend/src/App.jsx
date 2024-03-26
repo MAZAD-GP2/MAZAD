@@ -6,9 +6,7 @@ import loadable from "@loadable/component";
 const Home = loadable(() => import("./pages/Home.jsx"));
 const Register = loadable(() => import("./pages/auth/Register.jsx"));
 const Login = loadable(() => import("./pages/auth/Login.jsx"));
-const ForgotPassword = loadable(() =>
-  import("./pages/auth/ForgotPassword.jsx")
-);
+const ForgotPassword = loadable(() => import("./pages/auth/ForgotPassword.jsx"));
 const ResetPassword = loadable(() => import("./pages/auth/ResetPassword.jsx"));
 const AddItem = loadable(() => import("./pages/AddItem.jsx"));
 const CategoryItems = loadable(() => import("./pages/CategoryItems.jsx"));
@@ -41,26 +39,11 @@ function App() {
     <>
       <Routes>
         <Route exact path="/" element={<Home />} />
-
-        {isLoggedIn && <Route path="/register" element={<Home />} />}
-        {!isLoggedIn && <Route exact path="/register" element={<Register />} />}
-
-        {isLoggedIn && <Route path="/login" element={<Home />} />}
-        {!isLoggedIn && <Route exact path="/login" element={<Login />} />}
-
-        {isLoggedIn && <Route path="/forgot-password" element={<Home />} />}
-        {!isLoggedIn && (
-          <Route exact path="/forgot-password" element={<ForgotPassword />} />
-        )}
-
-        {isLoggedIn && <Route path="/reset-password" element={<Home />} />}
-        {!isLoggedIn && (
-          <Route exact path="/reset-password" element={<ResetPassword />} />
-        )}
-
-        {isLoggedIn && <Route path="/add-item" element={<AddItem />} />}
-        {!isLoggedIn && <Route exact path="/add-item" element={<Login />} />}
-
+        <Route exact path="/register" element={isLoggedIn ? <Navigate to="/" /> : <Register />} />
+        <Route exact path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login />} />
+        <Route exact path="/forgot-password" element={isLoggedIn ? <Navigate to="/" /> : <ForgotPassword />} />
+        <Route exact path="/reset-password" element={isLoggedIn ? <Navigate to="/" /> : <ResetPassword />} />
+        <Route exact path="/add-item" element={isLoggedIn ? <AddItem /> : <Navigate to="/login" />} />
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
       </Routes>
     </>
