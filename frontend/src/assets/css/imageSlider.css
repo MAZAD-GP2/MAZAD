@@ -1,0 +1,42 @@
+/* imageSlider.css */
+.image-slider-container {
+    position: relative;
+    width: fit-content; /* Adjust the width based on the size of the image */
+  }
+  
+  .main-image {
+    width: 100%; /* Ensure image takes up full width of container */
+  }
+  
+  .img-slider-img {
+    display: block;
+    margin: 7px;
+    border-radius: 2%;
+    max-height: 25rem;
+    min-width: 25rem;
+    object-fit: cover;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .img-slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    color: white;
+  }
+  .img-slider-btn:hover {
+    background-color: rgba(255, 255, 255, .15); /* RGBA values for white */
+  }
+  
+  .img-slider-btn.left {
+    left: 8px;
+  }
+  
+  .img-slider-btn.right {
+    right: 8px;
+  }
+  

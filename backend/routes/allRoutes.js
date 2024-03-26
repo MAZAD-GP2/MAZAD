@@ -21,6 +21,7 @@ router.route("/decode-token").post(authRoutes.decodeToken);
 
 // user
 router.route("/user").get(verifyToken, checkAdmin, userRoutes.getAllUsers);
+router.route("/user/:id").get(userRoutes.getUserById);
 router.route("/user/register").post(validateUserCreation, userRoutes.register);
 router.route("/user/login").post(userRoutes.login);
 router.route("/user/forgot-password").post(userRoutes.forgotPassword);
@@ -29,6 +30,7 @@ router.route("/user/update").put(verifyToken, validateUserUpdate, userRoutes.upd
 router.route("/user/delete/:id").delete(verifyToken, checkAdmin, userRoutes.deleteUser);
 
 // item
+router.route("/item/:id").get(itemRoutes.getItemById);
 router.route("/item/create").post(upload, verifyToken, validateItemCreation, itemRoutes.createItem);
 router.route("/item/user").get(verifyToken, itemRoutes.getAllItemsByUserId);
 router.route("/item").get(itemRoutes.getAllItems);

@@ -270,6 +270,7 @@ const AddItem = () => {
               type="text"
               className="form-control w-lg-50 w-md-50 w-sm-100"
               placeholder="Enter item name"
+              maxLength="255"
               onChange={handleItemChange}
             />
             <small className="form-text text-muted">limited to 255</small>

@@ -19,6 +19,7 @@ export const register = (data) => API.post(`/user/register`, data);
 export const getAllCategories = () => API.get("/category");
 
 //export const getAllItemsByCategory=()=>API.get('/item/category/:id')
+export const getItemById = (id) => API.get(`/item/${id}`);
 export const getAllItemsByCategory = (id) => API.get(`/item/category/${id}`);
 export const getAllItems = () => API.get(`/item`);
 export const addItem = (data) =>
@@ -28,4 +29,6 @@ export const addItem = (data) =>
     },
   });
 
+export const getUserById = (id) => API.get(`/user/${id}`);
+  
 export const decodeToken = () => API.post(`/decode-token`);

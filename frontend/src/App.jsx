@@ -6,12 +6,12 @@ import loadable from "@loadable/component";
 const Home = loadable(() => import("./pages/Home.jsx"));
 const Register = loadable(() => import("./pages/auth/Register.jsx"));
 const Login = loadable(() => import("./pages/auth/Login.jsx"));
-const ForgotPassword = loadable(() =>
-  import("./pages/auth/ForgotPassword.jsx")
-);
+const ForgotPassword = loadable(() => import("./pages/auth/ForgotPassword.jsx"));
 const ResetPassword = loadable(() => import("./pages/auth/ResetPassword.jsx"));
 const AddItem = loadable(() => import("./pages/AddItem.jsx"));
 const CategoryItems = loadable(() => import("./pages/CategoryItems.jsx"));
+const ViewItem = loadable(() => import("./pages/ViewItem.jsx"));
+const Profile = loadable(() => import("./pages/Profile.jsx"));
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -45,6 +45,9 @@ function App() {
         {isLoggedIn && <Route path="/register" element={<Home />} />}
         {!isLoggedIn && <Route exact path="/register" element={<Register />} />}
 
+        {isLoggedIn && <Route path="/profile" element={<Profile />} />}
+        {!isLoggedIn && <Route exact path="/profile" element={<Login />} />}
+
         {isLoggedIn && <Route path="/login" element={<Home />} />}
         {!isLoggedIn && <Route exact path="/login" element={<Login />} />}
 
@@ -62,7 +65,9 @@ function App() {
         {!isLoggedIn && <Route exact path="/add-item" element={<Login />} />}
 
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
+        <Route exact path="/item/:id" element={<ViewItem />} />
       </Routes>
+
     </>
   );
 }

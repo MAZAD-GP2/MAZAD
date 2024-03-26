@@ -1,10 +1,13 @@
 import React from "react";
 import "../assets/css/card.css";
 import sanitizeHtml from "sanitize-html";
+import { useNavigate } from "react-router-dom";
 
 const Card = ({ item }) => {
+  const navigate = useNavigate();
+  
   return (
-    <div className="card item-card">
+    <div className="card item-card" onClick={() => navigate(`/item/${item.id}`)}>
       <img className="image" src={item.Images[0].imgURL} alt="Card image cap" />
       <div className="card-body">
         <div className="tag-container">
