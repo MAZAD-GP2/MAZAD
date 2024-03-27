@@ -1,0 +1,19 @@
+.tag {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 25px;
+  padding: 7px;
+  width: fit-content;
+}
+
+#main-container {
+  color: #484848;
+}
+
+#auctioneer-name {
+  font-weight: bold;
+  color: #7a7a7a;
+}
+
+#desc {
+  color: #7a7a7a;
+}

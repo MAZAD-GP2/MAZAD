@@ -10,7 +10,7 @@ const ForgotPassword = loadable(() => import("./pages/auth/ForgotPassword.jsx"))
 const ResetPassword = loadable(() => import("./pages/auth/ResetPassword.jsx"));
 const AddItem = loadable(() => import("./pages/AddItem.jsx"));
 const CategoryItems = loadable(() => import("./pages/CategoryItems.jsx"));
-const ViewItem = loadable(() => import("./pages/ViewItem.jsx"));
+const ViewItem = loadable(() => import("./pages/ViewItemV2.jsx"));
 const Profile = loadable(() => import("./pages/Profile.jsx"));
 
 function App() {
