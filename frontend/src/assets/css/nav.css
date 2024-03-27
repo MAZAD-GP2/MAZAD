@@ -23,11 +23,16 @@
   border-bottom: 4px solid transparent;
 }
 
-.nav-item a {
+.nav-item span , .nav-item a{
   text-decoration: none;
   color: white;
 }
-
+.nav-item:hover{
+  & span{
+    color: var(--secondary-light);
+  }
+  cursor: pointer;
+}
 .nav-item a:hover {
   color: var(--secondary-light);
 }

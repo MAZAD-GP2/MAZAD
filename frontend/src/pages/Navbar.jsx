@@ -86,14 +86,12 @@ const Navbar = () => {
         </div>
         <div>
           <div className="d-flex flex-row justify-content-center align-items-center gap-3 text-center">
-            <div className={"px-3 py-2 nav-item" + (location.pathname === "/" ? " active" : "")}>
-              <a
+            <div className={"px-3 py-2 nav-item" + (location.pathname === "/" ? " active" : "")} onClick={() => navigate("/")}>
+              <span
                 className="link d-inline-block w-auto"
-                /*href="/"*/ onClick={() => navigate("/")}
-                style={{ cursor: "pointer" }}
               >
                 Home
-              </a>
+              </span>
             </div>
             <Nav>
               <NavDropdown
@@ -114,18 +112,17 @@ const Navbar = () => {
                 ))}
               </NavDropdown>
             </Nav>
-            <div className={"px-3 py-2 nav-item" + (location.pathname === "/liveMazads" ? " active" : "")}>
-              <a className="link d-inline-block w-auto" id="liveMazad" href="/liveMazads">
+            <div className={"px-3 py-2 nav-item" + (location.pathname === "/liveMazads" ? " active" : "")} onClick={()=>navigate("/livemazads")}>
+              <span className="link d-inline-block w-auto" id="liveMazad">
                 Live Mazads
-              </a>
+              </span>
             </div>
-            <div className="px-3 py-2 nav-item">
-              <a
-                className={"link d-inline-block w-auto" + (location.pathname === "/Popular" ? " active" : "")}
-                href="/Popular"
+            <div className={"px-3 py-2 nav-item" + (location.pathname === "/Popular" ? " active" : "")} onClick={()=>navigate('/popular')}>
+              <span
+                className="link d-inline-block w-auto"
               >
                 Popular Items
-              </a>
+              </span>
             </div>
           </div>
         </div>

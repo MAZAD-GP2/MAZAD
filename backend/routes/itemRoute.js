@@ -116,13 +116,16 @@ module.exports.getItemById = async (req, res) => {
 module.exports.getAllItemsByUserId = async (req, res) => {
   try {
     const userId = req.currentUser;
-    const items = await Item.findAll({
+    let items = await Item.findAll({
       where: {
         userId,
       },
     });
     // const items=await User.findAll({include: [Item]})
     // const items=await Item.findAll({include: [User]})
+
+    //new items appear first
+    items=items.reverse()
 
     res.send(items);
   } catch (er) {
@@ -133,7 +136,7 @@ module.exports.getAllItemsByUserId = async (req, res) => {
 module.exports.getAllItemsByCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
-    const items = await Item.findAll({
+    let items = await Item.findAll({
       where: { categoryId },
       include: [
         Category,
@@ -145,6 +148,9 @@ module.exports.getAllItemsByCategory = async (req, res) => {
       ],
     });
 
+    //new items appear first
+    items=items.reverse()
+    
     res.send(items);
   } catch (er) {
     res.send(er);
@@ -153,7 +159,7 @@ module.exports.getAllItemsByCategory = async (req, res) => {
 
 module.exports.getAllItems = async (req, res) => {
   try {
-    const items = await Item.findAll({
+    let items = await Item.findAll({
       include: [
         Category,
         {
@@ -163,6 +169,10 @@ module.exports.getAllItems = async (req, res) => {
         Image,
       ],
     });
+    
+    //new items appear first
+    items=items.reverse()
+
     res.send(items);
   } catch (er) {
     res.send(er);

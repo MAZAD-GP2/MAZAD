@@ -13,6 +13,7 @@ const Home = () => {
     const fetchItems = async () => {
       try {
         const response = await api.getAllItems();
+        //response.data=response.data.reverse();
         setItems(response.data);
       } catch (err) {
         console.error(err);
