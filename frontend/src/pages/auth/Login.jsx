@@ -44,7 +44,7 @@ function Login() {
     <div className="position-absolute d-flex justify-content-center align-items-center w-100 h-100" id="main-container">
       <div className="card px-1 py-4 w-50" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center">
-          <div className="col-sm-12 col-md-3 col-lg-4 text-center" id="logo-container">
+          <div className="col-sm-12 col-md-3 col-lg-4 text-center" id="logo-container" onClick={()=>navigate('/')}>
             <h1 id="logo">مَزَاد</h1>
           </div>
 

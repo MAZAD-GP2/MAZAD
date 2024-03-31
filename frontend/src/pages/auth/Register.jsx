@@ -169,7 +169,7 @@ function Register() {
     >
       <div className="card px-1 py-4 col-lg-6 col-md-8 col-sm-12" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center">
-          <div className="col-sm-12 col-md-3 col-lg-4 text-center" id="logo-container">
+          <div className="col-sm-12 col-md-3 col-lg-4 text-center" id="logo-container" onClick={()=>navigate('/')}>
             <h1 id="logo">مَزَاد</h1>
           </div>
 

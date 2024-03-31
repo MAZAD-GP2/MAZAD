@@ -3,12 +3,14 @@ import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import axios from "axios";
 import { Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router-dom"
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isResetting, setIsResetting] = useState(false); // Track reset password status
   const { enqueueSnackbar } = useSnackbar();
+  const navigate= useNavigate();
 
   const handlePasswordChange = (event) => {
     const value = event.target.value;
@@ -69,6 +71,7 @@ function ResetPassword() {
           <div
             className="col-sm-12 col-md-3 col-lg-4 text-center"
             id="logo-container"
+            onClick={()=>navigate('/')}
           >
             <h1 id="logo">
               

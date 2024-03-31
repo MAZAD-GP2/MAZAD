@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -43,6 +45,7 @@ function ForgotPassword() {
           <div
             className="col-sm-12 col-md-3 col-lg-4 text-center"
             id="logo-container"
+            onClick={()=>navigate('/')}
           >
             <h1 id="logo">
             مَزَاد

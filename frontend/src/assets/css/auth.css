@@ -29,6 +29,7 @@
 
 #logo-container {
   display: block;
+  cursor: pointer;
 }
 
 #seperator {
