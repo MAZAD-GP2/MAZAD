@@ -77,7 +77,7 @@ exports.validateUserUpdate = [
     .withMessage("Username can only contain letters, numbers, underscore, dots, and spaces")
     .custom(async (value, { req }) => {
       const existingUser = await User.findOne({ where: { username: value } });
-      if (existingUser && existingUser.id !== req.params.userId) {
+      if (existingUser && existingUser.id !== req.params.id) {
         throw new Error("Username already exists");
       }
     }),
@@ -88,7 +88,8 @@ exports.validateUserUpdate = [
     .withMessage("Invalid email format")
     .custom(async (value, { req }) => {
       const user = await User.findOne({ where: { email: value } });
-      if (user && user.id !== req.params.userId) {
+      const parsedId=parseInt(req.params.id)
+      if (user && user.id !== parsedId) {
         throw new Error("Email already exists");
       }
     }),
@@ -99,7 +100,8 @@ exports.validateUserUpdate = [
     .withMessage("Invalid phone number format")
     .custom(async (value, { req }) => {
       const user = await User.findOne({ where: { phoneNumber: value } });
-      if (user && user.id !== req.params.userId) {
+      const parsedId=parseInt(req.params.id)
+      if (user && user.id !== parsedId) {
         throw new Error("Phone number already exists");
       }
     }),
