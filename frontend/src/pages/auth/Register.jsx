@@ -176,7 +176,7 @@ function Register() {
           <div id="seperator" style={{ height: 420.16 }}></div>
 
           <form className="card-body" onSubmit={handleSubmit}>
-            <h1 className="information py-2">Sign up</h1>
+            <h1 className="information py-2">Sign Up</h1>
             <div className="col-sm-12 col-md-12 col-lg-9 d-flex flex-column gap-3">
               <div className="row">
                 <div className="col-sm-12">
@@ -193,6 +193,7 @@ function Register() {
                           handleUsernameChange(e);
                         }}
                         required
+                        autoFocus
                       />
                     </OverlayTrigger>
                   </div>

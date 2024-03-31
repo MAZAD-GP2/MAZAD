@@ -1,0 +1,102 @@
+  .user-cred {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: 100vh;
+    padding: 24px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+    padding-left: 40px;
+    background-color: #E6E6E6;
+    top: 0;
+    position: sticky;
+  }
+  
+  .profile-pic {
+    display: block;
+    width: 170px;
+    height: 170px;
+    overflow: hidden; /* Ensures the image remains within the container */
+    border-radius: 50%;
+    object-fit: cover;
+    /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); */
+    align-self: center;
+  }
+  
+  .admin-tag {
+    color: var(--secondary-light);
+    border-radius: 50px;
+    padding:  2px 8px;
+    margin-bottom: 30px;
+    width: fit-content;
+    font-size: 13px;
+    background-color: rgba(0, 0, 0, 0.6);
+    align-self: center;
+  }
+  
+  .profile-info {
+    font-weight: 500;
+    letter-spacing: .6px;
+    /* text-decoration: underline; */
+    /* text-decoration-color: var(--secondary-light); */
+    /* text-underline-offset: 0.2em; */
+    margin: 10px 0;
+    align-self: center;
+  }
+
+  .profile-username {
+    align-self: center;
+    margin-top: 45px;
+  }
+  
+  .edit-profile {
+    margin-top: 64px;
+  }
+  
+  .user-history-container {
+    display: flex;
+    flex-direction: column;
+    margin: 30px;
+    padding: 40px;
+    flex: 1;
+  }
+  
+  .user-history {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 80px;
+    margin-top: 30px;
+  }
+  
+
+  .item-container {
+    border: 1px solid #ccc; /* Border for the container */
+    border-radius: 5px; /* Rounded corners for the container */
+    padding: 10px; /* Padding inside the container */
+    margin-bottom: 20px; /* Margin to separate containers */
+    background-color: #E6E6E6;
+    transition: .25s;
+    cursor: pointer;
+  }
+
+  .item-container:hover {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+  }
+  
+  .item-name {
+    font-size: 18px; /* Font size for the item name */
+    font-weight: bold; /* Bold font weight for emphasis */
+    margin-bottom: 5px; /* Margin to separate item name from other elements */
+    text-decoration: underline;
+    text-decoration-color: var(--secondary-light);
+    text-underline-offset: 0.2em;
+  } 
+  
+  .bid-info {
+    font-size: 14px; /* Font size for bid information */
+  }
+  
+  .duration {
+    font-style: italic; /* Italic font style for duration */
+  }
+  
