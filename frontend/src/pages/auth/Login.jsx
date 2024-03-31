@@ -62,6 +62,7 @@ function Login() {
                     value={usernameOrEmail}
                     onChange={(e) => setUsernameOrEmail(e.target.value)}
                     required
+                    autoFocus
                   />
                 </div>
               </div>

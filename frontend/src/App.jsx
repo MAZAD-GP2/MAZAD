@@ -12,6 +12,7 @@ const AddItem = loadable(() => import("./pages/AddItem.jsx"));
 const CategoryItems = loadable(() => import("./pages/CategoryItems.jsx"));
 const ViewItem = loadable(() => import("./pages/ViewItemV2.jsx"));
 const Profile = loadable(() => import("./pages/Profile.jsx"));
+const EditProfile = loadable(() => import("./pages/EditProfile.jsx"));
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -42,11 +43,31 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Home />} />
 
-        <Route exact path="/register" element={isLoggedIn ? <Navigate to="/" /> : <Register />} />
-        <Route exact path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login />} />
-        <Route exact path="/forgot-password" element={isLoggedIn ? <Navigate to="/" /> : <ForgotPassword />} />
-        <Route exact path="/reset-password" element={isLoggedIn ? <Navigate to="/" /> : <ResetPassword />} />
-        <Route exact path="/add-item" element={isLoggedIn ? <AddItem /> : <Navigate to="/login" />} />
+        {isLoggedIn && <Route path="/register" element={<Home />} />}
+        {!isLoggedIn && <Route exact path="/register" element={<Register />} />}
+
+        {isLoggedIn && <Route path="/profile" element={<Profile />} />}
+        {!isLoggedIn && <Route exact path="/profile" element={<Login />} />}
+        <Route exact path="/profile/:id" element={<Profile />} />
+        
+        {!isLoggedIn && <Route path="/editProfile" element={<Login />} />}
+        {isLoggedIn && <Route path="/editProfile" element={<EditProfile />} />}
+
+        {isLoggedIn && <Route path="/login" element={<Home />} />}
+        {!isLoggedIn && <Route exact path="/login" element={<Login />} />}
+
+        {isLoggedIn && <Route path="/forgot-password" element={<Home />} />}
+        {!isLoggedIn && (
+          <Route exact path="/forgot-password" element={<ForgotPassword />} />
+        )}
+
+        {isLoggedIn && <Route path="/reset-password" element={<Home />} />}
+        {!isLoggedIn && (
+          <Route exact path="/reset-password" element={<ResetPassword />} />
+        )}
+
+        {isLoggedIn && <Route path="/add-item" element={<AddItem />} />}
+        {!isLoggedIn && <Route exact path="/add-item" element={<Login />} />}
 
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
         <Route exact path="/item/:id" element={<ViewItem />} />
