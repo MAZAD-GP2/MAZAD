@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "/src/assets/css/auth.css";
+import "../../assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import * as api from "../../api/index";
@@ -27,7 +27,7 @@ function Login() {
         setUsernameOrEmail("");
         setPassword("");
         setTimeout(() => {
-          navigate("/");
+          window.location.href = '/';
         }, 1000);
       })
       .catch((err) => {
@@ -44,9 +44,9 @@ function Login() {
     <div className="position-absolute d-flex justify-content-center align-items-center w-100 h-100" id="main-container">
       <div className="card px-1 py-4 w-50" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center">
-          <div className="col-sm-12 col-md-3 col-lg-4 text-center" id="logo-container" onClick={()=>navigate('/')}>
-            <h1 id="logo">مَزَاد</h1>
-          </div>
+          <a className="col-sm-12 col-md-3 col-lg-4 text-center text-primary link" id="logo-container" href="/">
+            <h1 id="logo">MAZAD</h1>
+          </a>
 
           <div id="seperator" style={{ height: 270.72 }}></div>
 
@@ -89,11 +89,7 @@ function Login() {
                 >
                   {isLoggingIn ? <Spinner animation="border" size="sm" /> : "Submit"}
                 </button>
-                <a
-                  /*href="/register"*/ onClick={() => navigate("/register")}
-                  style={{ cursor: "pointer" }}
-                  className="terms col-6"
-                >
+                <a href="/register" style={{ cursor: "pointer" }} className="terms col-6">
                   Don't have an account
                 </a>
               </div>

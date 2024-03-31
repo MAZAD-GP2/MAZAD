@@ -53,12 +53,12 @@ const Profile = () => {
             <p className="profile-info">{user.email}</p>
             <p className="profile-info">{user.phoneNumber}</p>
             {isCurrentUser && (
-              <button
+              <a
                 className="edit-profile btn btn-secondary align-self-center"
-                onClick={() => navigate("/editProfile")}
+                href="/editProfile"
               >
                 Edit Profile
-              </button>
+              </a>
             )}
           </div>
           <div className="user-history-container">

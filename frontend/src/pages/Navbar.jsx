@@ -39,18 +39,17 @@ const Navbar = () => {
     fetchCategories();
   }, []);
 
+  function handleHref(id) {
+    window.location.href = `/category-item/${id}`;
+  }
+
   return (
     <div className="d-flex flex-row w-100 gap-5 bg-primary">
       <div className="d-flex flex-column w-100 gap-1">
         <div className="row w-100 d-flex flex-row w-100 gap-5 mt-3 px-4">
-          <span
-            id="navbarlogo"
-            className="col-md-auto col-1 text-secondary"
-            onClick={() => navigate("/")}
-            style={{ cursor: "pointer" }}
-          >
-            مَزَاد
-          </span>
+          <a id="navbarlogo" className="col-md-auto col-1 text-secondary link" href="/" style={{ cursor: "pointer" }}>
+            MAZAD
+          </a>
           <div id="search-create-nav-container" className="col">
             <div id="search-create-container" className="d-flex flex-row gap-3 form-group">
               <input
@@ -64,9 +63,9 @@ const Navbar = () => {
                   New Mazad
                 </a>
               ) : (
-                <button type="submit" className="btn btn-secondary col-auto" onClick={() => navigate("/login")}>
+                <a type="submit" className="btn btn-secondary col-auto" href="/login">
                   Log in
-                </button>
+                </a>
               )}
               {user ? (
                 //<img src="https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D"
@@ -86,13 +85,12 @@ const Navbar = () => {
         </div>
         <div>
           <div className="d-flex flex-row justify-content-center align-items-center gap-3 text-center">
-            <div className={"px-3 py-2 nav-item" + (location.pathname === "/" ? " active" : "")} onClick={() => navigate("/")}>
-              <span
-                className="link d-inline-block w-auto"
-              >
-                Home
-              </span>
-            </div>
+            <a
+              className={"px-3 py-2 nav-item" + (location.pathname === "/" ? " active" : "")}
+              href="/"
+            >
+              <span className="link d-inline-block w-auto">Home</span>
+            </a>
             <Nav>
               <NavDropdown
                 title="Categories"
@@ -106,24 +104,26 @@ const Navbar = () => {
                 Categories <i className="fas fa-caret-down"></i>
               </a> */}
                 {categories.map((category) => (
-                  <NavDropdown.Item key={category.id} onClick={() => navigate(`/category-item/${category.id}`)}>
+                  <NavDropdown.Item key={category.id} onClick={() => handleHref(category.id)}>
                     {category.name}
                   </NavDropdown.Item>
                 ))}
               </NavDropdown>
             </Nav>
-            <div className={"px-3 py-2 nav-item" + (location.pathname === "/liveMazads" ? " active" : "")} onClick={()=>navigate("/livemazads")}>
+            <a
+              className={"px-3 py-2 nav-item" + (location.pathname === "/liveMazads" ? " active" : "")}
+              href="/livemazads"
+            >
               <span className="link d-inline-block w-auto" id="liveMazad">
                 Live Mazads
               </span>
-            </div>
-            <div className={"px-3 py-2 nav-item" + (location.pathname === "/Popular" ? " active" : "")} onClick={()=>navigate('/popular')}>
-              <span
-                className="link d-inline-block w-auto"
-              >
-                Popular Items
-              </span>
-            </div>
+            </a>
+            <a
+              className={"px-3 py-2 nav-item" + (location.pathname === "/Popular" ? " active" : "")}
+              href="/popular"
+            >
+              <span className="link d-inline-block w-auto">Popular Items</span>
+            </a>
           </div>
         </div>
       </div>

@@ -1,20 +1,15 @@
 /* import file global.css */
 #logo {
-  font-family: "Amiri";
-  font-size: 7rem;
+  font-family: "pacifico";
+  font-size: 3rem;
 }
 .terms {
   font-size: 12px;
-  text-decoration: none;
   color: #039be5;
 }
 
 .information {
-  background-image: linear-gradient(
-    to right,
-    var(--tertiary-light),
-    var(--secondary-light)
-  );
+  background-image: linear-gradient(to right, var(--tertiary-light), var(--secondary-light));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

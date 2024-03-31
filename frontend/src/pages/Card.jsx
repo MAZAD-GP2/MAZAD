@@ -5,9 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 const Card = ({ item }) => {
   const navigate = useNavigate();
+  function handleHref(id) {
+    window.location.href = `item/${id}`;
+  }
   
   return (
-    <div className="card item-card" onClick={() => navigate(`/item/${item.id}`)}>
+    <div className="card item-card" onClick={() => handleHref(item.id)}>
       <img className="image" src={item.Images[0].imgURL} alt="Card image cap" />
       <div className="card-body">
         <div className="tag-container">

@@ -3,14 +3,14 @@ import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import axios from "axios";
 import { Spinner } from "react-bootstrap";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isResetting, setIsResetting] = useState(false); // Track reset password status
   const { enqueueSnackbar } = useSnackbar();
-  const navigate= useNavigate();
+  const navigate = useNavigate();
 
   const handlePasswordChange = (event) => {
     const value = event.target.value;
@@ -27,12 +27,9 @@ function ResetPassword() {
     setIsResetting(true); // Set reset password status to true when reset password button is clicked
     const regex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
     if (!regex.test(password)) {
-      enqueueSnackbar(
-        "Password must contain at least 8 characters, including letters and numbers",
-        {
-          variant: "error",
-        }
-      );
+      enqueueSnackbar("Password must contain at least 8 characters, including letters and numbers", {
+        variant: "error",
+      });
       setIsResetting(false); // Set reset password status back to false
       return;
     }
@@ -62,22 +59,12 @@ function ResetPassword() {
   };
 
   return (
-    <div
-      className="position-absolute d-flex justify-content-center align-items-center w-100 h-100"
-      id="main-container"
-    >
+    <div className="position-absolute d-flex justify-content-center align-items-center w-100 h-100" id="main-container">
       <div className="card px-1 py-4 w-50" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center">
-          <div
-            className="col-sm-12 col-md-3 col-lg-4 text-center"
-            id="logo-container"
-            onClick={()=>navigate('/')}
-          >
-            <h1 id="logo">
-              
-            مَزَاد
-            </h1>
-          </div>
+          <a className="col-sm-12 col-md-3 col-lg-4 text-center link text-primary " id="logo-container" href="/">
+            <h1 id="logo">MAZAD</h1>
+          </a>
 
           <div id="seperator" style={{ height: 251.52 }}></div>
 
@@ -127,11 +114,7 @@ function ResetPassword() {
                   className="col-auto px-4 btn btn-secondary btn-block confirm-button"
                   disabled={isResetting} // Disable button while resetting password
                 >
-                  {isResetting ? (
-                    <Spinner animation="border" size="sm" />
-                  ) : (
-                    "Reset password"
-                  )}
+                  {isResetting ? <Spinner animation="border" size="sm" /> : "Reset password"}
                 </button>
                 <a href="/login" className="terms col-6">
                   back log in

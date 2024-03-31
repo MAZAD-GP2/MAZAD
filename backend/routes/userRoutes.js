@@ -57,6 +57,7 @@ module.exports.register = async (req, res) => {
       email: newUser.email,
       isAdmin: newUser.isAdmin,
       phoneNumber: newUser.phoneNumber,
+      profilePicture: newUser.profilePicture,
       token,
     };
 
@@ -103,6 +104,7 @@ module.exports.login = async (req, res) => {
       email: user.email,
       isAdmin: user.isAdmin,
       phoneNumber: user.phoneNumber,
+      profilePicture: user.profilePicture,
       token,
     };
 

@@ -151,7 +151,7 @@ function Register() {
         sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("User Created Successfully", { variant: "success" });
         setTimeout(() => {
-          navigate("/");
+          window.location.href = '/';
         }, 1000);
       })
       .catch((err) => {
@@ -167,11 +167,11 @@ function Register() {
       className="position-absolute d-flex flex-row justify-content-center align-items-center w-100 h-100"
       id="main-container"
     >
-      <div className="card px-1 py-4 col-lg-6 col-md-8 col-sm-12" id="form-container">
-        <div className="d-flex flex-row align-items-center justify-content-center">
-          <div className="col-sm-12 col-md-3 col-lg-4 text-center" id="logo-container" onClick={()=>navigate('/')}>
-            <h1 id="logo">مَزَاد</h1>
-          </div>
+      <div className="card px-1 py-4 col-lg-7 col-md-8 col-sm-12" id="form-container">
+        <div className="d-flex flex-row align-items-center justify-content-center w-100">
+          <a className="col-sm-12 col-md-3 col-lg-4 text-center link text-primary" id="logo-container" href="/">
+            <h1 id="logo">MAZAD</h1>
+          </a>
 
           <div id="seperator" style={{ height: 420.16 }}></div>
 
@@ -284,7 +284,7 @@ function Register() {
                 {isRegistering ? <Spinner animation="border" size="sm" /> : "Create account"}
               </button>
               <div className=" d-flex flex-column text-center px-5 mt-3 mb-3">
-                <a /*href="/login"*/ onClick={() => navigate("/login")} style={{ cursor: "pointer" }} className="terms">
+                <a href="/login" style={{ cursor: "pointer" }} className="terms">
                   Already have an account
                 </a>
               </div>

@@ -25,37 +25,20 @@ function ForgotPassword() {
       })
       .then(() => {
         setEmail("");
-        enqueueSnackbar(
-          "If the email exists in our records, an email with instructions will be sent to it",
-          {
-            variant: "success",
-            autoHideDuration: 5000,
-          }
-        );
+        enqueueSnackbar("If the email exists in our records, an email with instructions will be sent to it", {
+          variant: "success",
+          autoHideDuration: 5000,
+        });
       });
   };
 
   return (
-    <div
-      className="position-absolute d-flex justify-content-center align-items-center w-100 h-100"
-      id="main-container"
-    >
+    <div className="position-absolute d-flex justify-content-center align-items-center w-100 h-100" id="main-container">
       <div className="card px-1 py-4 w-50" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center">
-          <div
-            className="col-sm-12 col-md-3 col-lg-4 text-center"
-            id="logo-container"
-            onClick={()=>navigate('/')}
-          >
-            <h1 id="logo">
-            مَزَاد
-            </h1>
-            {/* <img
-              src="logo.png"
-              border="0"
-              className="logo w-100 h-100"
-            /> */}
-          </div>
+          <a className="col-sm-12 col-md-3 col-lg-4 text-center link text-primary" id="logo-container" href="/">
+            <h1 id="logo">MAZAD</h1>
+          </a>
 
           <div id="seperator" style={{ height: 234.24 }}></div>
 

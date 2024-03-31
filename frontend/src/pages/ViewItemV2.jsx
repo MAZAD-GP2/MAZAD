@@ -81,27 +81,6 @@ const ViewItem = () => {
                     ></p>
                   </div>
                 </div>
-                {/* 
-                <div className="d-flex flex-row justify-content-around ">
-                  <div>
-                    <h5>Auction duration</h5>
-                  </div>
-                  <div
-                    style={{
-                      background: "#999494",
-                      padding: "5px 30px",
-                      borderRadius: "5px",
-                      boxShadow: "0 3px 6px rgba(0, 0, 0, 0.2)",
-                    }}
-                  >
-                    <h5>Highest Bid</h5>
-                    <h6 style={{ color: "#00E175" }}>50$</h6>
-                  </div>
-                </div>
-
-                <button className="submit-button btn btn-secondary align-self-center">
-                  Place a Bid
-                </button> */}
               </div>
             </div>
           </div>

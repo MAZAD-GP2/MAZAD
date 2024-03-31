@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css?family=Amiri');
+@import url("https://fonts.googleapis.com/css?family=Amiri");
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 :root {
   --primary-light: #110f0f;
   --secondary-light: #00e175;
@@ -12,9 +13,10 @@
 
 body {
   font-family: "Poppins", sans-serif;
+  background-color: #EFEFEF;
 }
 
 .link {
-  /* text-decoration: underline; */
+  text-decoration: none;
   transition: color 0.3s;
 }

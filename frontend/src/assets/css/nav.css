@@ -1,6 +1,6 @@
 #navbarlogo {
   font-size: 2rem;
-  font-family: "Amiri";
+  font-family: "pacifico";
 }
 
 @media (max-width: 903px) {
@@ -23,12 +23,13 @@
   border-bottom: 4px solid transparent;
 }
 
-.nav-item span , .nav-item a{
+.nav-item span,
+.nav-item a {
   text-decoration: none;
   color: white;
 }
-.nav-item:hover{
-  & span{
+.nav-item:hover {
+  & span {
     color: var(--secondary-light);
   }
   cursor: pointer;

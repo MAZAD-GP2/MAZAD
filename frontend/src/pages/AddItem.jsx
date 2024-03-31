@@ -48,8 +48,6 @@ const AddItem = () => {
       });
       return;
     }
-    console.log(delta.ops[0].insert);
-    console.log(content);
     setDescription(delta.ops);
   }, []);
 
@@ -143,18 +141,16 @@ const AddItem = () => {
       try {
         // Send the FormData object using Axios
         const response = await api.addItem(formData);
-
         // Handle the response as needed
-        console.log(response.data);
         enqueueSnackbar("Added item", { variant: "success" });
         setName("");
         setDescription("");
         setTimeout(() => {
-          navigate("/");
+          window.location.href = "/";
         }, 1000);
       } catch (error) {
         // Handle errors
-        enqueueSnackbar(err.response.data.message, {
+        enqueueSnackbar(error.response.data.message, {
           variant: "error",
         });
       }
