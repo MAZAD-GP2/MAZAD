@@ -26,7 +26,7 @@ router.route("/user/register").post(validateUserCreation, userRoutes.register);
 router.route("/user/login").post(userRoutes.login);
 router.route("/user/forgot-password").post(userRoutes.forgotPassword);
 router.route("/user/reset-password").post(userRoutes.resetPassword);
-router.route("/user/update").put(verifyToken, validateUserUpdate, userRoutes.updateUser);
+router.route("/user/update/:id").put(verifyToken, validateUserUpdate, userRoutes.updateUser);
 router.route("/user/delete/:id").delete(verifyToken, checkAdmin, userRoutes.deleteUser);
 
 // item
