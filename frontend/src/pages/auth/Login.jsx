@@ -45,9 +45,7 @@ function Login() {
       <div className="card px-1 py-4 w-50" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center">
           <div className="col-sm-12 col-md-3 col-lg-4 text-center" id="logo-container">
-            <h1 id='logo'>
-            مَزَاد
-            </h1>
+            <h1 id="logo">مَزَاد</h1>
           </div>
 
           <div id="seperator" style={{ height: 270.72 }}></div>
@@ -90,7 +88,11 @@ function Login() {
                 >
                   {isLoggingIn ? <Spinner animation="border" size="sm" /> : "Submit"}
                 </button>
-                <a href="/register" className="terms col-6">
+                <a
+                  /*href="/register"*/ onClick={() => navigate("/register")}
+                  style={{ cursor: "pointer" }}
+                  className="terms col-6"
+                >
                   Don't have an account
                 </a>
               </div>

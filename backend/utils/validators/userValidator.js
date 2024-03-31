@@ -5,10 +5,10 @@ const User = require("../../models/User");
 exports.validateUserCreation = [
   body("username")
     .trim()
-    .isLength({ min: 3, max: 64 })
-    .withMessage("Username must be between 3 and 64 characters long")
+    .isLength({ min: 6, max: 20 })
+    .withMessage("Username must be between 6 and 20 characters long")
     .matches(/^[a-zA-Z][a-zA-Z0-9_.\s]+$/)
-    .withMessage("Username can only contain letters, numbers, underscore, dots, and spaces")
+    .withMessage("Username can only start with a letter and contain letters, numbers, underscores, dots, and spaces")
     .custom(async (value) => {
       const existingUser = await User.findOne({ where: { username: value } });
       if (existingUser) {
@@ -41,8 +41,8 @@ exports.validateUserCreation = [
     .trim()
     .notEmpty()
     .withMessage("Password is required")
-    .isLength({ min: 8, max: 64 })
-    .withMessage("Password must be between 8 and 64 characters long")
+    .isLength({ min: 8, max: 20 })
+    .withMessage("Password must be between 8 and 20 characters long")
     .matches(/[a-z]/)
     .withMessage("Password must contain at least one lowercase letter")
     .matches(/[A-Z]/)
@@ -71,8 +71,8 @@ exports.validateUserUpdate = [
   body("username")
     .optional()
     .trim()
-    .isLength({ min: 3, max: 64 })
-    .withMessage("Username must be between 3 and 64 characters long")
+    .isLength({ min: 6, max: 20 })
+    .withMessage("Username must be between 6 and 20 characters long")
     .matches(/^[a-zA-Z][a-zA-Z0-9_.\s]+$/)
     .withMessage("Username can only contain letters, numbers, underscore, dots, and spaces")
     .custom(async (value, { req }) => {
@@ -106,8 +106,8 @@ exports.validateUserUpdate = [
   body("password")
     .optional()
     .trim()
-    .isLength({ min: 8, max: 64 })
-    .withMessage("Password must be between 8 and 64 characters long")
+    .isLength({ min: 8, max: 20 })
+    .withMessage("Password must be between 8 and 20 characters long")
     .matches(/[a-z]/)
     .withMessage("Password must contain at least one lowercase letter")
     .matches(/[A-Z]/)

@@ -23,29 +23,35 @@ function Register() {
   const popoverUsername = (
     <Popover id="popover-basic">
       <Popover.Body>
-        The username must be comprised of 3 to 64 characters, consisting only of english letters, numbers, underscores,
-        dots, and spaces.
+        <ul>
+          <li>Use 6 to 20 characters</li>
+          <li>Use only letters, numbers, underscores, dots, and spaces</li>
+        </ul>
       </Popover.Body>
     </Popover>
   );
 
   const popoverPhoneNumber = (
     <Popover id="popover-basic">
-      <Popover.Body>Phone number must be a jordanian valid phone number</Popover.Body>
+      <Popover.Body>Enter a jordanian valid phone number</Popover.Body>
     </Popover>
   );
 
   const popoverEmail = (
     <Popover id="popover-basic">
-      <Popover.Body>Email must be a valid email address</Popover.Body>
+      <Popover.Body>Enter a valid email address</Popover.Body>
     </Popover>
   );
 
   const popoverPassword = (
     <Popover id="popover-basic">
       <Popover.Body>
-        The password should be between 8 and 64 characters in length, and it must include at least one lowercase letter,
-        one uppercase letter, and one number.
+        <ul>
+          <li>Use 8 to 64 characters</li>
+          <li>Include at least 1 uppercase letter</li>
+          <li>Include at least 1 lowercase letter</li>
+          <li>Include at least 1 number</li>
+        </ul>
       </Popover.Body>
     </Popover>
   );
@@ -277,7 +283,7 @@ function Register() {
                 {isRegistering ? <Spinner animation="border" size="sm" /> : "Create account"}
               </button>
               <div className=" d-flex flex-column text-center px-5 mt-3 mb-3">
-                <a href="/login" className="terms">
+                <a /*href="/login"*/ onClick={() => navigate("/login")} style={{ cursor: "pointer" }} className="terms">
                   Already have an account
                 </a>
               </div>

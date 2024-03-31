@@ -42,27 +42,11 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Home />} />
 
-        {isLoggedIn && <Route path="/register" element={<Home />} />}
-        {!isLoggedIn && <Route exact path="/register" element={<Register />} />}
-
-        {isLoggedIn && <Route path="/profile" element={<Profile />} />}
-        {!isLoggedIn && <Route exact path="/profile" element={<Login />} />}
-
-        {isLoggedIn && <Route path="/login" element={<Home />} />}
-        {!isLoggedIn && <Route exact path="/login" element={<Login />} />}
-
-        {isLoggedIn && <Route path="/forgot-password" element={<Home />} />}
-        {!isLoggedIn && (
-          <Route exact path="/forgot-password" element={<ForgotPassword />} />
-        )}
-
-        {isLoggedIn && <Route path="/reset-password" element={<Home />} />}
-        {!isLoggedIn && (
-          <Route exact path="/reset-password" element={<ResetPassword />} />
-        )}
-
-        {isLoggedIn && <Route path="/add-item" element={<AddItem />} />}
-        {!isLoggedIn && <Route exact path="/add-item" element={<Login />} />}
+        <Route exact path="/register" element={isLoggedIn ? <Navigate to="/" /> : <Register />} />
+        <Route exact path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login />} />
+        <Route exact path="/forgot-password" element={isLoggedIn ? <Navigate to="/" /> : <ForgotPassword />} />
+        <Route exact path="/reset-password" element={isLoggedIn ? <Navigate to="/" /> : <ResetPassword />} />
+        <Route exact path="/add-item" element={isLoggedIn ? <AddItem /> : <Navigate to="/login" />} />
 
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
         <Route exact path="/item/:id" element={<ViewItem />} />
