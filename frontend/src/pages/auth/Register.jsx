@@ -25,6 +25,7 @@ function Register() {
       <Popover.Body>
         <ul>
           <li>Use 6 to 20 characters</li>
+          <li>Must start with a letter</li>
           <li>Use only letters, numbers, underscores, dots, and spaces</li>
         </ul>
       </Popover.Body>
@@ -122,6 +123,7 @@ function Register() {
       setIsRegistering(false); // Set registration status back to false
       return;
     }
+    // if(username[0] )
     if (!confirmPassword.isValid || !confirmPassword.value || confirmPassword.value !== password.value) {
       setConfirmPassword({ ...confirmPassword, isValid: false });
       success = false;
@@ -151,7 +153,7 @@ function Register() {
         sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("User Created Successfully", { variant: "success" });
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = "/";
         }, 1000);
       })
       .catch((err) => {

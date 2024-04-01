@@ -32,13 +32,13 @@ const ImageSlider = ({ images }) => {
           className="img-slider-img"
         />
       </div>
-      {/* Buttons for manual navigation */}
-      <button onClick={showPrevImage} className="img-slider-btn left">
+      
+      {images.length > 1 && <button onClick={showPrevImage} className="img-slider-btn left">
         <FontAwesomeIcon icon={faChevronLeft} />
-      </button>
-      <button onClick={showNextImage} className="img-slider-btn right">
+      </button>}
+      {images.length > 1 && <button onClick={showNextImage} className="img-slider-btn right">
         <FontAwesomeIcon icon={faChevronRight} />
-      </button>
+      </button>}
     </div>
   );
 };

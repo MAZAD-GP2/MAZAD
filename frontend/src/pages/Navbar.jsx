@@ -68,7 +68,7 @@ const Navbar = () => {
                 </a>
               )}
               {user ? (
-                //<img src="https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D"
+                // <img src={user.profilePicture}
                 // width={"40px"} style={{borderRadius:"90px"}}></img>
                 <div className="col-auto d-flex flex-row gap-3 form-group">
                   <a href="/profile" role="button" className="btn btn-secondary">

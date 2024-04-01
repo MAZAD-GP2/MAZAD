@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Card = ({ item }) => {
   const navigate = useNavigate();
   function handleHref(id) {
-    window.location.href = `item/${id}`;
+    window.location.href = `/item/${id}`;
   }
   
   return (
