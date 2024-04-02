@@ -97,6 +97,10 @@ function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!username.value[0].match(/[a-z]i/)) {
+      enqueueSnackbar("Username must start with letter", { variant: "error" });
+      return;
+    }
     setIsRegistering(true); // Set registration status to true when registration button is clicked
     let success = true;
     // Validate input fields
@@ -123,7 +127,6 @@ function Register() {
       setIsRegistering(false); // Set registration status back to false
       return;
     }
-    // if(username[0] )
     if (!confirmPassword.isValid || !confirmPassword.value || confirmPassword.value !== password.value) {
       setConfirmPassword({ ...confirmPassword, isValid: false });
       success = false;

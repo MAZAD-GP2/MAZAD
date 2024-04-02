@@ -133,12 +133,12 @@ const EditProfile = () => {
     const value = event.target.value;
     setConfirmPassword({ value, isValid: true });
   };
-  
+
   const handleEdit = async (event) => {
     event.preventDefault();
-    setisEditing(true); 
+    setisEditing(true);
     let success = true;
-    
+
     if (!username.isValid || !username.value) {
       setUsername({ ...username, isValid: false });
       success = false;
@@ -153,7 +153,7 @@ const EditProfile = () => {
     }
 
     if (!success) {
-      setisEditing(false); 
+      setisEditing(false);
       return;
     }
 
@@ -169,13 +169,15 @@ const EditProfile = () => {
         setEmail({ value: "", isValid: true });
         sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("Changes Saved Successfully", { variant: "success" });
-        window.location.href = "/";
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
       })
       .catch((err) => {
         enqueueSnackbar(err.response.data.message, { variant: "error" });
       })
       .finally(() => {
-        setisEditing(false); 
+        setisEditing(false);
       });
   };
 
@@ -201,9 +203,9 @@ const EditProfile = () => {
         variant: "error",
       });
     }
-    
+
     if (!success) {
-      setIsChangingPassword(false); 
+      setIsChangingPassword(false);
       return;
     }
 
@@ -217,17 +219,17 @@ const EditProfile = () => {
         setConfirmPassword({ value: "", isValid: true });
         sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("Password Changed Successfully", { variant: "success" });
-        window.location.href = "/";
-        
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
       })
       .catch((err) => {
         enqueueSnackbar(err.response.data.message, { variant: "error" });
       })
       .finally(() => {
-        setIsChangingPassword(false); 
+        setIsChangingPassword(false);
       });
   };
-
 
   const handleCancelEdit = async (event) => {
     event.preventDefault();
@@ -245,8 +247,7 @@ const EditProfile = () => {
     setPassword({ value: "", isValid: true });
     setConfirmPassword({ value: "", isValid: true });
     window.location.href = "/";
-  }
-
+  };
 
   return (
     <>
@@ -258,10 +259,7 @@ const EditProfile = () => {
             <h3 className="profile-username">{user.username}</h3>
             {user.isAdmin && <p className="admin-tag">Admin</p>}
             {isCurrentUser && (
-              <a
-                className="edit-profile btn btn-secondary align-self-center"
-                href="/profile"
-              >
+              <a className="edit-profile btn btn-secondary align-self-center" href="/profile">
                 Profile
               </a>
             )}
@@ -280,15 +278,9 @@ const EditProfile = () => {
               <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
                 <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group" style={{ width: "80%" }}>
-                    <OverlayTrigger
-                      trigger="focus"
-                      placement="top"
-                      overlay={popoverUsername}
-                    >
+                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverUsername}>
                       <input
-                        className={`form-control ${
-                          !username.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!username.isValid ? "is-invalid" : ""}`}
                         type="text"
                         placeholder="Username"
                         id="name"
@@ -305,15 +297,9 @@ const EditProfile = () => {
                 </div>
                 <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group" style={{ width: "80%" }}>
-                    <OverlayTrigger
-                      trigger="focus"
-                      placement="top"
-                      overlay={popoverEmail}
-                    >
+                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverEmail}>
                       <input
-                        className={`form-control ${
-                          !email.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!email.isValid ? "is-invalid" : ""}`}
                         type="text"
                         placeholder="Email"
                         id="email"
@@ -330,15 +316,9 @@ const EditProfile = () => {
                 </div>
                 <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group" style={{ width: "80%" }}>
-                    <OverlayTrigger
-                      trigger="focus"
-                      placement="top"
-                      overlay={popoverPhoneNumber}
-                    >
+                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverPhoneNumber}>
                       <input
-                        className={`form-control ${
-                          !phoneNumber.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!phoneNumber.isValid ? "is-invalid" : ""}`}
                         type="text"
                         placeholder="Phone Number"
                         id="phone-number"
@@ -364,11 +344,7 @@ const EditProfile = () => {
                       alignSelf: "center",
                     }}
                   >
-                    {isEditing ? (
-                      <Spinner animation="border" size="sm" />
-                    ) : (
-                      "Save Changes"
-                    )}
+                    {isEditing ? <Spinner animation="border" size="sm" /> : "Save Changes"}
                   </button>
                   <button
                     className="btn btn-danger btn-block confirm-button"
@@ -380,8 +356,7 @@ const EditProfile = () => {
                 </div>
               </div>
             </form>
-              
-            {/* password */}
+
             <h2 className="py-2">Change Password</h2>
             <form
               className="card-body user-history"
@@ -395,18 +370,11 @@ const EditProfile = () => {
               <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
                 <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group" style={{ width: "80%" }}>
-                    <OverlayTrigger
-                      className="overlay"
-                      trigger="focus"
-                      placement="top"
-                      overlay={popoverPassword}
-                    >
+                    <OverlayTrigger className="overlay" trigger="focus" placement="top" overlay={popoverPassword}>
                       <input
-                        className={`form-control ${
-                          !password.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!password.isValid ? "is-invalid" : ""}`}
                         type="password"
-                        placeholder="Password"
+                        placeholder="New Password"
                         id="password"
                         value={password.value}
                         onChange={(e) => {
@@ -422,11 +390,9 @@ const EditProfile = () => {
                 <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group" style={{ width: "80%" }}>
                     <input
-                      className={`form-control ${
-                        !confirmPassword.isValid ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${!confirmPassword.isValid ? "is-invalid" : ""}`}
                       type="password"
-                      placeholder="Confirm password"
+                      placeholder="Confirm New password"
                       id="confirm-password"
                       value={confirmPassword.value}
                       onChange={(e) => {
@@ -449,11 +415,7 @@ const EditProfile = () => {
                       alignSelf: "center",
                     }}
                   >
-                    {isChangingPassword ? (
-                      <Spinner animation="border" size="sm" />
-                    ) : (
-                      "Save Changes"
-                    )}
+                    {isChangingPassword ? <Spinner animation="border" size="sm" /> : "Save Changes"}
                   </button>
                   <button
                     className="btn btn-danger btn-block confirm-button"

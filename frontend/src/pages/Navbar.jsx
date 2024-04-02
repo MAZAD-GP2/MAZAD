@@ -48,7 +48,7 @@ const Navbar = () => {
       <div className="d-flex flex-column w-100 gap-1">
         <div className="row w-100 d-flex flex-row w-100 gap-5 mt-3 px-4">
           <a id="navbarlogo" className="col-md-auto col-1 text-secondary link" href="/" style={{ cursor: "pointer" }}>
-            MAZAD
+            MAZAD &#128184;
           </a>
           <div id="search-create-nav-container" className="col">
             <div id="search-create-container" className="d-flex flex-row gap-3 form-group">
@@ -85,10 +85,7 @@ const Navbar = () => {
         </div>
         <div>
           <div className="d-flex flex-row justify-content-center align-items-center gap-3 text-center">
-            <a
-              className={"px-3 py-2 nav-item" + (location.pathname === "/" ? " active" : "")}
-              href="/"
-            >
+            <a className={"px-3 py-2 nav-item" + (location.pathname === "/" ? " active" : "")} href="/">
               <span className="link d-inline-block w-auto">Home</span>
             </a>
             <Nav>
@@ -118,10 +115,7 @@ const Navbar = () => {
                 Live Mazads
               </span>
             </a>
-            <a
-              className={"px-3 py-2 nav-item" + (location.pathname === "/Popular" ? " active" : "")}
-              href="/popular"
-            >
+            <a className={"px-3 py-2 nav-item" + (location.pathname === "/Popular" ? " active" : "")} href="/popular">
               <span className="link d-inline-block w-auto">Popular Items</span>
             </a>
           </div>
