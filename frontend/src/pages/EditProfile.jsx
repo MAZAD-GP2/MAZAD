@@ -15,7 +15,6 @@ const EditProfile = () => {
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const userData = sessionStorage.getItem("user");
 
-  
   const [isEditing, setisEditing] = useState(false); // Track editing status
   const { enqueueSnackbar } = useSnackbar();
 
@@ -40,18 +39,18 @@ const EditProfile = () => {
     return () => {
       setIsCurrentUser(false);
     };
-  }, [userData]); 
+  }, [userData]);
 
   useEffect(() => {
     const userData = sessionStorage.getItem("user");
-    if(userData) {
+    if (userData) {
       const parsedUserData = JSON.parse(userData);
       setUsername({ value: parsedUserData.username, isValid: true });
       setPhoneNumber({ value: parsedUserData.phoneNumber, isValid: true });
       setEmail({ value: parsedUserData.email, isValid: true });
     }
   }, []);
-  
+
   const popoverUsername = (
     <Popover id="popover-basic">
       <Popover.Body>
@@ -102,7 +101,6 @@ const EditProfile = () => {
     setEmail({ value, isValid: true });
   };
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setisEditing(true); // Set registration status to true when registration button is clicked
@@ -120,7 +118,7 @@ const EditProfile = () => {
       setEmail({ ...email, isValid: false });
       success = false;
     }
-    
+
     if (!success) {
       setisEditing(false); // Set registration status back to false
       return;
@@ -130,7 +128,7 @@ const EditProfile = () => {
       .userUpdate({
         username: username.value,
         email: email.value,
-        phoneNumber: phoneNumber.value
+        phoneNumber: phoneNumber.value,
       })
       .then((result) => {
         setUsername({ value: "", isValid: true });
@@ -147,8 +145,15 @@ const EditProfile = () => {
         setisEditing(false); // Set registration status back to false
       });
   };
-  
-
+  const handleDiscard = async (event) => {
+    event.preventDefault();
+    if (userData) {
+      const parsedUserData = JSON.parse(userData);
+      setUsername({ value: parsedUserData.username, isValid: true });
+      setPhoneNumber({ value: parsedUserData.phoneNumber, isValid: true });
+      setEmail({ value: parsedUserData.email, isValid: true });
+    }
+  };
 
   return (
     <>
@@ -168,15 +173,31 @@ const EditProfile = () => {
               </a>
             )}
           </div>
-          <form className="card-body" onSubmit={handleSubmit}>
-            <h1 className="information py-2">Edit Profile</h1>
-            <div className="col-sm-12 col-md-12 col-lg-9 d-flex flex-column gap-3">
-              <div className="row">
-                <div className="col-sm-12">
+          <div className="user-history-container">
+            <form
+              className="card-body user-history"
+              style={{
+                width: "100%",
+                alignContent: "center",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <h1 className="py-2" style={{ textAlign: "center" }}>
+                Edit Profile
+              </h1>
+              <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
+                <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group">
-                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverUsername}>
+                    <OverlayTrigger
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverUsername}
+                    >
                       <input
-                        className={`form-control ${!username.isValid ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          !username.isValid ? "is-invalid" : ""
+                        }`}
                         type="text"
                         placeholder="Username"
                         id="name"
@@ -191,13 +212,17 @@ const EditProfile = () => {
                     </OverlayTrigger>
                   </div>
                 </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-12">
+                <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group">
-                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverEmail}>
+                    <OverlayTrigger
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverEmail}
+                    >
                       <input
-                        className={`form-control ${!email.isValid ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          !email.isValid ? "is-invalid" : ""
+                        }`}
                         type="text"
                         placeholder="Email"
                         id="email"
@@ -211,13 +236,17 @@ const EditProfile = () => {
                     </OverlayTrigger>
                   </div>
                 </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-12">
+                <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group">
-                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverPhoneNumber}>
+                    <OverlayTrigger
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverPhoneNumber}
+                    >
                       <input
-                        className={`form-control ${!phoneNumber.isValid ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          !phoneNumber.isValid ? "is-invalid" : ""
+                        }`}
                         type="text"
                         placeholder="Phone Number"
                         id="phone-number"
@@ -231,16 +260,28 @@ const EditProfile = () => {
                     </OverlayTrigger>
                   </div>
                 </div>
+                        <div style={{display:"flex", justifyContent:"space-around"}}>
+                <button
+                  className="btn btn-secondary btn-block confirm-button"
+                  disabled={isEditing} // Disable button while editing
+                  onClick={handleSubmit}
+                >
+                  {isEditing ? (
+                    <Spinner animation="border" size="sm" />
+                  ) : (
+                    "Save Changes"
+                  )}
+                </button>
+                <button
+                  className="btn btn-danger btn-block confirm-button"
+                  onClick={handleDiscard}
+                  >
+                    Discard Changes
+                </button>
+                </div>
               </div>
-
-              <button
-                className="btn btn-secondary btn-block confirm-button"
-                disabled={isEditing} // Disable button while editing
-              >
-                {isEditing ? <Spinner animation="border" size="sm" /> : "Save Changes"}
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       )}
     </>
