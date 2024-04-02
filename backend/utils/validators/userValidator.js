@@ -104,8 +104,17 @@ exports.validateUserUpdate = [
         throw new Error("Phone number already exists");
       }
     }),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: errors.array()[0].msg });
+    }
+    next();
+  },
+];
+
+exports.validatePasswordUpdate = [
   body("password")
-    .optional()
     .trim()
     .isLength({ min: 8, max: 20 })
     .withMessage("Password must be between 8 and 20 characters long")
@@ -116,7 +125,6 @@ exports.validateUserUpdate = [
     .matches(/\d/)
     .withMessage("Password must contain at least one number"),
   body("confirmPassword")
-    .optional()
     .trim()
     .custom((value, { req }) => {
       if (value !== req.body.password) {

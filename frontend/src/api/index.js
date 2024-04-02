@@ -18,7 +18,7 @@ export const login = (data) => API.post("/user/login", data);
 export const register = (data) => API.post(`/user/register`, data);
 export const getUserById = (id) => API.get(`/user/${id}`);
 export const userUpdate = (data) => API.put(`/user/update`, data)
-
+export const passwordUpdate = (data) => API.put(`/user/password-update`, data)
 //categories
 export const getAllCategories = () => API.get("/category");
 

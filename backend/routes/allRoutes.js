@@ -6,7 +6,7 @@ const categoryRoutes = require("./categoryRoutes");
 const authRoutes = require("./authRoutes");
 const verifyToken = require("../middlewares/verfiytoken");
 const checkAdmin = require("../middlewares/checkAdmin");
-const { validateUserCreation, validateUserUpdate } = require("../utils/validators/userValidator");
+const { validateUserCreation, validateUserUpdate, validatePasswordUpdate } = require("../utils/validators/userValidator");
 const { validateItemCreation } = require("../utils/validators/itemValidator");
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -27,6 +27,7 @@ router.route("/user/login").post(userRoutes.login);
 router.route("/user/forgot-password").post(userRoutes.forgotPassword);
 router.route("/user/reset-password").post(userRoutes.resetPassword);
 router.route("/user/update").put(verifyToken, validateUserUpdate, userRoutes.updateUser);
+router.route("/user/password-update").put(verifyToken, validatePasswordUpdate, userRoutes.passwordUpdate);
 router.route("/user/delete/:id").delete(verifyToken, checkAdmin, userRoutes.deleteUser);
 
 // item

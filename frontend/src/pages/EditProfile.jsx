@@ -16,11 +16,19 @@ const EditProfile = () => {
   const userData = sessionStorage.getItem("user");
 
   const [isEditing, setisEditing] = useState(false); // Track editing status
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const [username, setUsername] = useState({ value: "", isValid: true });
   const [phoneNumber, setPhoneNumber] = useState({ value: "", isValid: true });
   const [email, setEmail] = useState({ value: "", isValid: true });
+
+  const [password, setPassword] = useState({ value: "", isValid: true });
+  const [confirmPassword, setConfirmPassword] = useState({
+    value: "",
+    isValid: true,
+  });
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -75,10 +83,25 @@ const EditProfile = () => {
     </Popover>
   );
 
+  const popoverPassword = (
+    <Popover id="popover-basic">
+      <Popover.Body>
+        <ul>
+          <li>Use 8 to 64 characters</li>
+          <li>Include at least 1 uppercase letter</li>
+          <li>Include at least 1 lowercase letter</li>
+          <li>Include at least 1 number</li>
+        </ul>
+      </Popover.Body>
+    </Popover>
+  );
+
   const handleInputChange = () => {
     setUsername({ ...username, isValid: true });
     setPhoneNumber({ ...phoneNumber, isValid: true });
     setEmail({ ...email, isValid: true });
+    setPassword({ ...password, isValid: true });
+    setConfirmPassword({ ...confirmPassword, isValid: true });
   };
 
   const handleUsernameChange = (event) => {
@@ -101,11 +124,21 @@ const EditProfile = () => {
     setEmail({ value, isValid: true });
   };
 
-  const handleSubmit = async (event) => {
+  const handlePasswordChange = (event) => {
+    const value = event.target.value;
+    setPassword({ value, isValid: true });
+  };
+
+  const handleConfirmPasswordChange = (event) => {
+    const value = event.target.value;
+    setConfirmPassword({ value, isValid: true });
+  };
+  
+  const handleEdit = async (event) => {
     event.preventDefault();
-    setisEditing(true); // Set registration status to true when registration button is clicked
+    setisEditing(true); 
     let success = true;
-    // Validate input fields
+    
     if (!username.isValid || !username.value) {
       setUsername({ ...username, isValid: false });
       success = false;
@@ -120,10 +153,10 @@ const EditProfile = () => {
     }
 
     if (!success) {
-      setisEditing(false); // Set registration status back to false
+      setisEditing(false); 
       return;
     }
-    // Perform registration
+
     await api
       .userUpdate({
         username: username.value,
@@ -142,10 +175,61 @@ const EditProfile = () => {
         enqueueSnackbar(err.response.data.message, { variant: "error" });
       })
       .finally(() => {
-        setisEditing(false); // Set registration status back to false
+        setisEditing(false); 
       });
   };
-  const handleDiscard = async (event) => {
+
+  const handleChangePassword = async (event) => {
+    event.preventDefault();
+    setIsChangingPassword(true); // Set registration status to true when registration button is clicked
+    let success = true;
+
+    const regex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
+    if (!regex.test(password.value)) {
+      enqueueSnackbar("Password must contain at least 8 characters, including at least one letter and one number", {
+        variant: "error",
+        hideIconVariant: true,
+      });
+      setPassword({ ...password, isValid: false });
+      setIsChangingPassword(false);
+      return;
+    }
+    if (!confirmPassword.isValid || !confirmPassword.value || confirmPassword.value !== password.value) {
+      setConfirmPassword({ ...confirmPassword, isValid: false });
+      success = false;
+      enqueueSnackbar("Password and Confirm Password don't match or are not valid", {
+        variant: "error",
+      });
+    }
+    
+    if (!success) {
+      setIsChangingPassword(false); 
+      return;
+    }
+
+    api
+      .passwordUpdate({
+        password: password.value,
+        confirmPassword: confirmPassword.value,
+      })
+      .then((result) => {
+        setPassword({ value: "", isValid: true });
+        setConfirmPassword({ value: "", isValid: true });
+        sessionStorage.setItem("user", JSON.stringify(result.data));
+        enqueueSnackbar("Password Changed Successfully", { variant: "success" });
+        window.location.href = "/";
+        
+      })
+      .catch((err) => {
+        enqueueSnackbar(err.response.data.message, { variant: "error" });
+      })
+      .finally(() => {
+        setIsChangingPassword(false); 
+      });
+  };
+
+
+  const handleCancelEdit = async (event) => {
     event.preventDefault();
     if (userData) {
       const parsedUserData = JSON.parse(userData);
@@ -153,7 +237,16 @@ const EditProfile = () => {
       setPhoneNumber({ value: parsedUserData.phoneNumber, isValid: true });
       setEmail({ value: parsedUserData.email, isValid: true });
     }
+    window.location.href = "/";
   };
+
+  const handleCancelPassword = async (event) => {
+    event.preventDefault();
+    setPassword({ value: "", isValid: true });
+    setConfirmPassword({ value: "", isValid: true });
+    window.location.href = "/";
+  }
+
 
   return (
     <>
@@ -174,6 +267,7 @@ const EditProfile = () => {
             )}
           </div>
           <div className="user-history-container">
+            <h2 className="py-2">Edit Profile</h2>
             <form
               className="card-body user-history"
               style={{
@@ -183,12 +277,9 @@ const EditProfile = () => {
                 flexDirection: "column",
               }}
             >
-              <h1 className="py-2" style={{ textAlign: "center" }}>
-                Edit Profile
-              </h1>
               <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
                 <div className="col-sm-12 row justify-content-center mb-3">
-                  <div className="form-group">
+                  <div className="form-group" style={{ width: "80%" }}>
                     <OverlayTrigger
                       trigger="focus"
                       placement="top"
@@ -207,13 +298,13 @@ const EditProfile = () => {
                           handleUsernameChange(e);
                         }}
                         required
-                        autoFocus
+                        style={{ width: "100%" }}
                       />
                     </OverlayTrigger>
                   </div>
                 </div>
                 <div className="col-sm-12 row justify-content-center mb-3">
-                  <div className="form-group">
+                  <div className="form-group" style={{ width: "80%" }}>
                     <OverlayTrigger
                       trigger="focus"
                       placement="top"
@@ -232,12 +323,13 @@ const EditProfile = () => {
                           handleEmailChange(e);
                         }}
                         required
+                        style={{ width: "100%" }}
                       />
                     </OverlayTrigger>
                   </div>
                 </div>
                 <div className="col-sm-12 row justify-content-center mb-3">
-                  <div className="form-group">
+                  <div className="form-group" style={{ width: "80%" }}>
                     <OverlayTrigger
                       trigger="focus"
                       placement="top"
@@ -256,28 +348,120 @@ const EditProfile = () => {
                           handlePhoneNumberChange(e);
                         }}
                         required
+                        style={{ width: "100%" }}
                       />
                     </OverlayTrigger>
                   </div>
                 </div>
-                        <div style={{display:"flex", justifyContent:"space-around"}}>
-                <button
-                  className="btn btn-secondary btn-block confirm-button"
-                  disabled={isEditing} // Disable button while editing
-                  onClick={handleSubmit}
-                >
-                  {isEditing ? (
-                    <Spinner animation="border" size="sm" />
-                  ) : (
-                    "Save Changes"
-                  )}
-                </button>
-                <button
-                  className="btn btn-danger btn-block confirm-button"
-                  onClick={handleDiscard}
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <button
+                    className="btn btn-secondary btn-block confirm-button"
+                    disabled={isEditing}
+                    onClick={handleEdit}
+                    style={{
+                      marginBottom: "10px",
+                      width: "60%",
+                      alignSelf: "center",
+                    }}
                   >
-                    Discard Changes
-                </button>
+                    {isEditing ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </button>
+                  <button
+                    className="btn btn-danger btn-block confirm-button"
+                    onClick={handleCancelEdit}
+                    style={{ width: "60%", alignSelf: "center" }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+              
+            {/* password */}
+            <h2 className="py-2">Change Password</h2>
+            <form
+              className="card-body user-history"
+              style={{
+                width: "100%",
+                alignContent: "center",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
+                <div className="col-sm-12 row justify-content-center mb-3">
+                  <div className="form-group" style={{ width: "80%" }}>
+                    <OverlayTrigger
+                      className="overlay"
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverPassword}
+                    >
+                      <input
+                        className={`form-control ${
+                          !password.isValid ? "is-invalid" : ""
+                        }`}
+                        type="password"
+                        placeholder="Password"
+                        id="password"
+                        value={password.value}
+                        onChange={(e) => {
+                          handleInputChange();
+                          handlePasswordChange(e);
+                        }}
+                        required
+                        style={{ width: "100%" }}
+                      />
+                    </OverlayTrigger>
+                  </div>
+                </div>
+                <div className="col-sm-12 row justify-content-center mb-3">
+                  <div className="form-group" style={{ width: "80%" }}>
+                    <input
+                      className={`form-control ${
+                        !confirmPassword.isValid ? "is-invalid" : ""
+                      }`}
+                      type="password"
+                      placeholder="Confirm password"
+                      id="confirm-password"
+                      value={confirmPassword.value}
+                      onChange={(e) => {
+                        handleInputChange();
+                        handleConfirmPasswordChange(e);
+                      }}
+                      required
+                      style={{ width: "100%" }}
+                    />
+                  </div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <button
+                    className="btn btn-secondary btn-block confirm-button"
+                    disabled={isChangingPassword}
+                    onClick={handleChangePassword}
+                    style={{
+                      marginBottom: "10px",
+                      width: "60%",
+                      alignSelf: "center",
+                    }}
+                  >
+                    {isChangingPassword ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </button>
+                  <button
+                    className="btn btn-danger btn-block confirm-button"
+                    onClick={handleCancelPassword}
+                    style={{ width: "60%", alignSelf: "center" }}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             </form>

@@ -223,16 +223,51 @@ module.exports.updateUser = async (req, res) => {
 
     const userId = req.currentUser.id;
 
-    // const saltRounds = parseInt(process.env.BCRYPT_SALT);
-    // const hashedPassword = await bcrypt.hash(password, saltRounds);
-
     const user = await User.findByPk(userId);
 
     await user.update({
       username,
       email,
-      // password: hashedPassword,
       phoneNumber,
+    });
+
+    const token = await generateJWT({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      phoneNumber: user.phoneNumber,
+    });
+
+    const userData = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      phoneNumber: user.phoneNumber,
+      profilePicture: user.profilePicture,
+      token,
+    };
+
+    return res.json(userData);
+  } catch (err) {
+    return res.send(err);
+  }
+};
+
+module.exports.passwordUpdate = async (req, res) => {
+  try {
+    const { password} = req.body;
+
+    const userId = req.currentUser.id;
+
+    const saltRounds = parseInt(process.env.BCRYPT_SALT);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const user = await User.findByPk(userId);
+
+    await user.update({
+      password: hashedPassword,
     });
 
     const token = await generateJWT({
