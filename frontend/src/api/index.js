@@ -17,7 +17,7 @@ API.interceptors.request.use((req) => {
 export const login = (data) => API.post("/user/login", data);
 export const register = (data) => API.post(`/user/register`, data);
 export const getUserById = (id) => API.get(`/user/${id}`);
-export const userUpdate = (id) => API.put(`/user/update/${id}`)
+export const userUpdate = (data) => API.put(`/user/update`, data)
 
 //categories
 export const getAllCategories = () => API.get("/category");

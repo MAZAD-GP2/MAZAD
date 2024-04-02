@@ -19,10 +19,10 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  useEffect(async() => {
     const user = JSON.parse(sessionStorage.getItem("user"));
     if (user) {
-      api
+      await api
         .decodeToken()
         .then((result) => {
           setIsLoggedIn(true);
@@ -50,8 +50,8 @@ function App() {
         {!isLoggedIn && <Route exact path="/profile" element={<Login />} />}
         <Route exact path="/profile/:id" element={<Profile />} />
         
-        {!isLoggedIn && <Route path="/editProfile" element={<Login />} />}
-        {isLoggedIn && <Route path="/editProfile" element={<EditProfile />} />}
+        {!isLoggedIn && <Route path="/edit-profile" element={<Login />} />}
+        {isLoggedIn && <Route path="/edit-profile" element={<EditProfile />} />}
 
         {isLoggedIn && <Route path="/login" element={<Home />} />}
         {!isLoggedIn && <Route exact path="/login" element={<Login />} />}

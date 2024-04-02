@@ -219,23 +219,41 @@ module.exports.resetPassword = async (req, res) => {
 
 module.exports.updateUser = async (req, res) => {
   try {
-    const { username, email, password, phoneNumber } = req.body;
+    const { username, email, phoneNumber } = req.body;
 
     const userId = req.currentUser.id;
 
-    const saltRounds = parseInt(process.env.BCRYPT_SALT);
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    // const saltRounds = parseInt(process.env.BCRYPT_SALT);
+    // const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const user = await User.findByPk(userId);
 
     await user.update({
       username,
       email,
-      password: hashedPassword,
+      // password: hashedPassword,
       phoneNumber,
     });
 
-    return res.json({ user });
+    const token = await generateJWT({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      phoneNumber: user.phoneNumber,
+    });
+
+    const userData = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      phoneNumber: user.phoneNumber,
+      profilePicture: user.profilePicture,
+      token,
+    };
+
+    return res.json(userData);
   } catch (err) {
     return res.send(err);
   }

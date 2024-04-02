@@ -69,38 +69,37 @@ exports.validateUserCreation = [
 // Validation middleware for user update
 exports.validateUserUpdate = [
   body("username")
-    .optional()
     .trim()
     .isLength({ min: 6, max: 20 })
     .withMessage("Username must be between 6 and 20 characters long")
     .matches(/^[a-zA-Z][a-zA-Z0-9_.\s]+$/)
-    .withMessage("Username can only contain letters, numbers, underscore, dots, and spaces")
+    .withMessage("Username can only start with a letter and contain letters, numbers, underscores, dots, and spaces")
     .custom(async (value, { req }) => {
       const existingUser = await User.findOne({ where: { username: value } });
-      if (existingUser && existingUser.id !== req.params.id) {
+      if (existingUser && existingUser.id !== req.currentUser.id) {
         throw new Error("Username already exists");
       }
     }),
   body("email")
-    .optional()
     .trim()
+    .notEmpty()
     .isEmail()
     .withMessage("Invalid email format")
     .custom(async (value, { req }) => {
       const user = await User.findOne({ where: { email: value } });
-      const parsedId=parseInt(req.params.id)
+      const parsedId=parseInt(req.currentUser.id)
       if (user && user.id !== parsedId) {
         throw new Error("Email already exists");
       }
     }),
   body("phoneNumber")
-    .optional()
     .trim()
+    .notEmpty()
     .matches(/^(07[789]\d{7})$/)
     .withMessage("Invalid phone number format")
     .custom(async (value, { req }) => {
       const user = await User.findOne({ where: { phoneNumber: value } });
-      const parsedId=parseInt(req.params.id)
+      const parsedId=parseInt(req.currentUser.id)
       if (user && user.id !== parsedId) {
         throw new Error("Phone number already exists");
       }
@@ -128,7 +127,7 @@ exports.validateUserUpdate = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ message: errors.array()[0].msg });
     }
     next();
   },

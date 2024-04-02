@@ -55,7 +55,7 @@ const Profile = () => {
             {isCurrentUser && (
               <a
                 className="edit-profile btn btn-secondary align-self-center"
-                href="/editProfile"
+                href="/edit-profile"
               >
                 Edit Profile
               </a>
