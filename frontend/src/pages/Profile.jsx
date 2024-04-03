@@ -4,6 +4,7 @@ import Navbar from "./Navbar";
 import * as api from "../api/index";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
 
 const Profile = () => {
   const { id } = useParams();
@@ -11,6 +12,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const userData = sessionStorage.getItem("user");
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -41,6 +43,18 @@ const Profile = () => {
     };
   }, [id, userData]);
 
+  const handleSignOut = async (event) =>{
+    try{
+    sessionStorage.clear()
+    enqueueSnackbar("Singed out", { variant: "success" });
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 300);
+    }catch(err) {
+      enqueueSnackbar(err.response.data.message, { variant: "error" });
+    }
+  }
+
   return (
     <>
       <Navbar />
@@ -52,14 +66,18 @@ const Profile = () => {
             {user.isAdmin && <p className="admin-tag">Admin</p>}
             <p className="profile-info">{user.email}</p>
             <p className="profile-info">{user.phoneNumber}</p>
-            {isCurrentUser && (
-              <a
-                className="edit-profile btn btn-secondary align-self-center"
-                href="/edit-profile"
-              >
-                Edit Profile
-              </a>
-            )}
+            <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around"}}>
+              {isCurrentUser && (
+                <a className="edit-profile btn btn-secondary align-self-center" href="/edit-profile">
+                  Edit Profile
+                </a>
+              )}
+              {isCurrentUser && (
+                <a className="edit-profile btn btn-danger align-self-center" onClick={handleSignOut}>
+                  Sign Out
+                </a>
+              )}
+            </div>
           </div>
           <div className="user-history-container">
             <h3>Recent Auctions</h3>

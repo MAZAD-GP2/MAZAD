@@ -249,6 +249,18 @@ const EditProfile = () => {
     window.location.href = "/";
   };
 
+  const handleSignOut = async (event) =>{
+    try{
+    sessionStorage.clear()
+    enqueueSnackbar("Singed out", { variant: "success" });
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 300);
+    }catch(err) {
+      enqueueSnackbar(err.response.data.message, { variant: "error" });
+    }
+  }
+
   return (
     <>
       <Navbar />
@@ -258,11 +270,20 @@ const EditProfile = () => {
             <img src={user.profilePicture} className="profile-pic" />
             <h3 className="profile-username">{user.username}</h3>
             {user.isAdmin && <p className="admin-tag">Admin</p>}
-            {isCurrentUser && (
-              <a className="edit-profile btn btn-secondary align-self-center" href="/profile">
-                Profile
-              </a>
-            )}
+            <p className="profile-info">{user.email}</p>
+            <p className="profile-info">{user.phoneNumber}</p>
+            <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around"}}>
+              {isCurrentUser && (
+                <a className="edit-profile btn btn-secondary align-self-center" href="/profile">
+                  Profile
+                </a>
+              )}
+              {isCurrentUser && (
+                <a className="edit-profile btn btn-danger align-self-center" onClick={handleSignOut}>
+                  Sign Out
+                </a>
+              )}
+            </div>
           </div>
           <div className="user-history-container">
             <h2 className="py-2">Edit Profile</h2>
