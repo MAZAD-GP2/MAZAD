@@ -20,7 +20,9 @@ const SideProfile = ({ user, isCurrentUser }) => {
   };
   return (
     <div className="user-cred">
-      <img src={user.profilePicture} className="profile-pic" />
+      <img src={user.profilePicture
+                  ? user.profilePicture
+                  : "https://media.istockphoto.com/id/1288129985/vector/missing-image-of-a-person-placeholder.jpg?s=612x612&w=0&k=20&c=9kE777krx5mrFHsxx02v60ideRWvIgI1RWzR1X4MG2Y="} className="profile-pic" />
       <h3 className="profile-username">{user.username}</h3>
       {user.isAdmin && <p className="admin-tag">Admin</p>}
       <p className="profile-info">{user.email}</p>
