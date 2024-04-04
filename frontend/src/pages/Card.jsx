@@ -1,10 +1,8 @@
 import React from "react";
 import "../assets/css/card.css";
 import sanitizeHtml from "sanitize-html";
-import { useNavigate } from "react-router-dom";
 
 const Card = ({ item }) => {
-  const navigate = useNavigate();
   function handleHref(id) {
     window.location.href = `/item/${id}`;
   }

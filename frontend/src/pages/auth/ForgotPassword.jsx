@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import * as api from "../../api/index";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -19,16 +17,19 @@ function ForgotPassword() {
       return;
     }
 
-    await axios
-      .post("http://localhost:3000/user/forgot-password", {
+    await api
+      .forgotPassword({
         email,
       })
       .then(() => {
         setEmail("");
-        enqueueSnackbar("If the email exists in our records, an email with instructions will be sent to it", {
-          variant: "success",
-          autoHideDuration: 5000,
-        });
+        enqueueSnackbar(
+          "If the email exists in our records, an email with instructions will be sent to it",
+          {
+            variant: "success",
+            autoHideDuration: 5000,
+          }
+        );
       });
   };
 

@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import * as api from "./api/index";
 import loadable from "@loadable/component";
@@ -17,7 +17,6 @@ const EditProfile = loadable(() => import("./pages/EditProfile.jsx"));
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(async() => {
     const user = JSON.parse(sessionStorage.getItem("user"));

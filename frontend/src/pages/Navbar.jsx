@@ -2,10 +2,9 @@ import React from "react";
 import { useState, useEffect } from "react";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import axios from "axios";
 import "../assets/css/nav.css";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import * as api from "../api/index";
 
 const Navbar = () => {
@@ -14,7 +13,6 @@ const Navbar = () => {
   const [show, setShow] = useState(false);
   const isAdmin = useSelector((state) => state.auth.isAdmin);
   const user = JSON.parse(sessionStorage.getItem("user"));
-  const navigate = useNavigate();
   const location = useLocation();
 
   const showDropdown = (e) => {

@@ -4,7 +4,6 @@ import { useSnackbar } from "notistack";
 import * as api from "../../api/index";
 import { Spinner } from "react-bootstrap";
 import "bootstrap";
-import { useNavigate } from "react-router-dom";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 
 function Register() {
@@ -18,7 +17,6 @@ function Register() {
   });
   const [isRegistering, setIsRegistering] = useState(false); // Track registration status
   const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
   //tool tips messages
   const popoverUsername = (
     <Popover id="popover-basic">
@@ -117,29 +115,27 @@ function Register() {
       success = false;
     }
     // Add password regex validation here
-    const regex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
-    if (!regex.test(password.value)) {
-      enqueueSnackbar("Password must contain at least 8 characters, including at least one letter and one number", {
-        variant: "error",
-        hideIconVariant: true,
-      });
-      setPassword({ ...password, isValid: false });
-      setIsRegistering(false); // Set registration status back to false
-      return;
-    }
-    if (!confirmPassword.isValid || !confirmPassword.value || confirmPassword.value !== password.value) {
+
+    if (
+      !confirmPassword.isValid ||
+      !confirmPassword.value ||
+      confirmPassword.value !== password.value
+    ) {
       setConfirmPassword({ ...confirmPassword, isValid: false });
       success = false;
-      enqueueSnackbar("Password and Confirm Password don't match or are not valid", {
-        variant: "error",
-      });
+      enqueueSnackbar(
+        "Password and Confirm Password don't match or are not valid",
+        {
+          variant: "error",
+        }
+      );
     }
     if (!success) {
       setIsRegistering(false); // Set registration status back to false
       return;
     }
     // Perform registration
-    api
+    await api
       .register({
         username: username.value,
         email: email.value,

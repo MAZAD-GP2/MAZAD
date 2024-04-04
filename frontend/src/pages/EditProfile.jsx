@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
-import "../assets/css/profile.css";
-import Navbar from "./Navbar";
-import * as api from "../api/index";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import "/src/assets/css/auth.css";
-import { useSnackbar } from "notistack";
 import { Spinner } from "react-bootstrap";
-import "bootstrap";
 import { OverlayTrigger, Popover } from "react-bootstrap";
+import Navbar from "./Navbar";
+import SideProfile from "./SideProfile";
+import { useSnackbar } from "notistack";
+import * as api from "../api/index";
+import "bootstrap";
+import "../assets/css/profile.css";
+import "/src/assets/css/auth.css";
 
 const EditProfile = () => {
   const [user, setUser] = useState(null);
@@ -249,42 +248,12 @@ const EditProfile = () => {
     window.location.href = "/";
   };
 
-  const handleSignOut = async (event) =>{
-    try{
-    sessionStorage.clear()
-    enqueueSnackbar("Singed out", { variant: "success" });
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 300);
-    }catch(err) {
-      enqueueSnackbar(err.response.data.message, { variant: "error" });
-    }
-  }
-
   return (
     <>
       <Navbar />
       {user && (
         <div className="d-flex">
-          <div className="user-cred">
-            <img src={user.profilePicture} className="profile-pic" />
-            <h3 className="profile-username">{user.username}</h3>
-            {user.isAdmin && <p className="admin-tag">Admin</p>}
-            <p className="profile-info">{user.email}</p>
-            <p className="profile-info">{user.phoneNumber}</p>
-            <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around"}}>
-              {isCurrentUser && (
-                <a className="edit-profile btn btn-secondary align-self-center" href="/profile">
-                  Profile
-                </a>
-              )}
-              {isCurrentUser && (
-                <a className="edit-profile btn btn-danger align-self-center" onClick={handleSignOut}>
-                  Sign Out
-                </a>
-              )}
-            </div>
-          </div>
+          <SideProfile user={user} isCurrentUser={isCurrentUser}/>
           <div className="user-history-container">
             <h2 className="py-2">Edit Profile</h2>
             <form

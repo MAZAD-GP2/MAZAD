@@ -16,9 +16,11 @@ API.interceptors.request.use((req) => {
 //user
 export const login = (data) => API.post("/user/login", data);
 export const register = (data) => API.post(`/user/register`, data);
+export const forgotPassword = (data) => API.post(`/user/forgot-password`, data);
+export const resetPassword = (data) => API.post(`/user/reset-password`, data);
 export const getUserById = (id) => API.get(`/user/${id}`);
-export const userUpdate = (data) => API.put(`/user/update`, data)
-export const passwordUpdate = (data) => API.put(`/user/password-update`, data)
+export const userUpdate = (data) => API.put(`/user/update`, data);
+export const passwordUpdate = (data) => API.put(`/user/password-update`, data);
 //categories
 export const getAllCategories = () => API.get("/category");
 
@@ -33,5 +35,4 @@ export const addItem = (data) =>
     },
   });
 
-  
 export const decodeToken = () => API.post(`/decode-token`);

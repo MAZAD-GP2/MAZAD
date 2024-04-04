@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "../../assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import * as api from "../../api/index";
 import { Spinner } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const navigate = useNavigate();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Track login status

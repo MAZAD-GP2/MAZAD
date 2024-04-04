@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
-import axios from "axios";
 import { Spinner } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import * as api from "../../api/index";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isResetting, setIsResetting] = useState(false); // Track reset password status
   const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
 
   const handlePasswordChange = (event) => {
     const value = event.target.value;
@@ -41,21 +39,21 @@ function ResetPassword() {
       return;
     }
 
-    await axios
-      .post("http://localhost:3000/user/reset-password", {
-        token: window.location.search.split("=")[1],
-        password,
-        confirmPassword,
-      })
-      .then(() => {
-        window.location.href = "/login";
-      })
-      .catch((err) => {
-        enqueueSnackbar(err.response.data.message, { variant: "error" });
-      })
-      .finally(() => {
-        setIsResetting(false); // Set reset password status back to false
-      });
+    await api
+    .ResetPassword({
+      token: window.location.search.split("=")[1],
+      password,
+      confirmPassword,
+    })
+    .then(() => {
+      window.location.href = "/login";
+    })
+    .catch((err) => {
+      enqueueSnackbar(err.response.data.message, { variant: "error" });
+    })
+    .finally(() => {
+      setIsResetting(false); // Set reset password status back to false
+    });
   };
 
   return (

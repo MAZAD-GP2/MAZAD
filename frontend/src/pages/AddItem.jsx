@@ -1,10 +1,8 @@
 import Navbar from "./Navbar";
 import "../assets/css/addItem.css";
-import { React, useEffect, useState, useRef, useCallback } from "react";
+import { React, useEffect, useState, useCallback } from "react";
 import * as api from "../api/index";
-import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Dropzone from "react-dropzone";
 
@@ -23,7 +21,8 @@ const AddItem = () => {
   const [quillInitialized, setQuillInitialized] = useState(false);
   const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
-
+  const [isAddingItem, setIsAddingItem] = useState(false);
+  
   const { quill, quillRef } = useQuill({
     theme: "snow",
     placeholder: "Enter description here...",
@@ -72,8 +71,6 @@ const AddItem = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [tags, setTags] = useState([]);
-  const navigate = useNavigate();
-
   const [name, setName] = useState("");
 
   useEffect(() => {
@@ -139,6 +136,7 @@ const AddItem = () => {
       });
 
       try {
+        setIsAddingItem(true)
         // Send the FormData object using Axios
         const response = await api.addItem(formData);
         // Handle the response as needed
@@ -419,7 +417,7 @@ const AddItem = () => {
               </div>
             </div>
           </div>
-          <button className="submit-button btn btn-secondary" onClick={handleSubmit}>
+          <button className="submit-button btn btn-secondary" disabled={isAddingItem} onClick={handleSubmit}>
             Start Mazad
           </button>
           {!submitValid && <p style={{ color: "red", fontSize: "15px" }}>Fill in all input fields!</p>}
