@@ -178,3 +178,57 @@ input::placeholder {
     align-content: center;
   }
 } */
+
+.input-container {
+  width: 45%;
+  padding: 1px 10px;
+  align-items: center;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  margin: 0 auto; /* Horizontally center the input container */
+}
+
+.input-container input:focus {
+  box-shadow: none;
+}
+
+.create-item-pfp {
+  display: flex;
+  gap: 30px;
+  justify-content: flex-end; /* Align items to the end of the container */
+  margin-right: 1%;
+}
+
+
+.add-item {
+  background-color: transparent;
+  border: none;
+  color: var(--secondary-light);
+}
+
+.add-item:hover {
+  background-color: var(--secondary-light);
+}
+
+.profile-redirect {
+  background-color: transparent;
+  border: none;
+  color: var(--secondary-light);
+  padding: 0 10px;
+  border-radius: 50px;
+}
+
+.profile-redirect:hover {
+  color: var(--primary-light);
+  background-color: var(--secondary-light);
+}
+
+.lgn-sign-up {
+  color: var(--secondary-light);
+  background-color: transparent;
+  border: none;
+}
+
+.lgn-sign-up:hover {
+  background-color: var(--secondary-light);
+}

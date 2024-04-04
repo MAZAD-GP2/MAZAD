@@ -1,28 +1,28 @@
 .card {
     width: 25rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px transparent;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    border: 1px solid rgba(0, 0, 0, 0.12);
     cursor: pointer;
     transition: .25s;
 }
 
 .item-card:hover {
     /* background-color: #e4c9af; */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .image {
     display: block;
-    margin: 7px;
-    box-shadow: 1px 4px 8px rgba(0, 0, 0, 0.4);
-    border-radius: 4%;
+    margin: 10px;
+    /* box-shadow: 1px 4px 8px rgba(0, 0, 0, 0.4); */
+    border-radius: 2%;
     max-height: 15rem;
     object-fit: cover;
 }
 
 .card-body { 
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .card-text {
@@ -38,6 +38,7 @@
 .tag-container {
     display: flex;
     flex-wrap: wrap;
+    margin-bottom: 18px;
 }
 
 .tag {

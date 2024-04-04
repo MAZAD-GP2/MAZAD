@@ -43,17 +43,17 @@ const Profile = () => {
     };
   }, [id, userData]);
 
-  const handleSignOut = async (event) =>{
-    try{
-    sessionStorage.clear()
-    enqueueSnackbar("Singed out", { variant: "success" });
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 300);
-    }catch(err) {
+  const handleSignOut = async (event) => {
+    try {
+      sessionStorage.clear();
+      enqueueSnackbar("Singed out", { variant: "success" });
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 300);
+    } catch (err) {
       enqueueSnackbar(err.response.data.message, { variant: "error" });
     }
-  }
+  };
 
   return (
     <>
@@ -61,19 +61,37 @@ const Profile = () => {
       {user && (
         <div className="d-flex">
           <div className="user-cred">
-            <img src={user.profilePicture} className="profile-pic" />
+            <img
+              src={
+                user.profilePicture
+                  ? user.profilePicture
+                  : "https://media.istockphoto.com/id/1288129985/vector/missing-image-of-a-person-placeholder.jpg?s=612x612&w=0&k=20&c=9kE777krx5mrFHsxx02v60ideRWvIgI1RWzR1X4MG2Y="
+              }
+              className="profile-pic"
+            />
             <h3 className="profile-username">{user.username}</h3>
             {user.isAdmin && <p className="admin-tag">Admin</p>}
             <p className="profile-info">{user.email}</p>
             <p className="profile-info">{user.phoneNumber}</p>
-            <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around"}}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-around",
+              }}
+            >
               {isCurrentUser && (
-                <a className="edit-profile btn btn-secondary align-self-center" href="/edit-profile">
+                <a
+                  className="edit-profile btn btn-secondary align-self-center"
+                  href="/edit-profile"
+                >
                   Edit Profile
                 </a>
               )}
               {isCurrentUser && (
-                <a className="edit-profile btn btn-danger align-self-center" onClick={handleSignOut}>
+                <a
+                  className="edit-profile btn btn-danger align-self-center"
+                  onClick={handleSignOut}
+                >
                   Sign Out
                 </a>
               )}

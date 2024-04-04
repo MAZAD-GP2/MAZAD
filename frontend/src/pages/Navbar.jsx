@@ -7,6 +7,7 @@ import "../assets/css/nav.css";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as api from "../api/index";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Navbar = () => {
   const [categories, setCategories] = useState([]);
@@ -46,40 +47,48 @@ const Navbar = () => {
   return (
     <div className="d-flex flex-row w-100 gap-5 bg-primary">
       <div className="d-flex flex-column w-100 gap-1">
-        <div className="row w-100 d-flex flex-row w-100 gap-5 mt-3 px-4">
-          <a id="navbarlogo" className="col-md-auto col-1 text-secondary link" href="/" style={{ cursor: "pointer" }}>
+        <div className="row w-100 d-flex flex-row w-100 gap-5 mt-3">
+          <a id="navbarlogo" className="col-md-auto col-1 text-secondary link px-4" href="/" style={{ cursor: "pointer" }}>
             MAZAD &#128184;
           </a>
           <div id="search-create-nav-container" className="col">
             <div id="search-create-container" className="d-flex flex-row gap-3 form-group">
-              <input
-                type="search"
-                placeholder="Search Items, tags or categories"
-                aria-label="Search"
-                className="form-control col bg-dark text-white"
-              />
+              <div className="input-container bg-dark rounded-5 border-0 d-flex">
+                <FontAwesomeIcon icon="fa-search" color="white"/>
+                <input
+                  id="seach-input"
+                  type="search"
+                  placeholder="Search Items, tags or categories"
+                  aria-label="Search"
+                  className="form-control col bg-dark text-white border-0 rounded-5 "
+                  style={{ outline: "none" }}
+                />
+              </div>
               {user ? (
-                <a type="submit" className="btn btn-secondary col-auto" href="/add-item">
-                  New Mazad
-                </a>
-              ) : (
-                <a type="submit" className="btn btn-secondary col-auto" href="/login">
-                  Log in
-                </a>
-              )}
-              {user ? (
-                // <img src={user.profilePicture}
-                // width={"40px"} style={{borderRadius:"90px"}}></img>
-                <div className="col-auto d-flex flex-row gap-3 form-group">
-                  <a href="/profile" role="button" className="btn btn-secondary">
-                    Profile
+                <div className="create-item-pfp justify-end">
+                  <a type="submit" className="btn btn-secondary col-auto align-content-center p-0 px-2 rounded-5 add-item" href="/add-item">
+                    <FontAwesomeIcon icon="fa-add"/> New Mazad
                   </a>
+                  <div className="col-auto d-flex flex-row form-group align-content-end ">
+                  <a href="/profile" role="button" className="m-0 profile-redirect btn-btn-secondary" style={{fontSize: "25px"}}>
+                    {user.profilePicture ? 
+                      <img src={user.profilePicture}
+                           width={"40px"} style={{borderRadius:"100px"}}></img> : 
+                      <FontAwesomeIcon icon="fa-regular fa-user"/>}
+                  </a>
+                  </div>
                 </div>
               ) : (
-                <a className="btn btn-secondary col-auto" href="/register" role="button">
-                  Sign Up
-                </a>
+                <>
+                  <a type="submit" className="btn btn-secondary col-auto px-3 rounded-5 align-content-center mt-2 lgn-sign-up" href="/login">
+                    Log In
+                  </a>
+                  <a className="btn btn-secondary col-auto px-3 rounded-5 align-content-center mt-2 lgn-sign-up" href="/register" role="button">
+                    Sign Up
+                  </a>
+                </>
               )}
+      
             </div>
           </div>
         </div>
