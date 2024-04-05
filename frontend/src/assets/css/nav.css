@@ -216,11 +216,19 @@ input::placeholder {
   color: var(--secondary-light);
   padding: 0 10px;
   border-radius: 50px;
+  transition: .25s;
 }
 
 .profile-redirect:hover {
   color: var(--primary-light);
   background-color: var(--secondary-light);
+}
+
+.lgn-sign-up-container {
+  display: flex;
+  gap: 30px;
+  justify-content: flex-end; /* Align items to the end of the container */
+  margin-right: 1%;  
 }
 
 .lgn-sign-up {

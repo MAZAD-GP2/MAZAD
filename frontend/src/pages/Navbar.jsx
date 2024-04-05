@@ -67,9 +67,9 @@ const Navbar = () => {
                   <a type="submit" className="btn btn-secondary col-auto align-content-center p-0 px-2 rounded-5 add-item" href="/add-item">
                     <FontAwesomeIcon icon="fa-add"/> New Mazad
                   </a>
-                  <div className="col-auto d-flex flex-row form-group align-content-end ">
-                  <a href="/profile" role="button" className="m-0 profile-redirect btn-btn-secondary" style={{fontSize: "25px"}}>
-                    {user.profilePicture ? 
+                  <div className="col-auto d-flex flex-row form-group align-content-end">
+                  <a href="/profile" role="button" className={`${user.profilePicture ? "" : "profile-redirect"}`} style={{fontSize: "25px"}}>
+                     {user.profilePicture ? 
                       <img src={user.profilePicture}
                            width={"40px"} style={{borderRadius:"100px"}}></img> : 
                       <FontAwesomeIcon icon="fa-regular fa-user"/>}
@@ -77,14 +77,14 @@ const Navbar = () => {
                   </div>
                 </div>
               ) : (
-                <>
-                  <a type="submit" className="btn btn-secondary col-auto px-3 rounded-5 align-content-center mt-2 lgn-sign-up" href="/login">
+                <div id="lgn-sign-up-container">
+                  <a type="submit" className="btn btn-secondary col-auto px-3 rounded-5 align-content-center lgn-sign-up ms-5" href="/login">
                     Log In
                   </a>
-                  <a className="btn btn-secondary col-auto px-3 rounded-5 align-content-center mt-2 lgn-sign-up" href="/register" role="button">
+                  <a className="btn btn-secondary col-auto px-3 rounded-5 align-content-center lgn-sign-up" href="/register" role="button">
                     Sign Up
                   </a>
-                </>
+                </div>
               )}
       
             </div>

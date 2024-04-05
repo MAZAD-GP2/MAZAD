@@ -21,7 +21,7 @@ function Login() {
       .then((result) => {
         sessionStorage.setItem("user", JSON.stringify(result.data));
         result.data.isAdmin ? dispatch({ type: "isAdmin" }) : dispatch({ type: "notAdmin" });
-        enqueueSnackbar("Login Successfully", { variant: "success" });
+        enqueueSnackbar("Logged in Successfully", { variant: "success" });
         setUsernameOrEmail("");
         setPassword("");
         setTimeout(() => {

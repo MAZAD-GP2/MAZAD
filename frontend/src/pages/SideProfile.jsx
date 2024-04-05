@@ -10,7 +10,7 @@ const SideProfile = ({ user, isCurrentUser }) => {
   const handleSignOut = async (event) => {
     try {
       sessionStorage.clear();
-      enqueueSnackbar("Singed out", { variant: "success" });
+      enqueueSnackbar("Signed out", { variant: "success" });
       setTimeout(() => {
         window.location.href = "/";
       }, 300);
