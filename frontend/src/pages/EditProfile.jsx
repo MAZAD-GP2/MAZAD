@@ -8,6 +8,9 @@ import * as api from "../api/index";
 import "bootstrap";
 import "../assets/css/profile.css";
 import "/src/assets/css/auth.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 
 const EditProfile = () => {
   const [user, setUser] = useState(null);
@@ -27,6 +30,9 @@ const EditProfile = () => {
     value: "",
     isValid: true,
   });
+
+  const [showPassword, setShowPassword] = useState(false); // password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // confirm password visibility
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -359,11 +365,11 @@ const EditProfile = () => {
             >
               <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
                 <div className="col-sm-12 row justify-content-center mb-3">
-                  <div className="form-group" style={{ width: "80%" }}>
+                  <div className="form-group position-relative d-flex" style={{ width: "80%" }}>
                     <OverlayTrigger className="overlay" trigger="focus" placement="top" overlay={popoverPassword}>
                       <input
                         className={`form-control ${!password.isValid ? "is-invalid" : ""}`}
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         placeholder="New Password"
                         id="password"
                         value={password.value}
@@ -375,13 +381,21 @@ const EditProfile = () => {
                         style={{ width: "100%" }}
                       />
                     </OverlayTrigger>
+                    <button
+                      type="button"
+                      className="btn btn-toggle-password position-absolute"
+                      style={{ right: "10px", border: "0" }}
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                    </button>
                   </div>
                 </div>
                 <div className="col-sm-12 row justify-content-center mb-3">
-                  <div className="form-group" style={{ width: "80%" }}>
+                  <div className="form-group position-relative d-flex" style={{ width: "80%" }}>
                     <input
                       className={`form-control ${!confirmPassword.isValid ? "is-invalid" : ""}`}
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm New password"
                       id="confirm-password"
                       value={confirmPassword.value}
@@ -392,6 +406,14 @@ const EditProfile = () => {
                       required
                       style={{ width: "100%" }}
                     />
+                    <button
+                      type="button"
+                      className="btn btn-toggle-password position-absolute"
+                      style={{ right: "10px", border: "0" }}
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      <FontAwesomeIcon icon={showConfirmPassword ? faEye : faEyeSlash} />
+                    </button>
                   </div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column" }}>

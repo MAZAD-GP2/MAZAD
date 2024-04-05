@@ -5,6 +5,8 @@ import * as api from "../../api/index";
 import { Spinner } from "react-bootstrap";
 import "bootstrap";
 import { OverlayTrigger, Popover } from "react-bootstrap";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 function Register() {
   const [username, setUsername] = useState({ value: "", isValid: true });
@@ -15,6 +17,8 @@ function Register() {
     value: "",
     isValid: true,
   });
+  const [showPassword, setShowPassword] = useState(false); // password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // confirm password visibility
   const [isRegistering, setIsRegistering] = useState(false); // Track registration status
   const { enqueueSnackbar } = useSnackbar();
   //tool tips messages
@@ -180,73 +184,67 @@ function Register() {
             <h1 className="information py-2">Sign Up</h1>
             <div className="col-sm-12 col-md-12 col-lg-9 d-flex flex-column gap-3">
               <div className="row">
-                <div className="col-sm-12">
-                  <div className="form-group">
-                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverUsername}>
-                      <input
-                        className={`form-control ${!username.isValid ? "is-invalid" : ""}`}
-                        type="text"
-                        placeholder="Username"
-                        id="name"
-                        value={username.value}
-                        onChange={(e) => {
-                          handleInputChange();
-                          handleUsernameChange(e);
-                        }}
-                        required
-                        autoFocus
-                      />
-                    </OverlayTrigger>
-                  </div>
+                <div className="col-sm-12 form-group">
+                  <OverlayTrigger trigger="focus" placement="top" overlay={popoverUsername}>
+                    <input
+                      className={`form-control ${!username.isValid ? "is-invalid" : ""}`}
+                      type="text"
+                      placeholder="Username"
+                      id="name"
+                      value={username.value}
+                      onChange={(e) => {
+                        handleInputChange();
+                        handleUsernameChange(e);
+                      }}
+                      required
+                      autoFocus
+                    />
+                  </OverlayTrigger>
                 </div>
               </div>
               <div className="row">
-                <div className="col-sm-12">
-                  <div className="form-group">
-                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverEmail}>
-                      <input
-                        className={`form-control ${!email.isValid ? "is-invalid" : ""}`}
-                        type="text"
-                        placeholder="Email"
-                        id="email"
-                        value={email.value}
-                        onChange={(e) => {
-                          handleInputChange();
-                          handleEmailChange(e);
-                        }}
-                        required
-                      />
-                    </OverlayTrigger>
-                  </div>
+                <div className="col-sm-12 form-group">
+                  <OverlayTrigger trigger="focus" placement="top" overlay={popoverEmail}>
+                    <input
+                      className={`form-control ${!email.isValid ? "is-invalid" : ""}`}
+                      type="text"
+                      placeholder="Email"
+                      id="email"
+                      value={email.value}
+                      onChange={(e) => {
+                        handleInputChange();
+                        handleEmailChange(e);
+                      }}
+                      required
+                    />
+                  </OverlayTrigger>
                 </div>
               </div>
               <div className="row">
-                <div className="col-sm-12">
-                  <div className="form-group">
-                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverPhoneNumber}>
-                      <input
-                        className={`form-control ${!phoneNumber.isValid ? "is-invalid" : ""}`}
-                        type="text"
-                        placeholder="Phone Number"
-                        id="phone-number"
-                        value={phoneNumber.value}
-                        onChange={(e) => {
-                          handleInputChange();
-                          handlePhoneNumberChange(e);
-                        }}
-                        required
-                      />
-                    </OverlayTrigger>
-                  </div>
+                <div className="col-sm-12 form-group">
+                  <OverlayTrigger trigger="focus" placement="top" overlay={popoverPhoneNumber}>
+                    <input
+                      className={`form-control ${!phoneNumber.isValid ? "is-invalid" : ""}`}
+                      type="text"
+                      placeholder="Phone Number"
+                      id="phone-number"
+                      value={phoneNumber.value}
+                      onChange={(e) => {
+                        handleInputChange();
+                        handlePhoneNumberChange(e);
+                      }}
+                      required
+                    />
+                  </OverlayTrigger>
                 </div>
               </div>
               <div className="row">
-                <div className="col-sm-12">
-                  <div className="form-group">
+                <div className="col-sm-12 form-group">
+                  <div className="position-relative d-flex">
                     <OverlayTrigger className="overlay" trigger="focus" placement="top" overlay={popoverPassword}>
                       <input
                         className={`form-control ${!password.isValid ? "is-invalid" : ""}`}
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         placeholder="Password"
                         id="password"
                         value={password.value}
@@ -257,16 +255,24 @@ function Register() {
                         required
                       />
                     </OverlayTrigger>
+                    <button
+                      type="button"
+                      className="btn btn-toggle-password position-absolute"
+                      style={{ right: "10px", border: "0" }}
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                    </button>
                   </div>
                 </div>
               </div>
               <div className="row">
-                <div className="col-sm-12">
-                  <div className="form-group">
+                <div className="col-sm-12 form-group">
+                  <div className="position-relative d-flex">
                     <input
                       className={`form-control ${!confirmPassword.isValid ? "is-invalid" : ""}`}
-                      type="password"
-                      placeholder="Confirm password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm Password"
                       id="confirm-password"
                       value={confirmPassword.value}
                       onChange={(e) => {
@@ -275,6 +281,15 @@ function Register() {
                       }}
                       required
                     />
+                    <button
+                      type="button"
+                      className="btn btn-toggle-password position-absolute"
+                      style={{ right: "10px", border: "0" }}
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      <FontAwesomeIcon icon={showConfirmPassword ? faEye : faEyeSlash} />
+                    </button>
+
                   </div>
                 </div>
               </div>

@@ -4,11 +4,14 @@ import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import * as api from "../../api/index";
 import { Spinner } from "react-bootstrap";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 function Login() {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Track login status
+  const [showPassword, setShowPassword] = useState(false); // password visibility
   let isAdmin = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -21,7 +24,7 @@ function Login() {
       .then((result) => {
         sessionStorage.setItem("user", JSON.stringify(result.data));
         result.data.isAdmin ? dispatch({ type: "isAdmin" }) : dispatch({ type: "notAdmin" });
-        enqueueSnackbar("Logged in Successfully", { variant: "success" });
+        enqueueSnackbar("Login Successful", { variant: "success" });
         setUsernameOrEmail("");
         setPassword("");
         setTimeout(() => {
@@ -65,22 +68,31 @@ function Login() {
                 </div>
               </div>
               <div className="row">
-                <div className="col-sm-12 form-group">
+                <div className="col-sm-12 form-group position-relative d-flex">
                   <input
                     className="form-control"
-                    type="password"
-                    placeholder="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                  <a href="/forgot-password" className="blockquote-footer">
-                    Forgot Password?
-                  </a>
+                  <button
+                    type="button"
+                    className="btn btn-toggle-password position-absolute"
+                    style={{ right: "10px", border: "0" }}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                  </button>
                 </div>
               </div>
 
-              <div className="d-flex flex-row align-items-center justify-content-start gap-3 mt-3">
+              <a href="/forgot-password" className="blockquote-footer">
+                Forgot Password?
+              </a>
+
+              <div className="d-flex flex-row align-items-center justify-content-start gap-3">
                 <button
                   className="col-auto px-4 btn btn-secondary btn-block confirm-button"
                   disabled={isLoggingIn} // Disable button while logging in

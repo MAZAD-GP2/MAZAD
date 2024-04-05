@@ -3,11 +3,15 @@ import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import { Spinner } from "react-bootstrap";
 import * as api from "../../api/index";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isResetting, setIsResetting] = useState(false); // Track reset password status
+  const [showPassword, setShowPassword] = useState(false); // password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // confirm password visibility
   const { enqueueSnackbar } = useSnackbar();
 
   const handlePasswordChange = (event) => {
@@ -40,20 +44,20 @@ function ResetPassword() {
     }
 
     await api
-    .ResetPassword({
-      token: window.location.search.split("=")[1],
-      password,
-      confirmPassword,
-    })
-    .then(() => {
-      window.location.href = "/login";
-    })
-    .catch((err) => {
-      enqueueSnackbar(err.response.data.message, { variant: "error" });
-    })
-    .finally(() => {
-      setIsResetting(false); // Set reset password status back to false
-    });
+      .ResetPassword({
+        token: window.location.search.split("=")[1],
+        password,
+        confirmPassword,
+      })
+      .then(() => {
+        window.location.href = "/login";
+      })
+      .catch((err) => {
+        enqueueSnackbar(err.response.data.message, { variant: "error" });
+      })
+      .finally(() => {
+        setIsResetting(false); // Set reset password status back to false
+      });
   };
 
   return (
@@ -70,40 +74,52 @@ function ResetPassword() {
             <h1 className="information py-2">Forgot password</h1>
             <div className="col-sm-12 col-md-12 col-lg-9 d-flex flex-column gap-3">
               <div className="row">
-                <div className="col-sm-12">
-                  <div className="form-group">
-                    <div className="input-group">
-                      <input
-                        className="form-control"
-                        type="password"
-                        placeholder="password"
-                        id="password"
-                        value={password.value}
-                        onChange={(e) => {
-                          handlePasswordChange(e);
-                        }}
-                        required
-                      />
-                    </div>
+                <div className="col-sm-12 form-group">
+                  <div className="position-relative d-flex">
+                    <input
+                      className="form-control"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      id="password"
+                      value={password.value}
+                      onChange={(e) => {
+                        handlePasswordChange(e);
+                      }}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-toggle-password position-absolute"
+                      style={{ right: "10px", border: "0" }}
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                    </button>
                   </div>
                 </div>
               </div>
               <div className="row">
-                <div className="col-sm-12">
-                  <div className="form-group">
-                    <div className="input-group">
-                      <input
-                        className="form-control"
-                        type="password"
-                        placeholder="Confirm password"
-                        id="confirm-password"
-                        value={confirmPassword.value}
-                        onChange={(e) => {
-                          handleConfirmPasswordChange(e);
-                        }}
-                        required
-                      />
-                    </div>
+                <div className="form-group col-sm-12">
+                  <div className="position-relative d-flex">
+                    <input
+                      className="form-control"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm Password"
+                      id="confirm-password"
+                      value={confirmPassword.value}
+                      onChange={(e) => {
+                        handleConfirmPasswordChange(e);
+                      }}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-toggle-password position-absolute"
+                      style={{ right: "10px", border: "0" }}
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      <FontAwesomeIcon icon={showConfirmPassword ? faEye : faEyeSlash} />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -112,10 +128,10 @@ function ResetPassword() {
                   className="col-auto px-4 btn btn-secondary btn-block confirm-button"
                   disabled={isResetting} // Disable button while resetting password
                 >
-                  {isResetting ? <Spinner animation="border" size="sm" /> : "Reset password"}
+                  {isResetting ? <Spinner animation="border" size="sm" /> : "Reset Password"}
                 </button>
                 <a href="/login" className="terms col-6">
-                  back log in
+                  Back log in
                 </a>
               </div>
             </div>
