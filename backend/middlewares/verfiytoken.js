@@ -6,7 +6,7 @@ const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(400).send("Authorization failed");
+    throw new Error("Authorization failed");
   }
 
   const token = authHeader.split(" ")[1];

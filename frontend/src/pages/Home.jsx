@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
 import Card from "./Card";
 import * as api from "../api/index";
 import { useSelector } from "react-redux";
@@ -31,10 +31,7 @@ const Home = () => {
       <div className="d-flex flex-row flex-wrap align-items-stretch justify-content-center gap-5 m-5 w-auto">
         {isFetching ? (
           <div className=" text-center w-100 mt-5">
-            <div
-              className="spinner-border text-primary opacity-25"
-              role="status"
-            >
+            <div className="spinner-border text-primary opacity-25" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>

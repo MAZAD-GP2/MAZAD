@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ImageSlider from "./ImageSlider";
+import ImageSlider from "../components/ImageSlider";
 import * as api from "../api/index";
 import "../assets/css/viewItem.css";
 import { useParams } from "react-router-dom";

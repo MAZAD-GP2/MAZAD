@@ -1,33 +1,33 @@
 import React, { useEffect, useState } from "react";
-import ImageSlider from "./ImageSlider";
+import ImageSlider from "../components/ImageSlider";
 import * as api from "../api/index";
 import "../assets/css/viewItem2.css";
 import { useParams } from "react-router-dom";
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
+import { useSnackbar } from "notistack";
 
 const ViewItem = () => {
   const { id } = useParams();
   const [item, setItem] = useState(null);
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { enqueueSnackbar } = useSnackbar();
+  const user = JSON.parse(sessionStorage.getItem("user"));
 
   useEffect(() => {
     const fetchItem = async () => {
       try {
         const response = await api.getItemById(id);
         setItem(response.data);
-        // Fetch user data associated with the item's userId
-        const userResponse = await api.getUserById(response.data.userId);
-        setUser(userResponse.data);
         setLoading(false);
       } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
     fetchItem();
-  }, [id]);
+  }, []);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -35,6 +35,20 @@ const ViewItem = () => {
 
   if (error) {
     return <p>Error: {error}</p>;
+  }
+
+  async function DeleteItem() {
+    await api
+      .deleteItem(id)
+      .then((result) => {
+        enqueueSnackbar("Item deleted successfully", { variant: "success" });
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
+      })
+      .catch((error) => {
+        enqueueSnackbar(error, { variant: "error" });
+      });
   }
 
   return (
@@ -56,9 +70,7 @@ const ViewItem = () => {
                   id="auctioneer-name"
                   className="row w-100 d-flex flex-row justify-content-between align-items-center"
                 >
-                  <div className="row">
-                    {user && <p>By {user.username}</p>}
-                  </div>
+                  <div className="row">{item.User && <p>By {item.User.username}</p>}</div>
                   <div className="d-flex flex-column col-auto">
                     <span className="d-flex gap-2">
                       <p className="tag" style={{ borderColor: "#00E175" }}>
@@ -73,16 +85,23 @@ const ViewItem = () => {
                   </div>
                 </div>
                 <div className="row d-flex flex-column w-100 p-3">
-                    <h5>Details</h5>
+                  <h5>Details</h5>
                   <div className="border-start border-3 border-secondary p-3 bg-body">
-                    <p
-                      id="desc"
-                      dangerouslySetInnerHTML={{ __html: item.description }}
-                    ></p>
+                    <p id="desc" dangerouslySetInnerHTML={{ __html: item.description }}></p>
                   </div>
                 </div>
               </div>
             </div>
+            {user.isAdmin && (
+              <button
+                type="button"
+                className="btn btn-danger"
+                style={{ width: "12%", height: "35px" }}
+                onClick={DeleteItem}
+              >
+                Delete
+              </button>
+            )}
           </div>
           <div className="d-flex flex-row col-lg-6 col-sm-12  shadow p-3 mb-5 bg-body rounded">
             <div className="comments d-flex flex-row">

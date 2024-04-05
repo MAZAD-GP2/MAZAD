@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Spinner } from "react-bootstrap";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import Navbar from "./Navbar";
-import SideProfile from "./SideProfile";
+import Navbar from "../components/Navbar";
+import SideProfile from "../components/SideProfile";
 import { useSnackbar } from "notistack";
 import * as api from "../api/index";
 import "bootstrap";
@@ -253,7 +253,7 @@ const EditProfile = () => {
       <Navbar />
       {user && (
         <div className="d-flex">
-          <SideProfile user={user} isCurrentUser={isCurrentUser}/>
+          <SideProfile user={user} isCurrentUser={isCurrentUser} />
           <div className="user-history-container">
             <h2 className="py-2">Edit Profile</h2>
             <form

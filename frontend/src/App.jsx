@@ -18,23 +18,26 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(async() => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    if (user) {
-      await api
-        .decodeToken()
-        .then((result) => {
-          setIsLoggedIn(true);
-          result.data.isAdmin ? setIsAdmin(true) : setIsAdmin(false);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      sessionStorage.clear();
-      setIsLoggedIn(false);
-      setIsAdmin(false);
-    }
+  useEffect(() => {
+    const decodeToken = async () => {
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      if (user) {
+        await api
+          .decodeToken()
+          .then((result) => {
+            setIsLoggedIn(true);
+            result.data.isAdmin ? setIsAdmin(true) : setIsAdmin(false);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        sessionStorage.clear();
+        setIsLoggedIn(false);
+        setIsAdmin(false);
+      }
+    };
+    decodeToken();
   }, []);
 
   return (
@@ -48,7 +51,7 @@ function App() {
         {isLoggedIn && <Route path="/profile" element={<Profile />} />}
         {!isLoggedIn && <Route exact path="/profile" element={<Login />} />}
         <Route exact path="/profile/:id" element={<Profile />} />
-        
+
         {!isLoggedIn && <Route path="/edit-profile" element={<Login />} />}
         {isLoggedIn && <Route path="/edit-profile" element={<EditProfile />} />}
 
@@ -56,14 +59,10 @@ function App() {
         {!isLoggedIn && <Route exact path="/login" element={<Login />} />}
 
         {isLoggedIn && <Route path="/forgot-password" element={<Home />} />}
-        {!isLoggedIn && (
-          <Route exact path="/forgot-password" element={<ForgotPassword />} />
-        )}
+        {!isLoggedIn && <Route exact path="/forgot-password" element={<ForgotPassword />} />}
 
         {isLoggedIn && <Route path="/reset-password" element={<Home />} />}
-        {!isLoggedIn && (
-          <Route exact path="/reset-password" element={<ResetPassword />} />
-        )}
+        {!isLoggedIn && <Route exact path="/reset-password" element={<ResetPassword />} />}
 
         {isLoggedIn && <Route path="/add-item" element={<AddItem />} />}
         {!isLoggedIn && <Route exact path="/add-item" element={<Login />} />}
@@ -71,7 +70,6 @@ function App() {
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
         <Route exact path="/item/:id" element={<ViewItem />} />
       </Routes>
-
     </>
   );
 }

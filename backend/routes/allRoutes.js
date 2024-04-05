@@ -6,7 +6,11 @@ const categoryRoutes = require("./categoryRoutes");
 const authRoutes = require("./authRoutes");
 const verifyToken = require("../middlewares/verfiytoken");
 const checkAdmin = require("../middlewares/checkAdmin");
-const { validateUserCreation, validateUserUpdate, validatePasswordUpdate } = require("../utils/validators/userValidator");
+const {
+  validateUserCreation,
+  validateUserUpdate,
+  validatePasswordUpdate,
+} = require("../utils/validators/userValidator");
 const { validateItemCreation } = require("../utils/validators/itemValidator");
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -31,11 +35,12 @@ router.route("/user/password-update").put(verifyToken, validatePasswordUpdate, u
 router.route("/user/delete/:id").delete(verifyToken, checkAdmin, userRoutes.deleteUser);
 
 // item
+router.route("/item").get(itemRoutes.getAllItems);
+router.route("/item/user").get(verifyToken, itemRoutes.getAllItemsByUserId);
 router.route("/item/:id").get(itemRoutes.getItemById);
 router.route("/item/create").post(upload, verifyToken, validateItemCreation, itemRoutes.createItem);
-router.route("/item/user").get(verifyToken, itemRoutes.getAllItemsByUserId);
-router.route("/item").get(itemRoutes.getAllItems);
 router.route("/item/category/:id").get(itemRoutes.getAllItemsByCategory);
+router.route("/item/delete/:id").delete(verifyToken, checkAdmin, itemRoutes.deleteItem);
 
 router.route("/category").get(categoryRoutes.getAllCategories);
 router.route("/category/create").post(categoryRoutes.createCategory);

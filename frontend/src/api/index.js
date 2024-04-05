@@ -34,5 +34,6 @@ export const addItem = (data) =>
       "Content-Type": "multipart/form-data",
     },
   });
+export const deleteItem = (id) => API.delete(`/item/delete/${id}`);
 
 export const decodeToken = () => API.post(`/decode-token`);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
 import Card from "./Card";
 import * as api from "../api/index";
 import { useDispatch, useSelector } from "react-redux";

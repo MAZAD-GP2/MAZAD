@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "../assets/css/profile.css";
-import Navbar from "./Navbar";
-import SideProfile from "./SideProfile";
+import Navbar from "../components/Navbar";
+import SideProfile from "../components/SideProfile";
 import * as api from "../api/index";
 import { useParams } from "react-router-dom";
+import RecentItems from "../components/RecentItems";
 
 const Profile = () => {
   const { id } = useParams();
@@ -40,32 +41,14 @@ const Profile = () => {
     };
   }, [id, userData]);
 
-
   return (
     <>
       <Navbar />
       {user && (
         <div className="d-flex">
-          <SideProfile user={user} isCurrentUser={isCurrentUser}/>
+          <SideProfile user={user} isCurrentUser={isCurrentUser} />
           <div className="user-history-container">
-            <h3>Recent Auctions</h3>
-            <div className="user-history">
-              <div className="item-container">
-                <p className="item-name">Item Name</p>
-                <p className="bid-info">Highest Bid: $100</p>
-                <p className="duration">Duration: 3 days left</p>
-              </div>
-              <div className="item-container">
-                <p className="item-name">Item Name</p>
-                <p className="bid-info">Highest Bid: $100</p>
-                <p className="duration">Duration: 3 days left</p>
-              </div>
-              <div className="item-container">
-                <p className="item-name">Item Name</p>
-                <p className="bid-info">Highest Bid: $100</p>
-                <p className="duration">Duration: 3 days left</p>
-              </div>
-            </div>
+            <RecentItems />
             <h3>Bid History</h3>
             <div className="user-history">
               <div className="item-container">

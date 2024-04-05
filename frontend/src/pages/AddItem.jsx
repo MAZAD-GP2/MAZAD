@@ -1,4 +1,4 @@
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
 import "../assets/css/addItem.css";
 import { React, useEffect, useState, useCallback } from "react";
 import * as api from "../api/index";
@@ -22,7 +22,7 @@ const AddItem = () => {
   const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [isAddingItem, setIsAddingItem] = useState(false);
-  
+
   const { quill, quillRef } = useQuill({
     theme: "snow",
     placeholder: "Enter description here...",
@@ -136,7 +136,7 @@ const AddItem = () => {
       });
 
       try {
-        setIsAddingItem(true)
+        setIsAddingItem(true);
         // Send the FormData object using Axios
         const response = await api.addItem(formData);
         // Handle the response as needed

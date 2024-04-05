@@ -12,7 +12,6 @@ const Navbar = () => {
   const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [show, setShow] = useState(false);
-  const isAdmin = useSelector((state) => state.auth.isAdmin);
   const user = JSON.parse(sessionStorage.getItem("user"));
   const location = useLocation();
 
@@ -71,7 +70,7 @@ const Navbar = () => {
                   <a href="/profile" role="button" className={`${user.profilePicture ? "" : "profile-redirect"}`} style={{fontSize: "25px"}}>
                      {user.profilePicture ? 
                       <img src={user.profilePicture}
-                           width={"40px"} style={{borderRadius:"100px"}}></img> : 
+                          width={"40px"} style={{borderRadius:"100px"}}></img> : 
                       <FontAwesomeIcon icon="fa-regular fa-user"/>}
                   </a>
                   </div>

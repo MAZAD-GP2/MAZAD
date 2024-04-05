@@ -8,9 +8,10 @@ const Image = require("../models/Image");
 const Item_tag = require("../models/Item_tag");
 const cloudinary = require("../config/cloudinaryConfig");
 const sanitizeHtml = require("sanitize-html");
+const User = require("../models/User");
+const { where } = require("sequelize");
 
-const QuillDeltaToHtmlConverter =
-  require("quill-delta-to-html").QuillDeltaToHtmlConverter;
+const QuillDeltaToHtmlConverter = require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 
 module.exports.createItem = async (req, res) => {
   const t = await sequelize.transaction();
@@ -29,11 +30,7 @@ module.exports.createItem = async (req, res) => {
 
     let htmlDescription = converter.convert();
     description = sanitizeHtml(htmlDescription, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-        "b",
-        "strong",
-        "i",
-      ]),
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["b", "strong", "i"]),
       allowedAttributes: {
         "*": ["style"],
       },
@@ -70,9 +67,7 @@ module.exports.createItem = async (req, res) => {
       { transaction: t }
     );
 
-    const tagOps = tags.map((tag) =>
-      Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t })
-    );
+    const tagOps = tags.map((tag) => Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t }));
     const createdTags = await Promise.all(tagOps);
 
     await Item_tag.bulkCreate(
@@ -85,10 +80,10 @@ module.exports.createItem = async (req, res) => {
 
     await t.commit();
 
-    res.send(item);
+    return res.send(item);
   } catch (err) {
     await t.rollback();
-    res.status(500).send({ err: err.message });
+    return res.status(500).send({ err: err.message });
   }
 };
 
@@ -96,6 +91,7 @@ module.exports.getItemById = async (req, res) => {
   try {
     const item = await Item.findByPk(req.params.id, {
       include: [
+        User,
         Category,
         {
           model: Tag,
@@ -113,25 +109,25 @@ module.exports.getItemById = async (req, res) => {
   }
 };
 
-module.exports.getAllItemsByUserId = async (req, res) => {
-  try {
-    const userId = req.currentUser;
-    let items = await Item.findAll({
-      where: {
-        userId,
-      },
-    });
-    // const items=await User.findAll({include: [Item]})
-    // const items=await Item.findAll({include: [User]})
+// module.exports.getAllItemsByUserId = async (req, res) => {
+//   try {
+//     const userId = req.currentUser;
+//     let items = await Item.findAll({
+//       where: {
+//         userId,
+//       },
+//     });
+//     // const items=await User.findAll({include: [Item]})
+//     // const items=await Item.findAll({include: [User]})
 
-    //new items appear first
-    items=items.reverse()
+//     //new items appear first
+//     items = items.reverse();
 
-    res.send(items);
-  } catch (er) {
-    res.send(er);
-  }
-};
+//     return res.send(items);
+//   } catch (er) {
+//     return res.send(er);
+//   }
+// };
 
 module.exports.getAllItemsByCategory = async (req, res) => {
   try {
@@ -146,14 +142,12 @@ module.exports.getAllItemsByCategory = async (req, res) => {
         },
         Image,
       ],
+      order: [["id", "DESC"]],
     });
 
-    //new items appear first
-    items=items.reverse()
-    
-    res.send(items);
+    return res.send(items);
   } catch (er) {
-    res.send(er);
+    return res.send(er);
   }
 };
 
@@ -168,13 +162,40 @@ module.exports.getAllItems = async (req, res) => {
         },
         Image,
       ],
+      order: [["id", "DESC"]],
     });
-    
-    //new items appear first
-    items=items.reverse()
 
-    res.send(items);
+    return res.send(items);
   } catch (er) {
-    res.send(er);
+    return res.send(er);
+  }
+};
+
+module.exports.getAllItemsByUserId = async (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const limit = 3;
+    const skip = (page - 1) * limit;
+    const items = await Item.findAndCountAll({
+      where: {
+        userId: req.currentUser.id,
+      },
+      offset: skip,
+      limit: limit,
+      order: [["id", "DESC"]],
+    });
+    return res.send(items);
+  } catch (err) {
+    return res.send(err);
+  }
+};
+
+module.exports.deleteItem = async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    await Item.destroy({ where: { id: itemId } });
+    return res.send("successfully");
+  } catch (err) {
+    return res.send(err);
   }
 };
