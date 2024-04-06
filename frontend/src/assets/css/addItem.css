@@ -11,7 +11,7 @@
 
 .submit-button {
   border-radius: 5%;
-  margin-top: 70px;
+  width: fit-content;
   border: 1px transparent;
   width: 20%;
   padding: 10px;

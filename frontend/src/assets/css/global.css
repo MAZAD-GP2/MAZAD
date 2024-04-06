@@ -13,10 +13,30 @@
 
 body {
   font-family: "Poppins", sans-serif;
-  background-color: #EFEFEF;
+  background-color: #efefef;
 }
 
 .link {
   text-decoration: none;
   transition: color 0.3s;
+}
+
+/* mobile */
+@media (max-width: 720px) {
+  #mobile-navbar {
+    display: flex;
+  }
+  #desktopNavbar {
+    display: none;
+  }
+  
+}
+
+@media (min-width: 721px) {
+  #mobile-navbar {
+    display: none;
+  }
+  #desktopNavbar {
+    display: flex;
+  }
 }

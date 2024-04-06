@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../assets/css/profile.css";
 import Navbar from "../components/Navbar";
+import MobileNavbar from "../components/MobileNavbar";
+
 import SideProfile from "../components/SideProfile";
 import * as api from "../api/index";
 import { useParams } from "react-router-dom";
@@ -70,6 +72,7 @@ const Profile = () => {
           </div>
         </div>
       )}
+      <MobileNavbar />
     </>
   );
 };

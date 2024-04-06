@@ -1,0 +1,94 @@
+body {
+  margin-bottom: 80px;
+}
+
+#mobile-navbar {
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary-light);
+
+  color: white;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+}
+
+#navbar {
+  z-index: 999;
+}
+
+#mobile-navbar.mobile-nav-item svg {
+  font-size: 4.5vw;
+}
+#mobile-navbar.mobile-nav-item .small {
+  font-size: 3vw;
+  color: var(--muted-light);
+}
+
+.mobile-nav-item {
+  display: inline-block;
+  width: 10rem;
+  box-sizing: border-box;
+}
+
+.mobile-nav-item.active,
+.mobile-nav-item.active a {
+  color: var(--secondary-light);
+}
+
+.mobile-nav-item {
+  border-bottom: 4px solid transparent;
+}
+
+.mobile-nav-item span,
+.mobile-nav-item a {
+  text-decoration: none;
+  color: white;
+}
+.mobile-nav-item:hover {
+  & span {
+    color: var(--secondary-light);
+  }
+  cursor: pointer;
+}
+.mobile-nav-item a:hover {
+  color: var(--secondary-light);
+}
+
+.mobile-nav-options {
+  position: absolute;
+  bottom: 0%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #262626;
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(100%);
+  z-index: 998;
+}
+
+.mobile-nav-options.show {
+  transform: translateY(-100%); /* Slide up from below the navbar */
+}
+
+#mobile-navbar .overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  animation: fadeInOut 0.3s forwards; /* Use fadeInOut animation */
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}

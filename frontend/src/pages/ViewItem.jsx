@@ -3,6 +3,10 @@ import ImageSlider from "../components/ImageSlider";
 import * as api from "../api/index";
 import "../assets/css/viewItem.css";
 import { useParams } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import MobileNavbar from "../components/MobileNavbar";
+
+import PageTitle from "../components/PageTitle";
 
 const ViewItem = () => {
   const { id } = useParams();
@@ -38,82 +42,63 @@ const ViewItem = () => {
 
   return (
     <>
+      {/* if user is on desktop, show Navbar else show MobileNavbar */}
+
+      <Navbar />
+      <PageTitle title="Auction" />
       {item && (
-        <div className="d-flex flex-column gap-5">
-          <div className="image-details">
-            <ImageSlider images={item.Images} />
-            <div
-              className="details d-flex flex-column"
-              style={{ width: "90%", margin: "0 auto" }}
-            >
-              <h5 style={{ fontSize: "80px", textAlign: "center" }}>
-                {item.name}
-              </h5>
-              {user && (
-                <h5 style={{ textAlign: "center" }}>By {user.username}</h5>
-              )}
-              <br />
-              <br />
-              <br />
-              <br />
-              <div className="d-flex flex-row justify-content-around ">
-                <div
-                  style={{
-                    background: "#999494",
-                    padding: "5px 30px",
-                    borderRadius: "5px",
-                    boxShadow: "0 3px 6px rgba(0, 0, 0, 0.2)" 
-                  }}
-                >
-                  <h5>Auction duration</h5>
-                  <p style={{ color: "#00E175" }}>Start time - End time</p>
+        <div
+          className="d-flex flex-column flex-lg-row gap-1 column-gap-3 w-100"
+          id="view-item-container"
+        >
+          <div className="image-details col-12 col-lg-6 shadow p-3 mb-5 bg-body rounded">
+            <div className="d-flex flex-column justify-content-center align-items-center gap-3 w-100">
+              <div className="w-100">
+                <ImageSlider images={item.Images} />
+              </div>
+              <div className="details w-100 d-flex flex-column justify-content-start align-items-start gap-3">
+                <div className="row">
+                  <h3>{item.name}</h3>
                 </div>
                 <div
-                  style={{
-                    background: "#999494",
-                    padding: "5px 30px",
-                    borderRadius: "5px",
-                    boxShadow: "0 3px 6px rgba(0, 0, 0, 0.2)" 
-                  }}
+                  id="auctioneer-name"
+                  className="row w-100 d-flex flex-row justify-content-between align-items-center"
                 >
-                  <h5>Highest Bid</h5>
-                  <h6 style={{ color: "#00E175"}}>50$</h6>
+                  <div className="row">{user && <p>By {user.username}</p>}</div>
+                  <div className="d-flex flex-column col-auto">
+                    <span className="d-flex flex-wrap gap-2">
+                      <p className="tag" style={{ borderColor: "#00E175" }}>
+                        {item.Category.name}
+                      </p>
+                      {item.Tags.map((tag, idx) => (
+                        <p className="tag" key={idx}>
+                          {tag.name}
+                        </p>
+                      ))}
+                    </span>
+                  </div>
+                </div>
+                <div className="row d-flex flex-column w-100 p-3">
+                  <h5>Details</h5>
+                  <div className="border-start border-3 border-secondary p-3 bg-body">
+                    <p
+                      id="desc"
+                      dangerouslySetInnerHTML={{ __html: item.description }}
+                    ></p>
+                  </div>
                 </div>
               </div>
-              <br />
-              <br />
-              <br />
-              <br />
-              <button className="submit-button btn btn-secondary align-self-center">
-                Place a Bid
-              </button>
             </div>
           </div>
-          <div className="categories-tags d-flex flex-row">
-            <div className="d-flex flex-column w-50">
-              <h3>Description</h3>
-              <p id="desc">{item.description}</p>
+          <div className="d-flex flex-column col-lg-6 col-sm-12 shadow p-3 mb-5 bg-body rounded">
+            <div className="comments d-flex flex-row">
+              <h3>Activity</h3>
             </div>
-            <div className="d-flex flex-column ">
-              <h3>Categories & tags</h3>
-              <br />
-              <span className="d-flex gap-2">
-                <p className="tag" style={{ borderColor: "#00E175" }}>
-                  {item.Category.name}
-                </p>
-                {item.Tags.map((tag, idx) => (
-                  <p className="tag" key={idx}>
-                    {tag.name}
-                  </p>
-                ))}
-              </span>
-            </div>
-          </div>
-          <div className="comments d-flex flex-row">
-            <h3>Comments</h3>
           </div>
         </div>
       )}
+
+      <MobileNavbar />
     </>
   );
 };

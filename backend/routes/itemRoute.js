@@ -11,13 +11,39 @@ const sanitizeHtml = require("sanitize-html");
 const User = require("../models/User");
 const { where } = require("sequelize");
 
-const QuillDeltaToHtmlConverter = require("quill-delta-to-html").QuillDeltaToHtmlConverter;
+const QuillDeltaToHtmlConverter =
+  require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 
 module.exports.createItem = async (req, res) => {
   const t = await sequelize.transaction();
   try {
-    let { name, description, startDate, endDate, tags, categoryId } = req.body;
+    let { name, description, startDate, endDate, tags, price, categoryId } =
+      req.body;
+    tags = tags.split(",").filter((tag) => tag.trim() !== "");
+    price = parseFloat(price);
+    if (!name || !description || !startDate || !endDate || !tags || !price) {
+      return res.status(400).send({ message: "All fields are required" });
+    }
+    if (new Date(startDate) < new Date()) {
+      return res.status(400).send({ message: "Start date must be in the future" });
+    }
+    if (new Date(endDate) < new Date(startDate)) {
+      return res.status(400).send({ message: "End date must be after start date" });
+    }
+    if (tags.length > 3) {
+      return res.status(400).send("Maximum 3 tags allowed");
+    }
+    if (price < 0 && isNaN(price)) {
+      return res.status(400).send("Price must be a positive number");
+    }
+
     const images = req.files;
+    if (images.length < 1) {
+      return res.status(400).send("At least one image is required");
+    }
+    if (images.length > 10) {
+      return res.status(400).send("Maximum 10 images allowed");
+    }
     const userId = req.currentUser.id;
 
     var deltaOps = JSON.parse(description);
@@ -26,11 +52,20 @@ module.exports.createItem = async (req, res) => {
     if (descriptionText.length > 1000) {
       return res.status(400).send("Description is too long");
     }
-    var converter = new QuillDeltaToHtmlConverter(deltaOps, {});
+    var converter = new QuillDeltaToHtmlConverter(deltaOps);
 
     let htmlDescription = converter.convert();
+
+    if (description.replace(/<[^>]*>?/gm, "").trim() === "") {
+      return res.status(400).send("Description cannot be empty");
+    }
+
     description = sanitizeHtml(htmlDescription, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["b", "strong", "i"]),
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+        "b",
+        "strong",
+        "i",
+      ]),
       allowedAttributes: {
         "*": ["style"],
       },
@@ -38,7 +73,7 @@ module.exports.createItem = async (req, res) => {
 
     description = description.replace(/<br\s*\/?>\s*(<br\s*\/?>)+/g, "<br/>");
 
-    tags = tags.split(",").filter((tag) => tag.trim() !== "");
+    // remove all tags and check if it is empty
 
     const item = await Item.create(
       {
@@ -50,7 +85,15 @@ module.exports.createItem = async (req, res) => {
       { transaction: t }
     );
 
-    Auction.create({ startTime: startDate, finishTime: endDate, itemId: item.id }, { transaction: t });
+    Auction.create(
+      {
+        startTime: startDate,
+        finishTime: endDate,
+        highestBid: price,
+        itemId: item.id,
+      },
+      { transaction: t }
+    );
 
     const imageURLs = await Promise.all(
       images.map(async (image) => {
@@ -67,7 +110,9 @@ module.exports.createItem = async (req, res) => {
       { transaction: t }
     );
 
-    const tagOps = tags.map((tag) => Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t }));
+    const tagOps = tags.map((tag) =>
+      Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t })
+    );
     const createdTags = await Promise.all(tagOps);
 
     await Item_tag.bulkCreate(
@@ -83,7 +128,7 @@ module.exports.createItem = async (req, res) => {
     return res.send(item);
   } catch (err) {
     await t.rollback();
-    return res.status(500).send({ err: err.message });
+    return res.status(500).send({ message: err.message });
   }
 };
 
@@ -145,7 +190,10 @@ module.exports.getAllItemsByCategory = async (req, res) => {
       order: [["id", "DESC"]],
     });
 
-    return res.send(items);
+    //new items appear first
+    items = items.reverse();
+
+    res.send(items);
   } catch (er) {
     return res.send(er);
   }
@@ -165,7 +213,10 @@ module.exports.getAllItems = async (req, res) => {
       order: [["id", "DESC"]],
     });
 
-    return res.send(items);
+    //new items appear first
+    items = items.reverse();
+
+    res.send(items);
   } catch (er) {
     return res.send(er);
   }

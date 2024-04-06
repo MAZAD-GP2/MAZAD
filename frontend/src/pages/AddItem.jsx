@@ -1,4 +1,7 @@
 import Navbar from "../components/Navbar";
+import MobileNavbar from "../components/MobileNavbar";
+import PageTitle from "../components/PageTitle";
+
 import "../assets/css/addItem.css";
 import { React, useEffect, useState, useCallback } from "react";
 import * as api from "../api/index";
@@ -13,8 +16,7 @@ import "react-date-range/dist/theme/default.css";
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 
-import ItemDateRange from "../components/ItemDateRange";
-import Tag from "./Tag";
+import Tag from "../components/Tag";
 
 const AddItem = () => {
   const [description, setDescription] = useState([]);
@@ -22,6 +24,19 @@ const AddItem = () => {
   const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [isAddingItem, setIsAddingItem] = useState(false);
+  const [price, setPrice] = useState(0);
+  const [tags, setTags] = useState([]);
+  const [name, setName] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [submitValid, setSubmitValid] = useState(true);
+  const [droppedFiles, setDroppedFiles] = useState([]);
+  const [calendarState, setCalendarState] = useState({
+    selection: {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  });
 
   const { quill, quillRef } = useQuill({
     theme: "snow",
@@ -37,7 +52,7 @@ const AddItem = () => {
     },
   });
 
-  const handleDescriptionChange = useCallback((content, delta, source, editor) => {
+  const handleDescriptionChange = useCallback((content, delta, source) => {
     let limit = 1000;
 
     if (delta.ops[0].retain + 1 > limit) {
@@ -47,19 +62,13 @@ const AddItem = () => {
       });
       return;
     }
-    setDescription(delta.ops);
+    // setDescription(delta.ops);
   }, []);
 
   useEffect(() => {
     if (quillInitialized) {
       quill.on("text-change", handleDescriptionChange);
     }
-
-    return () => {
-      if (quillInitialized) {
-        quill.off("text-change", handleDescriptionChange);
-      }
-    };
   }, [quillInitialized, handleDescriptionChange]);
 
   useEffect(() => {
@@ -69,9 +78,6 @@ const AddItem = () => {
   }, [quill, quillInitialized]);
 
   const { enqueueSnackbar } = useSnackbar();
-
-  const [tags, setTags] = useState([]);
-  const [name, setName] = useState("");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -88,35 +94,39 @@ const AddItem = () => {
     fetchCategories();
   }, []);
 
-  const [selectedCategory, setSelectedCategory] = useState(null);
-
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
   };
 
-  const [submitValid, setSubmitValid] = useState(true);
-  const [droppedFiles, setDroppedFiles] = useState([]);
-  // const [file, setFiles] = useState([]);
-
-  const [dropdownToggled, setDropdownToggled] = useState(false);
-
-  const handleItemChange = (event) => {
+  const handleTitleChange = (event) => {
     setName(event.target.value);
   };
 
+  const handlePriceChange = (event) => {
+    if (event.target.value < 0 && event.target.value !== "") {
+      setPrice(0);
+      return;
+    }
+    setPrice(event.target.value);
+  };
   const handleSubmit = async () => {
     // trigger change on the quill editor by adding a new line, to insure its got the last letter, fk om el_handling :)
-    quill.insertText(quill.getLength(), "\n");
-    quill.deleteText(quill.getLength() - 1, 1);
+    let desc_text = quill.getText();
+    if (desc_text.trim() === "") {
+      setSubmitValid(false);
+      return;
+    }
 
+    let desc = JSON.stringify(quill.getContents().ops);
     if (
       !name ||
-      !description ||
+      !desc.length ||
       !calendarState ||
       !calendarState.selection.startDate ||
       !calendarState.selection.endDate ||
       !selectedCategory ||
-      !droppedFiles.length
+      !droppedFiles.length ||
+      !price
     ) {
       setSubmitValid(false);
     } else {
@@ -125,11 +135,12 @@ const AddItem = () => {
       // Create a FormData object
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("description", JSON.stringify(description));
+      formData.append("description", desc);
       formData.append("startDate", calendarState.selection.startDate);
       formData.append("endDate", calendarState.selection.endDate);
       formData.append("categoryId", selectedCategory.id);
       formData.append("tags", tags);
+      formData.append("price", price);
 
       droppedFiles.forEach((file) => {
         formData.append("images", file);
@@ -151,18 +162,20 @@ const AddItem = () => {
         enqueueSnackbar(error.response.data.message, {
           variant: "error",
         });
+        // reenable the button
+        setIsAddingItem(false);
       }
     }
   };
 
   const handleUpload = (acceptedFiles) => {
-    acceptedFiles = acceptedFiles.slice(0, 5);
+    acceptedFiles = acceptedFiles.slice(0, 10);
     const formData = new FormData();
     let wenRay7 = false;
     setDroppedFiles((images) => {
       const newImages = [...images];
       acceptedFiles.forEach((file) => {
-        if (newImages.length >= 5) {
+        if (newImages.length >= 10) {
           wenRay7 = true;
           return;
         }
@@ -172,7 +185,7 @@ const AddItem = () => {
         }
       });
       if (wenRay7) {
-        enqueueSnackbar("ويييين رايح", { variant: "error" });
+        enqueueSnackbar("ويهيهييين رايح", { variant: "error" });
       }
       return newImages;
     });
@@ -186,13 +199,6 @@ const AddItem = () => {
     event.stopPropagation(); // Stop event propagation to prevent upload
     handleRemove(file);
   };
-  const [calendarState, setCalendarState] = useState({
-    selection: {
-      startDate: new Date(),
-      endDate: null,
-      key: "selection",
-    },
-  });
 
   const handleDateChange = (item) => {
     const selectedStartDate = item.selection.startDate;
@@ -230,10 +236,23 @@ const AddItem = () => {
     const { value } = e.target;
     const { selection } = calendarState;
     const newDate = new Date(selection[type]);
+    newDate.setHours(value.split(":")[0]);
+    newDate.setMinutes(value.split(":")[1]);
+    // if end date with the time is less than start date with the time, set the end date to be the same as the start date
+    if (type === "endDate" && newDate < selection.startDate) {
+      newDate.setHours(selection.startDate.getHours());
+      newDate.setMinutes(selection.startDate.getMinutes());
+
+      setCalendarState((prevState) => ({
+        ...prevState,
+        selection: {
+          ...prevState.selection,
+          endDate: newDate,
+        },
+      }));
+    }
 
     if (type === "startDate") {
-      newDate.setHours(value.split(":")[0]);
-      newDate.setMinutes(value.split(":")[1]);
       setCalendarState((prevState) => ({
         ...prevState,
         selection: {
@@ -242,8 +261,6 @@ const AddItem = () => {
         },
       }));
     } else if (type === "endDate") {
-      newDate.setHours(value.split(":")[0]);
-      newDate.setMinutes(value.split(":")[1]);
       setCalendarState((prevState) => ({
         ...prevState,
         selection: {
@@ -256,173 +273,264 @@ const AddItem = () => {
   return (
     <>
       <Navbar />
-      <div id="main" className="container mt-5 mb-5 p-3 shadow">
-        <div className="d-flex flex-column gap-3">
-          <div className="row p-2">
-            <h4>Item title</h4>
-            <input
-              type="text"
-              className="form-control w-lg-50 w-md-50 w-sm-100"
-              placeholder="Enter item name"
-              maxLength="255"
-              onChange={handleItemChange}
-            />
-            <small className="form-text text-muted">limited to 255</small>
-          </div>
-          <div id="image-details" className="d-flex flex-row justify-content-between w-100 mb-1">
-            <div className="d-flex flex-column justify-content-center align-items-center w-100">
-              <div className="w-100 position-relative">
-                <h4>Images</h4>
-                <Dropzone
-                  onDrop={handleUpload}
-                  accept={{
-                    "image/png": [".png"],
-                    "image/jpeg": [".jpeg"],
-                    "image/jpg": [".jpg"],
-                    "image/gif": [".gif"],
-                  }}
-                  minSize={1024}
-                  maxSize={6830020}
-                >
-                  {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject }) => {
-                    const additionalClass = isDragAccept ? "accept" : isDragReject ? "reject" : "";
+      <PageTitle title="Start a Mazad" />
+      <div className="p-3">
+        <div id="main" className="container p-3 shadow bg-white">
+          <div className="d-flex flex-column gap-3">
+            <div className="row p-2">
+              <h4>Auction title</h4>
+              <input
+                type="text"
+                className="form-control w-lg-50 w-md-50 w-sm-100"
+                placeholder="Enter auction name"
+                aria-label="Auction Title"
+                aria-describedby="basic-addon1"
+                maxLength="255"
+                onChange={handleTitleChange}
+              />
+              <small className="form-text text-muted">limited to 255</small>
+            </div>
+            <div
+              id="image-details"
+              className="d-flex flex-row justify-content-between w-100 mb-1"
+            >
+              <div className="d-flex flex-column justify-content-center align-items-center w-100">
+                <div className="w-100 position-relative">
+                  <h4>Images</h4>
+                  <Dropzone
+                    onDrop={handleUpload}
+                    accept={{
+                      "image/png": [".png"],
+                      "image/jpeg": [".jpeg"],
+                      "image/jpg": [".jpg"],
+                      "image/gif": [".gif"],
+                    }}
+                    minSize={1024}
+                    maxSize={6830020}
+                  >
+                    {({
+                      getRootProps,
+                      getInputProps,
+                      isDragActive,
+                      isDragAccept,
+                      isDragReject,
+                    }) => {
+                      const additionalClass = isDragAccept
+                        ? "accept"
+                        : isDragReject
+                        ? "reject"
+                        : "";
 
-                    return (
-                      <div
-                        {...getRootProps({
-                          className: `dropzone ${additionalClass}`,
-                        })}
-                      >
-                        <input {...getInputProps()} />
-                        <p>Drag & drop images, or click to select files</p>
-                        <div className="image-preview">
-                          {droppedFiles.map((file, index) => (
-                            <div key={file.name} className="image-container">
-                              <img src={URL.createObjectURL(file)} alt={file.name} />
-                              <button className="remove-button" onClick={handleRemoveClick(file)}>
-                                <i className="fa-solid fa-x fa-sm" style={{ color: "white" }}></i>
-                              </button>
-                            </div>
-                          ))}
+                      return (
+                        <div
+                          {...getRootProps({
+                            className: `dropzone ${additionalClass}`,
+                          })}
+                        >
+                          <input {...getInputProps()} />
+                          <p>Drag & drop images, or click to select files</p>
+                          <div className="image-preview">
+                            {droppedFiles.map((file, index) => (
+                              <div key={file.name} className="image-container">
+                                <img
+                                  src={URL.createObjectURL(file)}
+                                  alt={file.name}
+                                />
+                                <button
+                                  className="remove-button"
+                                  onClick={handleRemoveClick(file)}
+                                >
+                                  <i
+                                    className="fa-solid fa-x fa-sm"
+                                    style={{ color: "white" }}
+                                  ></i>
+                                </button>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  }}
-                </Dropzone>
-                <small className="form-text text-muted position-absolute">At least one, not more that five</small>
-              </div>
-              <small className="form-text text-muted"> {droppedFiles.length}/5 </small>
-            </div>
-          </div>
-          <div id="details" className="d-flex flex-column gap-3">
-            <div className="d-flex flex-row w-auto gap-3">
-              <div className="col-md-auto col-sm-12">
-                <DateRange
-                  editableDateInputs={true}
-                  onChange={handleDateChange}
-                  moveRangeOnFirstSelection={false}
-                  ranges={[calendarState.selection]}
-                  minDate={new Date()}
-                  color="#50B584"
-                  rangeColors={["#50B584"]}
-                />
-              </div>
-              <div className="col-md-auto col-sm-12 d-flex flex-row justify-content-between gap-3">
-                <div className="col-6">
-                  <label htmlFor="start-time" className="form-label">
-                    <b>On: </b>
-                    {calendarState.selection.startDate.toDateString()}
-                    <br />
-
-                    <b>At:</b>
-                  </label>
-                  <input
-                    type="time"
-                    className="form-control"
-                    id="start-time"
-                    name="start-time"
-                    value={
-                      calendarState.selection.startDate
-                        ? `${String(calendarState.selection.startDate.getHours()).padStart(2, "0")}:${String(
-                            calendarState.selection.startDate.getMinutes()
-                          ).padStart(2, "0")}`
-                        : ""
-                    }
-                    onChange={(e) => handleTimeChange(e, "startDate")}
-                    required
-                  />
+                      );
+                    }}
+                  </Dropzone>
+                  <small className="form-text text-muted position-absolute w-50 pe-3">
+                    At least one, not more that five
+                  </small>
                 </div>
-                <div className="col-6">
-                  <label htmlFor="end-time" className="form-label">
-                    <b>Until: </b>
-                    {calendarState.selection.endDate
-                      ? calendarState.selection.endDate.toDateString()
-                      : calendarState.selection.startDate.toDateString()}{" "}
-                    <br />
-                    <b>At:</b>
-                  </label>
-                  <input
-                    type="time"
-                    className="form-control"
-                    id="end-time"
-                    name="end-time"
-                    value={
-                      calendarState.selection.endDate
-                        ? `${String(calendarState.selection.endDate.getHours()).padStart(2, "0")}:${String(
-                            calendarState.selection.endDate.getMinutes()
-                          ).padStart(2, "0")}`
-                        : ""
-                    }
-                    onChange={(e) => handleTimeChange(e, "endDate")}
-                    required
-                  />
-                </div>
+                <small className="form-text text-muted">
+                  {" "}
+                  {droppedFiles.length}/10{" "}
+                </small>
               </div>
             </div>
-            <small className="text-muted">limited to 7 days</small>
+            <div id="details" className="d-flex flex-column gap-3">
+              <div className="row d-flex flex-row w-auto gap-3">
+                <div className="col-md-auto col-sm-12">
+                  <DateRange
+                    editableDateInputs={true}
+                    onChange={handleDateChange}
+                    moveRangeOnFirstSelection={false}
+                    ranges={[calendarState.selection]}
+                    minDate={new Date()}
+                    color="#50B584"
+                    rangeColors={["#50B584"]}
+                  />
+                </div>
+                <div
+                  className="col-lg-auto col-sm-12 d-flex flex-row justify-content-between gap-3"
+                  style={{ minWidth: "365px" }}
+                >
+                  <div className="col-6">
+                    <label htmlFor="start-time" className="form-label">
+                      <b>On: </b>
+                      {calendarState.selection.startDate.toDateString()}
+                      <br />
 
-            <div className="category-selector">
-              <h4>Category</h4>
-              <div className="row row-cols-auto">
-                {isFetching ? (
-                  <div className=" text-center w-100 mt-5">
-                    <div className="spinner-border text-primary opacity-25" role="status">
-                      <span className="visually-hidden">Loading...</span>
+                      <b>At:</b>
+                    </label>
+                    <input
+                      type="time"
+                      className="form-control"
+                      id="start-time"
+                      name="start-time"
+                      value={
+                        calendarState.selection.startDate
+                          ? `${String(
+                              calendarState.selection.startDate.getHours()
+                            ).padStart(2, "0")}:${String(
+                              calendarState.selection.startDate.getMinutes()
+                            ).padStart(2, "0")}`
+                          : ""
+                      }
+                      onChange={(e) => handleTimeChange(e, "startDate")}
+                      required
+                    />
+                  </div>
+                  <div className="col-6">
+                    <label htmlFor="end-time" className="form-label">
+                      <b>Until: </b>
+                      {calendarState.selection.endDate
+                        ? calendarState.selection.endDate.toDateString()
+                        : calendarState.selection.startDate.toDateString()}{" "}
+                      <br />
+                      <b>At:</b>
+                    </label>
+                    <input
+                      type="time"
+                      className="form-control"
+                      id="end-time"
+                      name="end-time"
+                      value={
+                        calendarState.selection.endDate
+                          ? `${String(
+                              calendarState.selection.endDate.getHours()
+                            ).padStart(2, "0")}:${String(
+                              calendarState.selection.endDate.getMinutes()
+                            ).padStart(2, "0")}`
+                          : ""
+                      }
+                      onChange={(e) => handleTimeChange(e, "endDate")}
+                      required
+                    />
+                  </div>
+                </div>
+                <small className="text-muted row ms-1">limited to 7 days</small>
+              </div>
+              <div className="category-selector">
+                <h4>Starting pricing</h4>
+                <div className="d-flex flex-column">
+                  <div className="d-flex flex-row gap-3">
+                    <div className="input-group">
+                      <span className="input-group-text" id="basic-addon1">
+                        JOD
+                      </span>
+                      <input
+                        type="number"
+                        className="form-control"
+                        placeholder="1"
+                        aria-label="Starting price"
+                        aria-describedby="basic-addon1"
+                        min="1"
+                        onChange={(e) => {
+                          handlePriceChange(e);
+                        }}
+                        value={price}
+                      />
                     </div>
                   </div>
-                ) : (
-                  categories.map((category) => (
-                    <div
-                      key={category.id}
-                      className={`col p-2 border rounded mx-1 px-2 ${
-                        selectedCategory && selectedCategory["id"] === category["id"] ? "selected" : ""
-                      }`}
-                      onClick={() => handleCategorySelect(category)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {category.name}
+                  <small className="form-text text-muted">
+                    Starting at 0 JOD
+                  </small>
+                </div>
+              </div>
+              <div className="category-selector">
+                <h4>Category</h4>
+                <div className="row row-cols-auto">
+                  {isFetching ? (
+                    <div className=" text-center w-100 mt-5">
+                      <div
+                        className="spinner-border text-primary opacity-25"
+                        role="status"
+                      >
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
                     </div>
-                  ))
-                )}
+                  ) : (
+                    categories &&
+                    categories.map((category) => (
+                      <div
+                        key={category.id}
+                        className={`col p-2 border rounded m-1 px-2 ${
+                          selectedCategory &&
+                          selectedCategory["id"] === category["id"]
+                            ? "selected"
+                            : ""
+                        }`}
+                        onClick={() => handleCategorySelect(category)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {category.name}
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
+              <Tag tags={tags} setTags={setTags} />
             </div>
-            <Tag tags={tags} setTags={setTags} />
-          </div>
 
-          <div id="desc-add">
-            <h4>Description</h4>
-            <div className="h-100 mb-3">
-              <div style={{ width: "100%", minHeight: "100px" }}>
-                <div ref={quillRef} />
+            <div id="desc-add">
+              <h4>Description</h4>
+              <div className="h-100 mb-1">
+                <div style={{ width: "100%", minHeight: "100px" }}>
+                  <div ref={quillRef} />
+                </div>
               </div>
             </div>
+            <div className="w-100 d-flex flex-row justify-content-center">
+              <button
+                className="submit-button btn btn-secondary w-auto"
+                disabled={isAddingItem}
+                onClick={handleSubmit}
+              >
+                Start Mazad
+                {isAddingItem && (
+                  <div
+                    className="spinner-border spinner-border-sm ms-2"
+                    role="status"
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                )}
+              </button>
+            </div>
+            {!submitValid && (
+              <p style={{ color: "red", fontSize: "15px" }}>
+                Fill in all input fields!
+              </p>
+            )}
           </div>
-          <button className="submit-button btn btn-secondary" disabled={isAddingItem} onClick={handleSubmit}>
-            Start Mazad
-          </button>
-          {!submitValid && <p style={{ color: "red", fontSize: "15px" }}>Fill in all input fields!</p>}
         </div>
       </div>
+      <MobileNavbar />
     </>
   );
 };

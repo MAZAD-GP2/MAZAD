@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Spinner } from "react-bootstrap";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import Navbar from "../components/Navbar";
+import MobileNavbar from "../components/MobileNavbar";
+
 import SideProfile from "../components/SideProfile";
 import { useSnackbar } from "notistack";
 import * as api from "../api/index";
@@ -441,7 +443,8 @@ const EditProfile = () => {
             </form>
           </div>
         </div>
-      )}
+)}
+<MobileNavbar />
     </>
   );
 };

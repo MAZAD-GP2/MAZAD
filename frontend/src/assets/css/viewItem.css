@@ -1,50 +1,29 @@
-.image-details {
-    background-color: #F2EDED;
-    margin: 0;
-    padding: 50px;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-}
-
-.details {
-    text-align: center;
-}
-
-.categories-tags {
-    margin-left: 4%;
-    margin-right: 4%;
-    padding: 15px;
-    gap: 14%;
-    border: transparent;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-}
-
-
-.submit-button {
-    width: 15%;
-}
-
-#desc {
-    padding: 10px; /* Add padding */
-    border-radius: 10px;
-    width: fit-content;
-}
-
-.comments {
-    padding: 10px; /* Add padding */
-    margin-left: 4%;
-    gap: 14%;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-}
-
-
 .tag {
-    border: 1px solid rgba(0,0,0,.2);
-    border-radius: 25px;
-    padding: 7px;
-    width: fit-content;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 25px;
+  padding: 7px;
+  width: fit-content;
 }
-  
+
+#main-container {
+  color: #484848;
+}
+
+#auctioneer-name {
+  font-weight: bold;
+  color: #7a7a7a;
+}
+
+#view-item-container {
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+@media (max-width: 720px) {
+  #view-item-container {
+    padding: 0.5rem;
+  }
+}
+/* #desc {
+  color: #7a7a7a;
+} */

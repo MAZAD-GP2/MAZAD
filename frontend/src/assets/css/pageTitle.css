@@ -1,0 +1,12 @@
+.page-title {
+  font-size: 0.8rem;
+  font-weight: 300;
+}
+.page-title-container {
+  display: none;
+}
+@media (max-width: 720px) {
+  .page-title-container {
+    display: block;
+  }
+}

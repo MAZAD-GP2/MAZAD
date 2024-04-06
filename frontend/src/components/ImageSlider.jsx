@@ -26,8 +26,8 @@ const ImageSlider = ({ images }) => {
   }, []);
   
   return (
-    <div className="image-slider-container">
-      <div className="main-image">
+    <div className="image-slider-container w-100">
+      <div className="main-image d-flex flex-row justify-content-center align-items-center">
         <img
           src={images[imageIndex].imgURL}
           alt="https://archive.org/download/placeholder-image/placeholder-image.jpg"
