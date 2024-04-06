@@ -13,10 +13,10 @@ const RecentItems = () => {
         </div>
         <nav aria-label="Page navigation example">
           <ul className="pagination justify-content-center">
-            <li class="page-item">
-              <a class="page-link text-black" href="#" aria-label="Previous">
+            <li className="page-item">
+              <a className="page-link text-black" href="#" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
-                <span class="sr-only">Previous</span>
+                <span className="sr-only">Previous</span>
               </a>
             </li>
             <li className="page-item active ">
@@ -34,10 +34,10 @@ const RecentItems = () => {
                 3
               </a>
             </li>
-            <li class="page-item">
-              <a class="page-link text-black" href="#" aria-label="Previous">
+            <li className="page-item">
+              <a className="page-link text-black" href="#" aria-label="Previous">
                 <span aria-hidden="true">&raquo;</span>
-                <span class="sr-only">Next</span>
+                <span className="sr-only">Next</span>
               </a>
             </li>
           </ul>

@@ -10,15 +10,14 @@ const cloudinary = require("../config/cloudinaryConfig");
 const sanitizeHtml = require("sanitize-html");
 const User = require("../models/User");
 const { where } = require("sequelize");
+const Interest = require("../models/Interest");
 
-const QuillDeltaToHtmlConverter =
-  require("quill-delta-to-html").QuillDeltaToHtmlConverter;
+const QuillDeltaToHtmlConverter = require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 
 module.exports.createItem = async (req, res) => {
   const t = await sequelize.transaction();
   try {
-    let { name, description, startDate, endDate, tags, price, categoryId } =
-      req.body;
+    let { name, description, startDate, endDate, tags, price, categoryId } = req.body;
     tags = tags.split(",").filter((tag) => tag.trim() !== "");
     price = parseFloat(price);
     if (!name || !description || !startDate || !endDate || !tags || !price) {
@@ -61,11 +60,7 @@ module.exports.createItem = async (req, res) => {
     }
 
     description = sanitizeHtml(htmlDescription, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-        "b",
-        "strong",
-        "i",
-      ]),
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["b", "strong", "i"]),
       allowedAttributes: {
         "*": ["style"],
       },
@@ -110,9 +105,7 @@ module.exports.createItem = async (req, res) => {
       { transaction: t }
     );
 
-    const tagOps = tags.map((tag) =>
-      Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t })
-    );
+    const tagOps = tags.map((tag) => Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t }));
     const createdTags = await Promise.all(tagOps);
 
     await Item_tag.bulkCreate(
@@ -133,8 +126,11 @@ module.exports.createItem = async (req, res) => {
 };
 
 module.exports.getItemById = async (req, res) => {
+  const itemId = req.params.id;
+  const user = req.currentUser;
+
   try {
-    const item = await Item.findByPk(req.params.id, {
+    const item = await Item.findByPk(itemId, {
       include: [
         User,
         Category,
@@ -145,36 +141,28 @@ module.exports.getItemById = async (req, res) => {
         Image,
       ],
     });
-    if (!item) {
-      throw new Error("Item not found");
+
+    let interests;
+    if (user) {
+      interests = await Interest.findOne({
+        where: {
+          itemId: itemId,
+          userId: user.id,
+        },
+      });
     }
-    return res.send(item);
+
+    const itemValues = { item, interests };
+
+    return res.send(itemValues);
   } catch (error) {
     return res.send(error);
   }
 };
 
-// module.exports.getAllItemsByUserId = async (req, res) => {
-//   try {
-//     const userId = req.currentUser;
-//     let items = await Item.findAll({
-//       where: {
-//         userId,
-//       },
-//     });
-//     // const items=await User.findAll({include: [Item]})
-//     // const items=await Item.findAll({include: [User]})
-
-//     //new items appear first
-//     items = items.reverse();
-
-//     return res.send(items);
-//   } catch (er) {
-//     return res.send(er);
-//   }
-// };
-
 module.exports.getAllItemsByCategory = async (req, res) => {
+  const user = req.currentUser;
+
   try {
     const categoryId = req.params.id;
     let items = await Item.findAll({
@@ -190,16 +178,32 @@ module.exports.getAllItemsByCategory = async (req, res) => {
       order: [["id", "DESC"]],
     });
 
-    //new items appear first
-    items = items.reverse();
+    let interests = {};
+    if (user) {
+      await Promise.all(
+        items.map(async (item) => {
+          const interest = await Interest.findOne({
+            where: {
+              itemId: item.id,
+              userId: user.id,
+            },
+          });
+          interests[item.id] = interest ? true : false;
+        })
+      );
+    }
 
-    res.send(items);
+    const itemsValues = { items, interests };
+
+    return res.send(itemsValues);
   } catch (er) {
     return res.send(er);
   }
 };
 
 module.exports.getAllItems = async (req, res) => {
+  const user = req.currentUser;
+
   try {
     let items = await Item.findAll({
       include: [
@@ -213,10 +217,24 @@ module.exports.getAllItems = async (req, res) => {
       order: [["id", "DESC"]],
     });
 
-    //new items appear first
-    items = items.reverse();
+    let interests = {};
+    if (user) {
+      await Promise.all(
+        items.map(async (item) => {
+          const interest = await Interest.findOne({
+            where: {
+              itemId: item.id,
+              userId: user.id,
+            },
+          });
+          interests[item.id] = interest ? true : false;
+        })
+      );
+    }
 
-    res.send(items);
+    const itemsValues = { items, interests };
+
+    return res.send(itemsValues);
   } catch (er) {
     return res.send(er);
   }
@@ -235,6 +253,7 @@ module.exports.getAllItemsByUserId = async (req, res) => {
       limit: limit,
       order: [["id", "DESC"]],
     });
+
     return res.send(items);
   } catch (err) {
     return res.send(err);

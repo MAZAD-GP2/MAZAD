@@ -35,5 +35,7 @@ export const addItem = (data) =>
     },
   });
 export const deleteItem = (id) => API.delete(`/item/delete/${id}`);
+export const addInterest = (id) => API.post(`/interest/add/${id}`);
+export const removeInterest = (id) => API.delete(`/interest/remove/${id}`);
 
 export const decodeToken = () => API.post(`/decode-token`);

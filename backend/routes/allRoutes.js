@@ -4,6 +4,7 @@ const userRoutes = require("./userRoutes");
 const itemRoutes = require("./itemRoute");
 const categoryRoutes = require("./categoryRoutes");
 const authRoutes = require("./authRoutes");
+const interestRoutes = require("./interestRoute");
 const verifyToken = require("../middlewares/verfiytoken");
 const checkAdmin = require("../middlewares/checkAdmin");
 const {
@@ -13,6 +14,7 @@ const {
 } = require("../utils/validators/userValidator");
 const { validateItemCreation } = require("../utils/validators/itemValidator");
 const multer = require("multer");
+const checkToken = require("../middlewares/checkToken");
 const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -35,14 +37,18 @@ router.route("/user/password-update").put(verifyToken, validatePasswordUpdate, u
 router.route("/user/delete/:id").delete(verifyToken, checkAdmin, userRoutes.deleteUser);
 
 // item
-router.route("/item").get(itemRoutes.getAllItems);
+router.route("/item").get(checkToken, itemRoutes.getAllItems);
 router.route("/item/user").get(verifyToken, itemRoutes.getAllItemsByUserId);
-router.route("/item/:id").get(itemRoutes.getItemById);
+router.route("/item/:id").get(checkToken, itemRoutes.getItemById);
 router.route("/item/create").post(upload, verifyToken, validateItemCreation, itemRoutes.createItem);
-router.route("/item/category/:id").get(itemRoutes.getAllItemsByCategory);
+router.route("/item/category/:id").get(checkToken, itemRoutes.getAllItemsByCategory);
 router.route("/item/delete/:id").delete(verifyToken, checkAdmin, itemRoutes.deleteItem);
 
+// Category
 router.route("/category").get(categoryRoutes.getAllCategories);
 router.route("/category/create").post(categoryRoutes.createCategory);
+
+router.route("/interest/add/:id").post(verifyToken, interestRoutes.addToInterests);
+router.route("/interest/remove/:id").delete(verifyToken, interestRoutes.removeFromInterests);
 
 module.exports = router;
