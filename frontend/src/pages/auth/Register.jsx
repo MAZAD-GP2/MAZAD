@@ -156,7 +156,7 @@ function Register() {
         sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("User Created Successfully", { variant: "success" });
         setTimeout(() => {
-          window.location.href = "/";
+          window.location.href = "/home";
         }, 1000);
       })
       .catch((err) => {
@@ -174,7 +174,7 @@ function Register() {
     >
       <div className="card px-1 py-4 col-lg-7 col-md-8 col-sm-12" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center w-100">
-          <a className="col-sm-12 col-md-3 col-lg-4 text-center link text-primary" id="logo-container" href="/">
+          <a className="col-sm-12 col-md-3 col-lg-4 text-center link text-primary" id="logo-container" href="/home">
             <h1 id="logo">MAZAD</h1>
           </a>
 

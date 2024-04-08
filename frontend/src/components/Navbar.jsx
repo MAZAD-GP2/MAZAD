@@ -49,7 +49,7 @@ const Navbar = () => {
             <a
               id="navbarlogo"
               className="col-md-auto col-1 text-secondary link px-4"
-              href="/"
+              href="/home"
               style={{ cursor: "pointer" }}
             >
               MAZAD &#128184;
@@ -126,9 +126,9 @@ const Navbar = () => {
               <a
                 className={
                   "px-3 py-2 nav-item" +
-                  (location.pathname === "/" ? " active" : "")
+                  (location.pathname === "/home" ? " active" : "")
                 }
-                href="/"
+                href="/home"
               >
                 <span className="link d-inline-block w-auto">Home</span>
               </a>

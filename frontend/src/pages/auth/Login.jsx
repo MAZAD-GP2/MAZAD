@@ -28,7 +28,7 @@ function Login() {
         setUsernameOrEmail("");
         setPassword("");
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = '/home';
         }, 1000);
       })
       .catch((err) => {
@@ -45,7 +45,7 @@ function Login() {
     <div className="position-absolute d-flex justify-content-center align-items-center w-100 h-100" id="main-container">
       <div className="card px-1 py-4 w-50" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center">
-          <a className="col-sm-12 col-md-3 col-lg-4 text-center text-primary link" id="logo-container" href="/">
+          <a className="col-sm-12 col-md-3 col-lg-4 text-center text-primary link" id="logo-container" href="/home">
             <h1 id="logo">MAZAD</h1>
           </a>
 

@@ -177,7 +177,7 @@ const EditProfile = () => {
         sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("Changes Saved Successfully", { variant: "success" });
         setTimeout(() => {
-          window.location.href = "/";
+          window.location.href = "/home";
         }, 1000);
       })
       .catch((err) => {
@@ -227,7 +227,7 @@ const EditProfile = () => {
         sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("Password Changed Successfully", { variant: "success" });
         setTimeout(() => {
-          window.location.href = "/";
+          window.location.href = "/home";
         }, 1000);
       })
       .catch((err) => {
@@ -246,14 +246,14 @@ const EditProfile = () => {
       setPhoneNumber({ value: parsedUserData.phoneNumber, isValid: true });
       setEmail({ value: parsedUserData.email, isValid: true });
     }
-    window.location.href = "/";
+    window.location.href = "/home";
   };
 
   const handleCancelPassword = async (event) => {
     event.preventDefault();
     setPassword({ value: "", isValid: true });
     setConfirmPassword({ value: "", isValid: true });
-    window.location.href = "/";
+    window.location.href = "/home";
   };
 
   return (
@@ -261,7 +261,7 @@ const EditProfile = () => {
       <Navbar />
       {user && (
         <div className="d-flex">
-          <SideProfile user={user} isCurrentUser={isCurrentUser} />
+          <SideProfile user={user} setUser={setUser} isCurrentUser={isCurrentUser} />
           <div className="user-history-container">
             <h2 className="py-2">Edit Profile</h2>
             <form
