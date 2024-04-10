@@ -68,7 +68,7 @@ const ViewItem = () => {
                 <div className="d-flex gap-2 ">
                   <h3>{item.name}</h3>
                   {user && (
-                    <span className="text-danger" onClick={changeInterest}>
+                    <span className="text-danger" onClick={changeInterest} style={{cursor: "pointer"}}>
                       {interest ? (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
