@@ -7,6 +7,7 @@ import SideProfile from "../components/SideProfile";
 import * as api from "../api/index";
 import { useParams } from "react-router-dom";
 import RecentItems from "../components/RecentItems";
+import NotFound from "../components/NotFound";
 
 const Profile = () => {
   const { id } = useParams();
@@ -19,7 +20,9 @@ const Profile = () => {
       try {
         if (id) {
           const response = await api.getUserById(id);
-          setUser(response.data);
+          if(Object.keys(response.data).length){
+            setUser(response.data);
+          } // check if user exists
           const parsedUserData = JSON.parse(userData);
           if (parsedUserData && parsedUserData.id == id) {
             setIsCurrentUser(true);
@@ -46,7 +49,7 @@ const Profile = () => {
   return (
     <>
       <Navbar />
-      {user && (
+      {user ? (
         <div className="d-flex">
           <SideProfile user={user} isCurrentUser={isCurrentUser} />
           <div className="user-history-container">
@@ -71,7 +74,7 @@ const Profile = () => {
             </div>
           </div>
         </div>
-      )}
+      ) : <NotFound/>}
       <MobileNavbar />
     </>
   );

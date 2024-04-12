@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import MobileNavbar from "../components/MobileNavbar";
 
 import PageTitle from "../components/PageTitle";
+import NotFound from "../components/NotFound";
 
 const ViewItem = () => {
   const { id } = useParams();
@@ -20,8 +21,10 @@ const ViewItem = () => {
     const fetchItem = async () => {
       try {
         const response = await api.getItemById(id);
-        setItem(response.data.item);
-        setInterest(response.data.interests ? true : false); 
+        if(Object.keys(response.data).length){
+          setItem(response.data.item);
+          setInterest(response.data.interests ? true : false); 
+        } 
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -54,7 +57,7 @@ const ViewItem = () => {
 
       <Navbar />
       <PageTitle title="Auction" />
-      {item && (
+      {item ? (
         <div className="d-flex flex-column flex-lg-row gap-1 column-gap-3 w-100" id="view-item-container">
           <div className="image-details col-12 col-lg-6 shadow p-3 mb-5 bg-body rounded">
             <div className="d-flex flex-column justify-content-center align-items-center gap-3 w-100">
@@ -65,7 +68,7 @@ const ViewItem = () => {
                 <div className="d-flex gap-2 ">
                   <h3>{item.name}</h3>
                   {user && (
-                    <span className="text-danger" onClick={changeInterest}>
+                    <span className="text-danger" onClick={changeInterest} style={{cursor: "pointer"}}>
                       {interest ? (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -128,7 +131,7 @@ const ViewItem = () => {
             </div>
           </div>
         </div>
-      )}
+      ) : <NotFound/>}
 
       <MobileNavbar />
     </>

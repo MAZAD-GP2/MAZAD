@@ -15,9 +15,9 @@ const MobileNavbar = () => {
     <div id="mobile-navbar">
       <div className="w-100" id="navbar">
         <div className="d-flex flex-row w-100 gap-5 h-100 p-3 bg-primary border-top border-secondary border-4">
-        <div className={`mobile-nav-item d-flex flex-column justify-content-center align-items-center gap-1 ${(location.pathname.includes("/home/") || location.pathname === "/") ? "active" : ""}`}>
+        <div className={`mobile-nav-item d-flex flex-column justify-content-center align-items-center gap-1 ${(location.pathname.includes("/home/")) ? "active" : ""}`}>
             <FontAwesomeIcon icon="home" />
-            <a href="/" className="small text-center">
+            <a href="/home" className="small text-center">
               Home
             </a>
           </div>

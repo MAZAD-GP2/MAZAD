@@ -49,7 +49,7 @@ const Navbar = () => {
             <a
               id="navbarlogo"
               className="col-md-auto col-1 text-secondary link px-4"
-              href="/"
+              href="/home"
               style={{ cursor: "pointer" }}
             >
               MAZAD &#128184;
@@ -80,24 +80,18 @@ const Navbar = () => {
                       <FontAwesomeIcon icon="fa-add" /> New Mazad
                     </a>
                     <div className="col-auto d-flex flex-row form-group align-content-end">
-                      <a
-                        href="/profile"
-                        role="button"
-                        className={`${
-                          user.profilePicture ? "" : "profile-redirect"
-                        }`}
-                        style={{ fontSize: "25px" }}
-                      >
-                        {user.profilePicture ? (
-                          <img
+                      {user.profilePicture ? <img
+                            onClick={() => window.location.href = '/profile'}
                             src={user.profilePicture}
                             width={"40px"}
-                            style={{ borderRadius: "100px" }}
-                          ></img>
-                        ) : (
-                          <FontAwesomeIcon icon="fa-regular fa-user" />
-                        )}
-                      </a>
+                            height={"40px"}
+                            style={{ borderRadius: "100px" ,objectFit: "cover", cursor: "pointer"}}
+                      /> : 
+                      <FontAwesomeIcon 
+                        icon="fa-regular fa-user"
+                        className="profile-redirect"
+                        onClick={() => window.location.href = '/profile'}
+                      />}
                     </div>
                   </div>
                 ) : (
@@ -126,9 +120,9 @@ const Navbar = () => {
               <a
                 className={
                   "px-3 py-2 nav-item" +
-                  (location.pathname === "/" ? " active" : "")
+                  (location.pathname === "/home" ? " active" : "")
                 }
-                href="/"
+                href="/home"
               >
                 <span className="link d-inline-block w-auto">Home</span>
               </a>

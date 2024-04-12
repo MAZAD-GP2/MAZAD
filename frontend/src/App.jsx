@@ -15,6 +15,7 @@ const CategoryItems = loadable(() => import("./pages/CategoryItems.jsx"));
 const ViewItem = loadable(() => import("./pages/ViewItem.jsx"));
 const Profile = loadable(() => import("./pages/Profile.jsx"));
 const EditProfile = loadable(() => import("./pages/EditProfile.jsx"));
+const LandingPage = loadable(() => import("./pages/LandingPage.jsx"));
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -42,7 +43,8 @@ function App() {
   return (
     <>
       <Routes>
-        <Route exact path="/" element={<Home />} />
+        <Route exact path="/" element={<LandingPage />} />
+        <Route exact path="/home" element={<Home />} />
 
         {isLoggedIn && <Route path="/register" element={<Home />} />}
         {!isLoggedIn && <Route exact path="/register" element={<Register />} />}

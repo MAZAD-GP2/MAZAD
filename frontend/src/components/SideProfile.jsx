@@ -39,7 +39,7 @@ const SideProfile = ({ user, isCurrentUser }) => {
       sessionStorage.clear();
       enqueueSnackbar("Signed out", { variant: "success" });
       setTimeout(() => {
-        window.location.href = "/";
+        window.location.href = "/home";
       }, 300);
     } catch (err) {
       enqueueSnackbar(err.response.data.message, { variant: "error" });
