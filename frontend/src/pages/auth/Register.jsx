@@ -6,7 +6,6 @@ import { Spinner } from "react-bootstrap";
 import "bootstrap";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 function Register() {
   const [username, setUsername] = useState({ value: "", isValid: true });
@@ -261,7 +260,7 @@ function Register() {
                       style={{ right: "10px", border: "0" }}
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />
                     </button>
                   </div>
                 </div>
@@ -287,7 +286,7 @@ function Register() {
                       style={{ right: "10px", border: "0" }}
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
-                      <FontAwesomeIcon icon={showConfirmPassword ? faEye : faEyeSlash} />
+                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showConfirmPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />
                     </button>
 
                   </div>

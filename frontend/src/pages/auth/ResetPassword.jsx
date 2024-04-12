@@ -93,7 +93,7 @@ function ResetPassword() {
                       style={{ right: "10px", border: "0" }}
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />
                     </button>
                   </div>
                 </div>
@@ -118,7 +118,7 @@ function ResetPassword() {
                       style={{ right: "10px", border: "0" }}
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
-                      <FontAwesomeIcon icon={showConfirmPassword ? faEye : faEyeSlash} />
+                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showConfirmPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />
                     </button>
                   </div>
                 </div>

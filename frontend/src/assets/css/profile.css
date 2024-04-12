@@ -20,12 +20,12 @@
     object-fit: cover;
     /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); */
     align-self: center;
-    cursor: pointer;
     transition: .25s;
   }
 
-  .profile-pic:hover {
+  .profile-pic-hover:hover {
     opacity: .5;
+    cursor: pointer;
   }
   
   .admin-tag {

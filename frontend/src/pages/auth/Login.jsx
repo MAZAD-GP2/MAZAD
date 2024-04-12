@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import * as api from "../../api/index";
 import { Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 function Login() {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
@@ -83,7 +82,8 @@ function Login() {
                     style={{ right: "10px", border: "0" }}
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                    {/* <FontAwesomeIcon  icon={showPassword ? faEye : faEyeSlash} /> */}
+                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />
                   </button>
                 </div>
               </div>

@@ -11,8 +11,6 @@ import "bootstrap";
 import "../assets/css/profile.css";
 import "/src/assets/css/auth.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-
 
 const EditProfile = () => {
   const [user, setUser] = useState(null);
@@ -389,7 +387,7 @@ const EditProfile = () => {
                       style={{ right: "10px", border: "0" }}
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />                      
                     </button>
                   </div>
                 </div>
@@ -414,7 +412,7 @@ const EditProfile = () => {
                       style={{ right: "10px", border: "0" }}
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
-                      <FontAwesomeIcon icon={showConfirmPassword ? faEye : faEyeSlash} />
+                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showConfirmPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />
                     </button>
                   </div>
                 </div>

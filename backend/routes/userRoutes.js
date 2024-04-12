@@ -6,6 +6,7 @@ require("dotenv").config();
 const { Op } = require("sequelize");
 const { v4: uuidv4 } = require("uuid");
 const nodemailer = require("nodemailer");
+const cloudinary = require("../config/cloudinaryConfig");
 
 module.exports.getAllUsers = async (req, res) => {
   try {
@@ -220,15 +221,22 @@ module.exports.resetPassword = async (req, res) => {
 module.exports.updateUser = async (req, res) => {
   try {
     const { username, email, phoneNumber } = req.body;
+    let profilePicture = req.currentUser.profilePicture;
 
     const userId = req.currentUser.id;
 
     const user = await User.findByPk(userId);
 
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      profilePicture = result.url; 
+    }
+
     await user.update({
       username,
       email,
       phoneNumber,
+      profilePicture
     });
 
     const token = await generateJWT({
@@ -237,6 +245,7 @@ module.exports.updateUser = async (req, res) => {
       email: user.email,
       isAdmin: user.isAdmin,
       phoneNumber: user.phoneNumber,
+      profilePicture: user.profilePicture
     });
 
     const userData = {

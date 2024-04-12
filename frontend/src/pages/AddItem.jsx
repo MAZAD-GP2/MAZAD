@@ -288,7 +288,7 @@ const AddItem = () => {
                 maxLength="255"
                 onChange={handleTitleChange}
               />
-              <small className="form-text text-muted">limited to 255</small>
+              <small className="form-text text-muted">limited to 255 characters</small>
             </div>
             <div
               id="image-details"
@@ -353,7 +353,7 @@ const AddItem = () => {
                     }}
                   </Dropzone>
                   <small className="form-text text-muted position-absolute w-50 pe-3">
-                    At least one, not more that five
+                    At least one, not more than ten
                   </small>
                 </div>
                 <small className="form-text text-muted">
@@ -436,7 +436,7 @@ const AddItem = () => {
                 <small className="text-muted row ms-1">limited to 7 days</small>
               </div>
               <div className="category-selector">
-                <h4>Starting pricing</h4>
+                <h4>Starting price</h4>
                 <div className="d-flex flex-column">
                   <div className="d-flex flex-row gap-3">
                     <div className="input-group">
