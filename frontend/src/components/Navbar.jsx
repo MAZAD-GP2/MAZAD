@@ -74,7 +74,7 @@ const Navbar = () => {
                   <div className="create-item-pfp justify-end">
                     <a
                       type="submit"
-                      className="btn btn-secondary col-auto align-content-center p-0 px-2 rounded-5 add-item"
+                      className="btn btn-secondary col-auto align-content-center px-2 rounded-5 add-item"
                       href="/add-item"
                     >
                       <FontAwesomeIcon icon="fa-add" /> New Mazad

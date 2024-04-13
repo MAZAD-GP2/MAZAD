@@ -214,12 +214,11 @@ input::placeholder {
   background-color: transparent;
   border: none;
   color: var(--secondary-light);
-  padding: 10px 10px;
-  border-radius: 10px;
+  padding: 5px 5px;
+  border-radius: 6px;
   transition: .25s;
   cursor: pointer;
   font-size: 25px;
-  
 }
 
 .profile-redirect:hover {

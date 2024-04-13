@@ -17,6 +17,8 @@ const Profile = loadable(() => import("./pages/Profile.jsx"));
 const EditProfile = loadable(() => import("./pages/EditProfile.jsx"));
 const LandingPage = loadable(() => import("./pages/LandingPage.jsx"));
 
+const NotFound = loadable(() => import("./components/NotFound.jsx"));
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -70,6 +72,7 @@ function App() {
 
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
         <Route exact path="/item/:id" element={<ViewItem />} />
+        <Route exact path="not-found" element={<NotFound/>}/>
       </Routes>
     </>
   );
