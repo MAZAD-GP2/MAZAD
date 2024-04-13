@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Spinner } from "react-bootstrap";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import Navbar from "../components/Navbar";
 import MobileNavbar from "../components/MobileNavbar";
+import { useLocation } from "react-router-dom";
 
-import SideProfile from "../components/SideProfile";
 import { useSnackbar } from "notistack";
 import * as api from "../api/index";
 import "bootstrap";
 import "../assets/css/profile.css";
 import "/src/assets/css/auth.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const EditProfile = () => {
   const [user, setUser] = useState(null);
@@ -20,6 +20,7 @@ const EditProfile = () => {
   const [isEditing, setisEditing] = useState(false); // Track editing status
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const location = useLocation();
 
   const [username, setUsername] = useState({ value: "", isValid: true });
   const [phoneNumber, setPhoneNumber] = useState({ value: "", isValid: true });
@@ -34,35 +35,9 @@ const EditProfile = () => {
   const [showPassword, setShowPassword] = useState(false); // password visibility
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // confirm password visibility
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        if (userData) {
-          setUser(JSON.parse(userData));
-          setIsCurrentUser(true);
-        } else {
-          console.error("User ID not provided.");
-        }
-      } catch (err) {
-        console.error("Error fetching user data:", err);
-      }
-    };
-    fetchUser();
-    // Clean-up function to reset state when component unmounts or id changes
-    return () => {
-      setIsCurrentUser(false);
-    };
-  }, [userData]);
-
-  useEffect(() => {
-    const userData = sessionStorage.getItem("user");
-    if (userData) {
-      const parsedUserData = JSON.parse(userData);
-      setUsername({ value: parsedUserData.username, isValid: true });
-      setPhoneNumber({ value: parsedUserData.phoneNumber, isValid: true });
-      setEmail({ value: parsedUserData.email, isValid: true });
-    }
-  }, []);
+  const fileInputRef = useRef(null); //profile pic
+  const [profilePicture, setProfilePicture] = useState("");
+  const [selectedProfilePicture, setSelectedProfilePicture] = useState(null);
 
   const popoverUsername = (
     <Popover id="popover-basic">
@@ -101,12 +76,53 @@ const EditProfile = () => {
     </Popover>
   );
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (userData) {
+          setUser(JSON.parse(userData));
+          setIsCurrentUser(true);
+        } else {
+          console.error("User ID not provided.");
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      }
+    };
+    fetchUser();
+    // Clean-up function to reset state when component unmounts or id changes
+    return () => {
+      setIsCurrentUser(false);
+    };
+  }, [userData]);
+
+  useEffect(() => {
+    const userData = sessionStorage.getItem("user");
+    if (userData) {
+      const parsedUserData = JSON.parse(userData);
+      setUsername({ value: parsedUserData.username, isValid: true });
+      setPhoneNumber({ value: parsedUserData.phoneNumber, isValid: true });
+      setEmail({ value: parsedUserData.email, isValid: true });
+      setProfilePicture(parsedUserData.profilePicture);
+    }
+  }, []);
+
   const handleInputChange = () => {
     setUsername({ ...username, isValid: true });
     setPhoneNumber({ ...phoneNumber, isValid: true });
     setEmail({ ...email, isValid: true });
     setPassword({ ...password, isValid: true });
     setConfirmPassword({ ...confirmPassword, isValid: true });
+  };
+
+  const handleProfilePic = async (event) => {
+    fileInputRef.current.click();
+  };
+  const handleFileChange = async (event) => {
+    const profilePicture = event.target.files[0];
+    const selectedImage = event.target.files[0];
+    setProfilePicture(profilePicture);
+    setSelectedProfilePicture(selectedImage);
   };
 
   const handleUsernameChange = (event) => {
@@ -161,22 +177,19 @@ const EditProfile = () => {
       setisEditing(false);
       return;
     }
-
+    const formData = new FormData();
+    formData.append("profilePicture", profilePicture);
+    formData.append("username", user.username);
+    formData.append("phoneNumber", user.phoneNumber);
+    formData.append("email", user.email);
     await api
-      .userUpdate({
-        username: username.value,
-        email: email.value,
-        phoneNumber: phoneNumber.value,
-      })
+      .userUpdate(formData)
       .then((result) => {
-        setUsername({ value: "", isValid: true });
-        setPhoneNumber({ value: "", isValid: true });
-        setEmail({ value: "", isValid: true });
         sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("Changes Saved Successfully", { variant: "success" });
         setTimeout(() => {
           window.location.href = "/home";
-        }, 1000);
+        }, 300);
       })
       .catch((err) => {
         enqueueSnackbar(err.response.data.message, { variant: "error" });
@@ -193,20 +206,30 @@ const EditProfile = () => {
 
     const regex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
     if (!regex.test(password.value)) {
-      enqueueSnackbar("Password must contain at least 8 characters, including at least one letter and one number", {
-        variant: "error",
-        hideIconVariant: true,
-      });
+      enqueueSnackbar(
+        "Password must contain at least 8 characters, including at least one letter and one number",
+        {
+          variant: "error",
+          hideIconVariant: true,
+        }
+      );
       setPassword({ ...password, isValid: false });
       setIsChangingPassword(false);
       return;
     }
-    if (!confirmPassword.isValid || !confirmPassword.value || confirmPassword.value !== password.value) {
+    if (
+      !confirmPassword.isValid ||
+      !confirmPassword.value ||
+      confirmPassword.value !== password.value
+    ) {
       setConfirmPassword({ ...confirmPassword, isValid: false });
       success = false;
-      enqueueSnackbar("Password and Confirm Password don't match or are not valid", {
-        variant: "error",
-      });
+      enqueueSnackbar(
+        "Password and Confirm Password don't match or are not valid",
+        {
+          variant: "error",
+        }
+      );
     }
 
     if (!success) {
@@ -223,7 +246,9 @@ const EditProfile = () => {
         setPassword({ value: "", isValid: true });
         setConfirmPassword({ value: "", isValid: true });
         sessionStorage.setItem("user", JSON.stringify(result.data));
-        enqueueSnackbar("Password Changed Successfully", { variant: "success" });
+        enqueueSnackbar("Password Changed Successfully", {
+          variant: "success",
+        });
         setTimeout(() => {
           window.location.href = "/home";
         }, 1000);
@@ -254,12 +279,71 @@ const EditProfile = () => {
     window.location.href = "/home";
   };
 
+  const handleSignOut = async (event) => {
+    try {
+      sessionStorage.clear();
+      enqueueSnackbar("Signed out", { variant: "success" });
+      setTimeout(() => {
+        window.location.href = "/home";
+      }, 300);
+    } catch (err) {
+      enqueueSnackbar(err.response.data.message, { variant: "error" });
+    }
+  };
+
   return (
     <>
       <Navbar />
       {user && (
         <div className="d-flex">
-          <SideProfile user={user} setUser={setUser} isCurrentUser={isCurrentUser} />
+          <div className="user-cred">
+            <img
+              src={
+                selectedProfilePicture
+                  ? URL.createObjectURL(selectedProfilePicture)
+                  : user.profilePicture
+                  ? user.profilePicture
+                  : "https://media.istockphoto.com/id/1288129985/vector/missing-image-of-a-person-placeholder.jpg?s=612x612&w=0&k=20&c=9kE777krx5mrFHsxx02v60ideRWvIgI1RWzR1X4MG2Y="
+              }
+              className="profile-pic profile-pic-hover"
+              onClick={handleProfilePic}
+            />
+            <div className="edit-icon-overlay" onClick={handleProfilePic}>
+              <FontAwesomeIcon size="4x" icon="fa-solid fa-camera-retro" />
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              name="profilePicture"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+            <h3 className="profile-username">{user.username}</h3>
+            {user.isAdmin && <p className="admin-tag">Admin</p>}
+            <p className="profile-info">{user.email}</p>
+            <p className="profile-info">{user.phoneNumber}</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              <a
+                className="edit-profile btn btn-secondary align-self-center"
+                href="/profile"
+              >
+                Profile
+              </a>
+              <a
+                className="edit-profile btn btn-danger align-self-center"
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </a>
+            </div>
+          </div>
           <div className="user-history-container">
             <h2 className="py-2">Edit Profile</h2>
             <form
@@ -274,9 +358,15 @@ const EditProfile = () => {
               <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
                 <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group" style={{ width: "80%" }}>
-                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverUsername}>
+                    <OverlayTrigger
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverUsername}
+                    >
                       <input
-                        className={`form-control ${!username.isValid ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          !username.isValid ? "is-invalid" : ""
+                        }`}
                         type="text"
                         placeholder="Username"
                         id="name"
@@ -293,9 +383,15 @@ const EditProfile = () => {
                 </div>
                 <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group" style={{ width: "80%" }}>
-                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverEmail}>
+                    <OverlayTrigger
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverEmail}
+                    >
                       <input
-                        className={`form-control ${!email.isValid ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          !email.isValid ? "is-invalid" : ""
+                        }`}
                         type="text"
                         placeholder="Email"
                         id="email"
@@ -312,9 +408,15 @@ const EditProfile = () => {
                 </div>
                 <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group" style={{ width: "80%" }}>
-                    <OverlayTrigger trigger="focus" placement="top" overlay={popoverPhoneNumber}>
+                    <OverlayTrigger
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverPhoneNumber}
+                    >
                       <input
-                        className={`form-control ${!phoneNumber.isValid ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          !phoneNumber.isValid ? "is-invalid" : ""
+                        }`}
                         type="text"
                         placeholder="Phone Number"
                         id="phone-number"
@@ -340,7 +442,11 @@ const EditProfile = () => {
                       alignSelf: "center",
                     }}
                   >
-                    {isEditing ? <Spinner animation="border" size="sm" /> : "Save Changes"}
+                    {isEditing ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : (
+                      "Save Changes"
+                    )}
                   </button>
                   <button
                     className="btn btn-danger btn-block confirm-button"
@@ -365,10 +471,20 @@ const EditProfile = () => {
             >
               <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
                 <div className="col-sm-12 row justify-content-center mb-3">
-                  <div className="form-group position-relative d-flex" style={{ width: "80%" }}>
-                    <OverlayTrigger className="overlay" trigger="focus" placement="top" overlay={popoverPassword}>
+                  <div
+                    className="form-group position-relative d-flex"
+                    style={{ width: "80%" }}
+                  >
+                    <OverlayTrigger
+                      className="overlay"
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverPassword}
+                    >
                       <input
-                        className={`form-control ${!password.isValid ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          !password.isValid ? "is-invalid" : ""
+                        }`}
                         type={showPassword ? "text" : "password"}
                         placeholder="New Password"
                         id="password"
@@ -387,14 +503,26 @@ const EditProfile = () => {
                       style={{ right: "10px", border: "0" }}
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />                      
+                      <FontAwesomeIcon
+                        style={{ opacity: "0.7" }}
+                        icon={
+                          showPassword
+                            ? "fa-regular fa-eye"
+                            : "fa-regular fa-eye-slash"
+                        }
+                      />
                     </button>
                   </div>
                 </div>
                 <div className="col-sm-12 row justify-content-center mb-3">
-                  <div className="form-group position-relative d-flex" style={{ width: "80%" }}>
+                  <div
+                    className="form-group position-relative d-flex"
+                    style={{ width: "80%" }}
+                  >
                     <input
-                      className={`form-control ${!confirmPassword.isValid ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        !confirmPassword.isValid ? "is-invalid" : ""
+                      }`}
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm New password"
                       id="confirm-password"
@@ -410,9 +538,18 @@ const EditProfile = () => {
                       type="button"
                       className="btn btn-toggle-password position-absolute"
                       style={{ right: "10px", border: "0" }}
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                     >
-                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showConfirmPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />
+                      <FontAwesomeIcon
+                        style={{ opacity: "0.7" }}
+                        icon={
+                          showConfirmPassword
+                            ? "fa-regular fa-eye"
+                            : "fa-regular fa-eye-slash"
+                        }
+                      />
                     </button>
                   </div>
                 </div>
@@ -427,7 +564,11 @@ const EditProfile = () => {
                       alignSelf: "center",
                     }}
                   >
-                    {isChangingPassword ? <Spinner animation="border" size="sm" /> : "Save Changes"}
+                    {isChangingPassword ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : (
+                      "Save Password"
+                    )}
                   </button>
                   <button
                     className="btn btn-danger btn-block confirm-button"
@@ -441,8 +582,8 @@ const EditProfile = () => {
             </form>
           </div>
         </div>
-)}
-<MobileNavbar />
+      )}
+      <MobileNavbar />
     </>
   );
 };

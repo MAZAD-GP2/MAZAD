@@ -277,7 +277,7 @@ const AddItem = () => {
       <div className="p-3">
         <div id="main" className="container p-3 shadow bg-white">
           <div className="d-flex flex-column gap-3">
-            <div className="row p-2">
+            <div>
               <h4>Auction title</h4>
               <input
                 type="text"
@@ -435,7 +435,7 @@ const AddItem = () => {
                 </div>
                 <small className="text-muted row ms-1">limited to 7 days</small>
               </div>
-              <div className="category-selector">
+              <div>
                 <h4>Starting price</h4>
                 <div className="d-flex flex-column">
                   <div className="d-flex flex-row gap-3">
@@ -462,7 +462,7 @@ const AddItem = () => {
                   </small>
                 </div>
               </div>
-              <div className="category-selector">
+              <div>
                 <h4>Category</h4>
                 <div className="row row-cols-auto">
                   {isFetching ? (

@@ -36,10 +36,13 @@
   transition: .25s;
 }
 
-.img-slider-btn:hover {
+.img-slider-btn {
   background-color: rgba(0, 0, 0, 0.3); /* RGBA values for white */
 }
 
+.img-slider-btn:hover {
+  background-color: rgba(0, 0, 0, 0.5); /* RGBA values for white */
+}
 .img-slider-btn.left {
   left: 0px;
   border-top-left-radius: 4px;

@@ -46,7 +46,7 @@ const Tag = ({tags, setTags}) => {
   return (
     <div className="wrapper">
       <div className="title">
-        <h2>Tags</h2>
+        <h4>Tags</h4>
       </div>
       <div className="content">
         <p>Press enter or add a comma after each tag</p>
@@ -63,7 +63,7 @@ const Tag = ({tags, setTags}) => {
       </div>
       <div className="details">
         <p><span>{tags.length}</span>/{maxTags}</p>
-        <button onClick={removeAllTags}>Remove All</button>
+        <button className='btn btn-danger' onClick={removeAllTags}>Remove All</button>
       </div>
     </div>
   );
