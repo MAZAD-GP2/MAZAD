@@ -38,4 +38,14 @@ export const deleteItem = (id) => API.delete(`/item/delete/${id}`);
 export const addInterest = (id) => API.post(`/interest/add/${id}`);
 export const removeInterest = (id) => API.delete(`/interest/remove/${id}`);
 
+export const getAuctionById = (id) => API.get(`/auction/${id}`);
+export const addAuction = (data) => API.post("/auction/create",data);
+export const updateAuction = (data) => API.put("/auction/update",data);
+export const removeAuction = (id) => API.delete(`/auction/delete/${id}`);
+
+export const getBidById = (id) => API.get(`/bid/${id}`);
+export const getBidsByAuction = (id) => API.get(`/bid/auction/${id}`);
+export const addBid = (data) => API.post("/bid/create", data);
+export const removeBid = (id) => API.delete(`/bid/auction/${id}`);
+
 export const decodeToken = () => API.post(`/decode-token`);

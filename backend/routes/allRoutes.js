@@ -5,6 +5,8 @@ const itemRoutes = require("./itemRoute");
 const categoryRoutes = require("./categoryRoutes");
 const authRoutes = require("./authRoutes");
 const interestRoutes = require("./interestRoute");
+const auctionRoutes = require("./auctionRoutes");
+const bidRoutes = require("./bidRoutes");
 const verifyToken = require("../middlewares/verifytoken");
 const checkAdmin = require("../middlewares/checkAdmin");
 const {
@@ -48,7 +50,21 @@ router.route("/item/delete/:id").delete(verifyToken(true), checkAdmin, itemRoute
 router.route("/category").get(categoryRoutes.getAllCategories);
 router.route("/category/create").post(categoryRoutes.createCategory);
 
+// Interest
 router.route("/interest/add/:id").post(verifyToken(true), interestRoutes.addToInterests);
 router.route("/interest/remove/:id").delete(verifyToken(true), interestRoutes.removeFromInterests);
+
+// Auction
+router.route("/auction/:id").get(auctionRoutes.getAuctionById);
+router.route("/auction/create").post(verifyToken(true), auctionRoutes.addAuction);
+router.route("/auction/update").put(verifyToken(true), auctionRoutes.updateAuction);
+router.route("/auction/delete/:id").delete(verifyToken(true), auctionRoutes.removeAuction);
+
+// Bid
+router.route("/bid/:id").get(bidRoutes.getBidById);
+router.route("/bid/auction/:id").get(bidRoutes.getBidsByAuction);
+router.route("/bid/create").post(verifyToken(true), bidRoutes.addBid);
+router.route("/bid/delete/:id").delete(verifyToken(true), bidRoutes.removeBid);
+
 
 module.exports = router;

@@ -19,9 +19,8 @@ module.exports.getCommentsbyItemId = async (req, res) => {
 
 module.exports.addComment = async (req, res) => {
   try {
-    const itemId = req.params;
     const userId = req.currentUser.id;
-    const { content } = req.body;
+    const { itemId, content } = req.body;
     const comment = await Comment.create({ content, userId, itemId });
     res.send(comment);
   } catch (err) {
@@ -45,12 +44,11 @@ module.exports.deleteComment = async (req, res) => {
 
 module.exports.editComment = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id, newContent } = req.body;
     const comment = await Comment.findByPk(id);
     if (!comment) {
       throw new Error("Comment not found");
     }
-    const { newContent } = req.body;
     comment.content = newContent;
     await comment.save();
     return res.sendStatus(200);

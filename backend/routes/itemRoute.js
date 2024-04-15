@@ -117,7 +117,6 @@ module.exports.createItem = async (req, res) => {
     );
 
     await t.commit();
-
     return res.send(item);
   } catch (err) {
     await t.rollback();
