@@ -154,9 +154,7 @@ const AddItem = () => {
         enqueueSnackbar("Added item", { variant: "success" });
         setName("");
         setDescription("");
-        setTimeout(() => {
-          window.location.href = "/home";
-        }, 1000);
+        window.location.href = "/home";        
       } catch (error) {
         // Handle errors
         enqueueSnackbar(error.response.data.message, {

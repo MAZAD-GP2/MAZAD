@@ -27,15 +27,12 @@ const EditProfile = () => {
   const [email, setEmail] = useState({ value: "", isValid: true });
 
   const [password, setPassword] = useState({ value: "", isValid: true });
-  const [confirmPassword, setConfirmPassword] = useState({
-    value: "",
-    isValid: true,
-  });
+  const [confirmPassword, setConfirmPassword] = useState({ value: "", isValid: true });
 
   const [showPassword, setShowPassword] = useState(false); // password visibility
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // confirm password visibility
 
-  const fileInputRef = useRef(null); //profile pic
+  const fileInputRef = useRef(null); //profile pic file
   const [profilePicture, setProfilePicture] = useState("");
   const [selectedProfilePicture, setSelectedProfilePicture] = useState(null);
 
@@ -187,9 +184,7 @@ const EditProfile = () => {
       .then((result) => {
         sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("Changes Saved Successfully", { variant: "success" });
-        setTimeout(() => {
-          window.location.href = "/home";
-        }, 300);
+        window.location.href = "/home";
       })
       .catch((err) => {
         enqueueSnackbar(err.response.data.message, { variant: "error" });
@@ -206,13 +201,7 @@ const EditProfile = () => {
 
     const regex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
     if (!regex.test(password.value)) {
-      enqueueSnackbar(
-        "Password must contain at least 8 characters, including at least one letter and one number",
-        {
-          variant: "error",
-          hideIconVariant: true,
-        }
-      );
+      enqueueSnackbar("Password must contain at least 8 characters, including at least one letter and one number", { variant: "error", hideIconVariant: true, });
       setPassword({ ...password, isValid: false });
       setIsChangingPassword(false);
       return;
@@ -224,12 +213,7 @@ const EditProfile = () => {
     ) {
       setConfirmPassword({ ...confirmPassword, isValid: false });
       success = false;
-      enqueueSnackbar(
-        "Password and Confirm Password don't match or are not valid",
-        {
-          variant: "error",
-        }
-      );
+      enqueueSnackbar("Password and Confirm Password don't match or are not valid", { variant: "error", hideIconVariant: true });
     }
 
     if (!success) {
@@ -243,15 +227,13 @@ const EditProfile = () => {
         confirmPassword: confirmPassword.value,
       })
       .then((result) => {
-        setPassword({ value: "", isValid: true });
-        setConfirmPassword({ value: "", isValid: true });
         sessionStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("Password Changed Successfully", {
           variant: "success",
         });
         setTimeout(() => {
           window.location.href = "/home";
-        }, 1000);
+        }, 500);
       })
       .catch((err) => {
         enqueueSnackbar(err.response.data.message, { variant: "error" });
@@ -269,83 +251,31 @@ const EditProfile = () => {
       setPhoneNumber({ value: parsedUserData.phoneNumber, isValid: true });
       setEmail({ value: parsedUserData.email, isValid: true });
     }
-    window.location.href = "/home";
   };
 
   const handleCancelPassword = async (event) => {
     event.preventDefault();
     setPassword({ value: "", isValid: true });
     setConfirmPassword({ value: "", isValid: true });
-    window.location.href = "/home";
-  };
-
-  const handleSignOut = async (event) => {
-    try {
-      sessionStorage.clear();
-      enqueueSnackbar("Signed out", { variant: "success" });
-      setTimeout(() => {
-        window.location.href = "/home";
-      }, 300);
-    } catch (err) {
-      enqueueSnackbar(err.response.data.message, { variant: "error" });
-    }
   };
 
   return (
     <>
       <Navbar />
       {user && (
-        <div className="d-flex">
-          <div className="user-cred">
-            <img
-              src={
-                selectedProfilePicture
-                  ? URL.createObjectURL(selectedProfilePicture)
-                  : user.profilePicture
-                  ? user.profilePicture
-                  : "https://media.istockphoto.com/id/1288129985/vector/missing-image-of-a-person-placeholder.jpg?s=612x612&w=0&k=20&c=9kE777krx5mrFHsxx02v60ideRWvIgI1RWzR1X4MG2Y="
-              }
-              className="profile-pic profile-pic-hover"
-              onClick={handleProfilePic}
-            />
-            <div className="edit-icon-overlay" onClick={handleProfilePic}>
-              <FontAwesomeIcon size="4x" icon="fa-solid fa-camera-retro" />
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              name="profilePicture"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-            />
-            <h3 className="profile-username">{user.username}</h3>
-            {user.isAdmin && <p className="admin-tag">Admin</p>}
-            <p className="profile-info">{user.email}</p>
-            <p className="profile-info">{user.phoneNumber}</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-around",
-              }}
+        <>
+          <div
+            className="user-history-container"
+            style={{ marginTop: "0px", paddingTop: "5px" }}
+          >
+            <button
+              className="btn btn-primary btn-block confirm-button"
+              onClick={() => window.location.href = "/profile"}
+              style={{ alignSelf: "flex-start", margin: "5px" }}
             >
-              <a
-                className="edit-profile btn btn-secondary align-self-center"
-                href="/profile"
-              >
-                Profile
-              </a>
-              <a
-                className="edit-profile btn btn-danger align-self-center"
-                onClick={handleSignOut}
-              >
-                Sign Out
-              </a>
-            </div>
-          </div>
-          <div className="user-history-container">
-            <h2 className="py-2">Edit Profile</h2>
+              Go Back
+            </button>
+            <h2 className="py-2" style={{ marginBottom: "0px" }}>Edit Profile</h2>
             <form
               className="card-body user-history"
               style={{
@@ -353,9 +283,50 @@ const EditProfile = () => {
                 alignContent: "center",
                 display: "flex",
                 flexDirection: "column",
+                marginBottom: "5px",
+                marginTop: "5px",
               }}
             >
               <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
+                <div className="col-sm-12 row justify-content-center mb-3">
+                  <div
+                    className="form-group"
+                    style={{ width: "80%", position: "relative" }}
+                  >
+                    <span className="profile-pic-hover">
+                      <img
+                        src={
+                          selectedProfilePicture
+                            ? URL.createObjectURL(selectedProfilePicture)
+                            : user.profilePicture
+                              ? user.profilePicture
+                              : "https://media.istockphoto.com/id/1288129985/vector/missing-image-of-a-person-placeholder.jpg?s=612x612&w=0&k=20&c=9kE777krx5mrFHsxx02v60ideRWvIgI1RWzR1X4MG2Y="
+                        }
+                        className="profile-pic"
+                        onClick={handleProfilePic}
+                      />
+                      <div
+                        className="edit-icon-overlay"
+                        onClick={handleProfilePic}
+                      >
+                        <FontAwesomeIcon size="3x" icon="fa-regular fa-pen-to-square" />
+                      </div>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        name="profilePicture"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={handleFileChange}
+                      />
+                    </span>
+                  </div>
+                </div>
+                <div className="col-sm-12 row justify-content-center mb-3">
+                  <div className="form-group" style={{ width: "80%" }}>
+                    <h4 style={{ textAlign: "center" }}>{user.username}</h4>
+                  </div>
+                </div>
                 <div className="col-sm-12 row justify-content-center mb-3">
                   <div className="form-group" style={{ width: "80%" }}>
                     <OverlayTrigger
@@ -364,9 +335,8 @@ const EditProfile = () => {
                       overlay={popoverUsername}
                     >
                       <input
-                        className={`form-control ${
-                          !username.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!username.isValid ? "is-invalid" : ""
+                          }`}
                         type="text"
                         placeholder="Username"
                         id="name"
@@ -389,9 +359,8 @@ const EditProfile = () => {
                       overlay={popoverEmail}
                     >
                       <input
-                        className={`form-control ${
-                          !email.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!email.isValid ? "is-invalid" : ""
+                          }`}
                         type="text"
                         placeholder="Email"
                         id="email"
@@ -414,9 +383,8 @@ const EditProfile = () => {
                       overlay={popoverPhoneNumber}
                     >
                       <input
-                        className={`form-control ${
-                          !phoneNumber.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!phoneNumber.isValid ? "is-invalid" : ""
+                          }`}
                         type="text"
                         placeholder="Phone Number"
                         id="phone-number"
@@ -482,9 +450,8 @@ const EditProfile = () => {
                       overlay={popoverPassword}
                     >
                       <input
-                        className={`form-control ${
-                          !password.isValid ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${!password.isValid ? "is-invalid" : ""
+                          }`}
                         type={showPassword ? "text" : "password"}
                         placeholder="New Password"
                         id="password"
@@ -520,9 +487,8 @@ const EditProfile = () => {
                     style={{ width: "80%" }}
                   >
                     <input
-                      className={`form-control ${
-                        !confirmPassword.isValid ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${!confirmPassword.isValid ? "is-invalid" : ""
+                        }`}
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm New password"
                       id="confirm-password"
@@ -581,7 +547,7 @@ const EditProfile = () => {
               </div>
             </form>
           </div>
-        </div>
+        </>
       )}
       <MobileNavbar />
     </>

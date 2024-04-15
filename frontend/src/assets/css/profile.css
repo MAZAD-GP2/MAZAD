@@ -12,35 +12,36 @@
 }
 
 .profile-pic {
-  display: block;
-  width: 160px;
-  height: 160px;
+  /* display: block; */
+  width: 100px;
+  height: 100px;
   overflow: hidden; /* Ensures the image remains within the container */
   border-radius: 50%;
   object-fit: cover;
   /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); */
   align-self: center;
   transition: 0.25s;
-}
-
-.profile-pic-hover:hover {
-  cursor: pointer;
+  display: block;
+  margin: 0 auto;
 }
 .edit-icon-overlay {
   position: absolute;
-  top: 70px; /* Adjust top position as needed */
-  right: 100px; /* Adjust right position as needed */
-  z-index: 1; /* Ensure the icon is above the image */
-  cursor: pointer;
-  opacity: 0;
-  border-radius: 100%;
-  cursor: pointer;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  opacity: 0.7;
 }
-.edit-icon-overlay:hover{
-  opacity: 0.8;
+.profile-pic-hover{
+  display: contents;
 }
-.profile-pic:hover + .edit-icon-overlay {
-  opacity: 0.8;
+.profile-pic-hover:hover>.profile-pic{
+  cursor: pointer;
+  opacity: 0.5;
+}
+.profile-pic-hover:hover>.edit-icon-overlay {
+  cursor: pointer;
+  opacity: 0.5;
 }
 
 .admin-tag {
