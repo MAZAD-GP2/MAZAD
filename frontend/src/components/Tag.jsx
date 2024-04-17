@@ -58,7 +58,7 @@ const Tag = ({tags, setTags}) => {
             value={inputValue} 
             onChange={handleInputChange} 
             onKeyDown={addTag}
-            className='bg-primary' 
+            className='bg-primary text-secondary' 
           />}
         </ul>
       </div>
