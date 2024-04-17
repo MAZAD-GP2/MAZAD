@@ -1,6 +1,7 @@
 require("dotenv").config();
 const sequelize = require("../config/database");
 const Auction = require("../models/Auction");
+const User = require("../models/User");
 const Bid = require("../models/Bid");
 
 module.exports.getBidById = async (req, res) => {
@@ -13,18 +14,41 @@ module.exports.getBidById = async (req, res) => {
   }
 };
 
+module.exports.getBidsByUser = async (req, res) => {
+  try {
+    let { userId } = req.params;
+    if(!userId) return res.status(400).send("User ID must be provided");
+
+    const user = User.findByPk(userId);
+    if(!user) return res.status(404).send("User not found");
+
+    const bids = await Bid.findAll({
+      where: { UserId: userId },
+      include: [{ model: User }],
+      limit: limit,
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.send(bids);
+  }
+  catch(err) {
+    console.error("Error retrieving bids for user:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports.getBidsByAuction = async (req, res) => {
   try {
     const { auctionId } = req.params;
     const limit = parseInt(req.query.limit) || 10;
 
     if (!auctionId) {
-      return res.status(400).json({ message: "Auction ID must be provided" });
+      return res.status(400).send("Auction ID must be provided");
     }
 
     const auction = await Auction.findByPk(auctionId);
     if (!auction) {
-      return res.status(404).json({ message: "Auction not found" });
+      return res.status(404).send("Auction not found");
     }
 
     const bids = await Bid.findAll({
@@ -46,29 +70,33 @@ module.exports.addBid = async (req, res) => {
     const userId = req.currentUser.id;
 
     if (!req.body.BidAmount || isNaN(parseInt(req.body.BidAmount))) {
-      return res
-        .status(400)
-        .json({ message: "Valid bid amount must be provided" });
+      return res.status(400).send("Valid bid amount must be provided");
     }
 
     const bidAmount = parseInt(req.body.BidAmount);
     const auctionId = req.body.auctionId;
 
     if (!auctionId) {
-      return res.status(400).json({ message: "Auction ID must be provided" });
+      return res.status(400).send("Auction ID must be provided");
     }
 
     const t = await sequelize.transaction();
     const auction = await Auction.findByPk(auctionId);
 
     if (!auction) {
-      return res.status(404).json({ message: "Auction not found" });
+      return res.status(404).send("Auction not found");
+    }
+
+    if(new Date(auction.startDate) > new Date()) {
+      return res.status(400).send("Auction has not started yet");
+    }
+
+    if(new Date(auction.endDate) < new Date()) {
+      return res.status(400).send("Auction has not started yet");
     }
 
     if (bidAmount <= auction.highestBid) {
-      return res
-        .status(400)
-        .json({ message: "Bid amount must be greater than the highest bid" });
+      return res.status(400).send("Bid amount must be greater than the highest bid");
     }
 
     auction.highestBid = bidAmount;

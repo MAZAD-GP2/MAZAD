@@ -1,12 +1,15 @@
 import React from "react";
 import notFoundImage from "../assets/images/404-image.webp";
+import Navbar from "./Navbar";
 
 const NotFound = () => {
   return (
+    <>
+    <Navbar/>
     <div
       style={{
         position: "fixed",
-        top: "40%",
+        top: "45%",
         left: "50%",
         transform: "translate(-50%, -50%)",
         display: "flex",
@@ -19,6 +22,7 @@ const NotFound = () => {
         <p>Sorry, but we can't find the page you're looking for...</p>
       </div>
     </div>
+    </>
   );
 };
 

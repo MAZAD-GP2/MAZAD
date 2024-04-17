@@ -72,7 +72,8 @@ function App() {
 
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
         <Route exact path="/item/:id" element={<ViewItem />} />
-        <Route exact path="not-found" element={<NotFound/>}/>
+        {/* <Route exact path="not-found" element={<NotFound/>}/> */}
+        <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
       </Routes>
     </>
   );

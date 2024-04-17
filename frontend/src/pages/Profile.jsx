@@ -25,7 +25,8 @@ const Profile = () => {
           if (Object.keys(response.data).length) {
             setUser(response.data);
           } // check if user exists
-          else navigate('/not-found', {replace: true});
+          
+          // else navigate('/not-found', {replace: true});
           setLoading(false);
           const parsedUserData = JSON.parse(userData);
           if (parsedUserData && parsedUserData.id == id) {

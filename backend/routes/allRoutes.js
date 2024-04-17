@@ -56,6 +56,7 @@ router.route("/interest/remove/:id").delete(verifyToken(true), interestRoutes.re
 
 // Auction
 router.route("/auction/:id").get(auctionRoutes.getAuctionById);
+router.route("/auction/user/:id").get(auctionRoutes.getAuctionsByUser);
 router.route("/auction/create").post(verifyToken(true), auctionRoutes.addAuction);
 router.route("/auction/update").put(verifyToken(true), auctionRoutes.updateAuction);
 router.route("/auction/delete/:id").delete(verifyToken(true), auctionRoutes.removeAuction);
@@ -63,6 +64,7 @@ router.route("/auction/delete/:id").delete(verifyToken(true), auctionRoutes.remo
 // Bid
 router.route("/bid/:id").get(bidRoutes.getBidById);
 router.route("/bid/auction/:id").get(bidRoutes.getBidsByAuction);
+router.route("/bid/user/:id").get(bidRoutes.getBidsByUser);
 router.route("/bid/create").post(verifyToken(true), bidRoutes.addBid);
 router.route("/bid/delete/:id").delete(verifyToken(true), bidRoutes.removeBid);
 
