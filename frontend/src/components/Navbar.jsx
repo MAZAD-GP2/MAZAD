@@ -42,7 +42,7 @@ const Navbar = () => {
   }
 
   return (
-    <div id="desktopNavbar">
+    <div id="desktopNavbar" >
       <div className="d-flex flex-row w-100 gap-5 bg-primary">
         <div className="d-flex flex-column w-100 gap-1">
           <div className="row w-100 d-flex flex-row w-100 gap-5 mt-3">
