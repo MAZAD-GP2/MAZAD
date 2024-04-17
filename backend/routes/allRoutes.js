@@ -18,7 +18,7 @@ const { validateItemCreation } = require("../utils/validators/itemValidator");
 const multer = require("multer");
 const storage = multer.diskStorage({
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    cb(null, file.originalname);  
   },
 });
 const upload = multer({ storage: storage }).array("images");
@@ -68,5 +68,7 @@ router.route("/bid/user/:id").get(bidRoutes.getBidsByUser);
 router.route("/bid/create").post(verifyToken(true), bidRoutes.addBid);
 router.route("/bid/delete/:id").delete(verifyToken(true), bidRoutes.removeBid);
 
+// Search
+router.route('/search').get(verifyToken(false), itemRoutes.searchItem);
 
 module.exports = router;

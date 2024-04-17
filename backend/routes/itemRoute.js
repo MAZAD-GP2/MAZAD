@@ -9,8 +9,8 @@ const Item_tag = require("../models/Item_tag");
 const cloudinary = require("../config/cloudinaryConfig");
 const sanitizeHtml = require("sanitize-html");
 const User = require("../models/User");
-const { where } = require("sequelize");
 const Interest = require("../models/Interest");
+const { Op } = require("sequelize");
 
 const QuillDeltaToHtmlConverter = require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 
@@ -266,5 +266,49 @@ module.exports.deleteItem = async (req, res) => {
     return res.send("successfully");
   } catch (err) {
     return res.send(err);
+  }
+};
+
+module.exports.searchItem = async (req, res) => {
+  const search = req.query.search;
+  const user = req.currentUser;
+  try {
+    const items = await Item.findAll({
+      where: {
+        [Op.or]: [
+          { name: { [Op.like]: "%" + search + "%" } },
+          { '$Tags.name$': { [Op.like]: "%" + search + "%" } }
+        ]
+      },
+      include: [
+        Category,
+        {
+          model: Tag,
+        },
+        Image,
+      ],
+      order: [["id", "DESC"]],
+    });
+
+    let interests = {};
+    if (user) {
+      await Promise.all(
+        items.map(async (item) => {
+          const interest = await Interest.findOne({
+            where: {
+              itemId: item.id,
+              userId: user.id,
+            },
+          });
+          interests[item.id] = interest ? true : false;
+        })
+      );
+    }
+
+    const itemsValues = { items, interests };
+
+    return res.send(itemsValues);
+  } catch (err) {
+    return res.status(400).send(err);
   }
 };

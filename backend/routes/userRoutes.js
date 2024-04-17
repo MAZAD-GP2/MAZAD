@@ -229,7 +229,7 @@ module.exports.updateUser = async (req, res) => {
 
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path);
-      profilePicture = result.url; 
+      profilePicture = result.url;
     }
 
     await user.update({

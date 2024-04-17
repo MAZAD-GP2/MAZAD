@@ -15,7 +15,6 @@ const Home = () => {
         const response = await api.getAllItems();
         setItems(response.data.items);
         setInterests(response.data.interests);
-        console.log(response.data.items);
       } catch (err) {
         console.error(err);
       } finally {

@@ -12,6 +12,7 @@ const Navbar = () => {
   const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [show, setShow] = useState(false);
+  const [search, setSearch] = useState("");
   const user = JSON.parse(sessionStorage.getItem("user"));
   const location = useLocation();
 
@@ -41,6 +42,13 @@ const Navbar = () => {
     window.location.href = `/category-item/${id}`;
   }
 
+  async function SubmitSearch(e) {
+    if (e.key === 'Enter') {
+      window.location.href = `/search?search=${search}`;
+      setSearch("");
+    }
+  }
+
   return (
     <div id="desktopNavbar">
       <div className="d-flex flex-row w-100 gap-5 bg-primary">
@@ -66,6 +74,9 @@ const Navbar = () => {
                     type="search"
                     placeholder="Search Items, tags or categories"
                     aria-label="Search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    onKeyDown={SubmitSearch}
                     className="form-control col bg-dark text-white border-0 rounded-5 "
                     style={{ outline: "none" }}
                   />

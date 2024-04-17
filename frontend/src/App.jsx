@@ -6,9 +6,7 @@ import loadable from "@loadable/component";
 const Home = loadable(() => import("./pages/Home.jsx"));
 const Register = loadable(() => import("./pages/auth/Register.jsx"));
 const Login = loadable(() => import("./pages/auth/Login.jsx"));
-const ForgotPassword = loadable(() =>
-  import("./pages/auth/ForgotPassword.jsx")
-);
+const ForgotPassword = loadable(() => import("./pages/auth/ForgotPassword.jsx"));
 const ResetPassword = loadable(() => import("./pages/auth/ResetPassword.jsx"));
 const AddItem = loadable(() => import("./pages/AddItem.jsx"));
 const CategoryItems = loadable(() => import("./pages/CategoryItems.jsx"));
@@ -16,6 +14,7 @@ const ViewItem = loadable(() => import("./pages/ViewItem.jsx"));
 const Profile = loadable(() => import("./pages/Profile.jsx"));
 const EditProfile = loadable(() => import("./pages/EditProfile.jsx"));
 const LandingPage = loadable(() => import("./pages/LandingPage.jsx"));
+const SearchResult = loadable(() => import("./pages/SearchResult.jsx"));
 
 const NotFound = loadable(() => import("./components/NotFound.jsx"));
 
@@ -70,6 +69,7 @@ function App() {
         {isLoggedIn && <Route path="/add-item" element={<AddItem />} />}
         {!isLoggedIn && <Route exact path="/add-item" element={<Login />} />}
 
+        <Route exact path="/search" element={<SearchResult />} />
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
         <Route exact path="/item/:id" element={<ViewItem />} />
         {/* <Route exact path="not-found" element={<NotFound/>}/> */}

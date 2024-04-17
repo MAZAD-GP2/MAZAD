@@ -51,3 +51,4 @@ export const addBid = (data) => API.post("/bid/create", data);
 export const removeBid = (id) => API.delete(`/bid/auction/${id}`);
 
 export const decodeToken = () => API.post(`/decode-token`);
+export const search = (data) => API.get(`/search?search=${data}`);
