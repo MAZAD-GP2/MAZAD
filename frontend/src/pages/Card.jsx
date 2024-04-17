@@ -1,26 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import "../assets/css/card.css";
 import sanitizeHtml from "sanitize-html";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as api from "../api/index";
 
 const Card = ({ item, interest }) => {
   const user = JSON.parse(sessionStorage.getItem("user"));
+  const [isInterest, setIsInterest] = useState(interest);
 
-  function handleHref(id) {
-    window.location.href = `/item/${id}`;
+  function handleCardClick() {
+    window.location.href = `/item/${item.id}`;
   }
 
-  async function changeInterest() {
-    if (interest) {
+  const changeInterest = async (event) => {
+    event.stopPropagation(); // Prevents the card click handler from being called
+    if (isInterest) {
       await api.removeInterest(item.id);
     } else {
       await api.addInterest(item.id);
     }
-    setInterest(!interest);
+    setIsInterest(!isInterest);
   }
 
   return (
-    <div className="card item-card" onClick={() => handleHref(item.id)}>
+    <div className="card item-card" onClick={handleCardClick}>
       <img className="image" src={item.Images[0].imgURL} alt="Card image cap" />
       <div className="card-body">
         <div className="tag-container">
@@ -34,22 +37,13 @@ const Card = ({ item, interest }) => {
         <div className="d-flex gap-4 ">
           <h5 className="card-title">{item.name}</h5>
           {user && (
-            <span className="text-danger" onClick={changeInterest}>
-              {interest ? (
-                <FontAwesomeIcon
-                  icon="fa-solid fa-heart"
-                  style={{ marginTop: "50%" }}
-                />
-              ) : (
-                <FontAwesomeIcon
-                  icon="fa-regular fa-heart"
-                  style={{ marginTop: "50%" }}
-                />
-              )}
+            <span className="text-danger" style={{width:"7%", display:"flex", justifyContent:"center", alignContent:"center", flexDirection:"column"}} onClick={changeInterest}>
+              <FontAwesomeIcon
+                icon={isInterest ? "fa-solid fa-heart" : "fa-regular fa-heart"}
+              />
             </span>
           )}
         </div>
-        {/* <p className="card-text text-truncate">{item.description}</p> */}
         <p className="card-text">
           {item.description.length > 150
             ? sanitizeHtml(
