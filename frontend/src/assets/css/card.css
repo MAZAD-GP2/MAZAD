@@ -1,14 +1,15 @@
 .card {
-    width: 25rem;
+    width: 15rem;
     /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--secondary-light);
     cursor: pointer;
     transition: .25s;
+    background-color: var(--primary-light);
+    color: var(--secondary-light);
 }
-
 .item-card:hover {
     /* background-color: #e4c9af; */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 16px var(--secondary-light);
 }
 
 .image {
@@ -16,7 +17,7 @@
     margin: 10px;
     /* box-shadow: 1px 4px 8px rgba(0, 0, 0, 0.4); */
     border-radius: 2%;
-    max-height: 15rem;
+    max-height: 9rem;
     object-fit: cover;
 }
 
@@ -44,12 +45,13 @@
 .tag {
     font-size: 13px;
     opacity: 80%;
-    border: 1px rgba(0, 0, 0, 0.2) solid;
+    border: 1px var(--secondary-light) solid;
     border-radius: 100px;
     padding: 1px 10px;
     margin: 3px 3px;
     margin-left: 1px;
-    background-color: white;
+    background-color: var(--primary-light);
+    color: var(--secondary-light);
 }
 
 .category {

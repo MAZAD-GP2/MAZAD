@@ -3,9 +3,11 @@
 :root {
   --primary-light: #110f0f;
   --secondary-light: #00e175;
+  --secondary-light-opacity: #00e17490;
   --tertiary-light: #826f66;
   --muted-light: #d7d4d4;
-
+  --danger-light: #DC3545;
+  
   --primary-dark: #1e1e2e;
   --secondary-dark: #f7ccac;
   --tertiary-dark: #ffe2cc;
@@ -13,7 +15,7 @@
 
 body {
   font-family: "Poppins", sans-serif;
-  background-color: #efefef;
+  background-color: var(--primary-light);
 }
 
 .link {

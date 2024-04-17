@@ -60,7 +60,7 @@ const Navbar = () => {
                 className="d-flex flex-row gap-3 form-group"
               >
                 <div className="input-container bg-dark rounded-5 border-0 d-flex">
-                  <FontAwesomeIcon icon="fa-search" color="white" />
+                  <FontAwesomeIcon icon="fa-search" />
                   <input
                     id="seach-input"
                     type="search"

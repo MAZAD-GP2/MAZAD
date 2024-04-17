@@ -11,7 +11,7 @@ const Tag = ({tags, setTags}) => {
     return tags.map((tag, index) => (
       <li key={index}>
         {tag} <i onClick={() => remove(tag)}>
-          <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
+          <FontAwesomeIcon className='icon' icon={faTimes}></FontAwesomeIcon>
         </i>
       </li>
     ));
@@ -57,13 +57,14 @@ const Tag = ({tags, setTags}) => {
             spellCheck="false" 
             value={inputValue} 
             onChange={handleInputChange} 
-            onKeyDown={addTag} 
+            onKeyDown={addTag}
+            className='bg-primary' 
           />}
         </ul>
       </div>
       <div className="details">
         <p><span>{tags.length}</span>/{maxTags}</p>
-        <button className='btn btn-danger' onClick={removeAllTags}>Remove All</button>
+        <button className='btn remove' onClick={removeAllTags}>Remove All</button>
       </div>
     </div>
   );

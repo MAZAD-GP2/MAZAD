@@ -24,7 +24,7 @@ const AddItem = () => {
   const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [isAddingItem, setIsAddingItem] = useState(false);
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState(1);
   const [tags, setTags] = useState([]);
   const [name, setName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -104,7 +104,7 @@ const AddItem = () => {
 
   const handlePriceChange = (event) => {
     if (event.target.value < 0 && event.target.value !== "") {
-      setPrice(0);
+      setPrice(1);
       return;
     }
     setPrice(event.target.value);
@@ -273,20 +273,20 @@ const AddItem = () => {
       <Navbar />
       <PageTitle title="Start a Mazad" />
       <div className="p-3">
-        <div id="main" className="container p-3 shadow bg-white">
+        <div id="main" className="container p-3 shadow bg-primary">
           <div className="d-flex flex-column gap-3">
             <div>
               <h4>Auction title</h4>
               <input
                 type="text"
-                className="form-control w-lg-50 w-md-50 w-sm-100"
+                className="form-control w-lg-50 w-md-50 w-sm-100 bg-primary"
                 placeholder="Enter auction name"
                 aria-label="Auction Title"
                 aria-describedby="basic-addon1"
                 maxLength="255"
                 onChange={handleTitleChange}
               />
-              <small className="form-text text-muted">limited to 255 characters</small>
+              <small className="form-text guide">limited to 255 characters</small>
             </div>
             <div
               id="image-details"
@@ -350,11 +350,11 @@ const AddItem = () => {
                       );
                     }}
                   </Dropzone>
-                  <small className="form-text text-muted position-absolute w-50 pe-3">
+                  <small className="form-text guide position-absolute w-50 pe-3">
                     At least one, not more than ten
                   </small>
                 </div>
-                <small className="form-text text-muted">
+                <small className="form-text guide">
                   {" "}
                   {droppedFiles.length}/10{" "}
                 </small>
@@ -387,7 +387,7 @@ const AddItem = () => {
                     </label>
                     <input
                       type="time"
-                      className="form-control"
+                      className="form-control bg-primary text-secondary"
                       id="start-time"
                       name="start-time"
                       value={
@@ -414,7 +414,7 @@ const AddItem = () => {
                     </label>
                     <input
                       type="time"
-                      className="form-control"
+                      className="form-control bg-primary text-secondary"
                       id="end-time"
                       name="end-time"
                       value={
@@ -431,22 +431,21 @@ const AddItem = () => {
                     />
                   </div>
                 </div>
-                <small className="text-muted row ms-1">limited to 7 days</small>
+                <small className="guide row ms-1">limited to 7 days</small>
               </div>
               <div>
                 <h4>Starting price</h4>
                 <div className="d-flex flex-column">
                   <div className="d-flex flex-row gap-3">
                     <div className="input-group">
-                      <span className="input-group-text" id="basic-addon1">
+                      <span className="input-group-text bg-primary text-secondary" id="basic-addon1">
                         JOD
                       </span>
                       <input
                         type="number"
-                        className="form-control"
+                        className="form-control bg-primary text-secondary"
                         placeholder="1"
                         aria-label="Starting price"
-                        aria-describedby="basic-addon1"
                         min="1"
                         onChange={(e) => {
                           handlePriceChange(e);
@@ -455,8 +454,8 @@ const AddItem = () => {
                       />
                     </div>
                   </div>
-                  <small className="form-text text-muted">
-                    Starting at 0 JOD
+                  <small className="form-text guide">
+                    Starting at 1 JOD
                   </small>
                 </div>
               </div>
@@ -477,7 +476,7 @@ const AddItem = () => {
                     categories.map((category) => (
                       <div
                         key={category.id}
-                        className={`col p-2 border rounded m-1 px-2 ${
+                        className={`col p-2 rounded m-1 px-2 categories ${
                           selectedCategory &&
                           selectedCategory["id"] === category["id"]
                             ? "selected"
@@ -505,7 +504,7 @@ const AddItem = () => {
             </div>
             <div className="w-100 d-flex flex-row justify-content-center">
               <button
-                className="submit-button btn btn-secondary w-auto"
+                className="submit-button btn btn-primary text-secondary w-auto"
                 disabled={isAddingItem}
                 onClick={handleSubmit}
               >

@@ -44,27 +44,6 @@ const Card = ({ item, interest }) => {
             </span>
           )}
         </div>
-        <p className="card-text">
-          {item.description.length > 150
-            ? sanitizeHtml(
-                item.description
-                  .replace("><", "> <")
-                  .substring(0, 147)
-                  .split(" ")
-                  .slice(0, -1)
-                  .join(" ") + "...",
-                {
-                  allowedTags: [],
-                  allowedAttributes: {},
-                  allowedIframeHostnames: [],
-                }
-              )
-            : sanitizeHtml(item.description.replace("><", "> <"), {
-                allowedTags: [],
-                allowedAttributes: {},
-                allowedIframeHostnames: [],
-              })}
-        </p>
       </div>
     </div>
   );
