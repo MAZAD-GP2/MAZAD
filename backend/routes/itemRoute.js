@@ -12,22 +12,28 @@ const User = require("../models/User");
 const Interest = require("../models/Interest");
 const { Op } = require("sequelize");
 
-const QuillDeltaToHtmlConverter = require("quill-delta-to-html").QuillDeltaToHtmlConverter;
+const QuillDeltaToHtmlConverter =
+  require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 
 module.exports.createItem = async (req, res) => {
   const t = await sequelize.transaction();
   try {
-    let { name, description, startDate, endDate, tags, price, categoryId } = req.body;
+    let { name, description, startDate, endDate, tags, price, categoryId } =
+      req.body;
     tags = tags.split(",").filter((tag) => tag.trim() !== "");
     price = parseFloat(price);
     if (!name || !description || !startDate || !endDate || !tags || !price) {
       return res.status(400).send({ message: "All fields are required" });
     }
     if (new Date(startDate) < new Date()) {
-      return res.status(400).send({ message: "Start date must be in the future" });
+      return res
+        .status(400)
+        .send({ message: "Start date must be in the future" });
     }
     if (new Date(endDate) < new Date(startDate)) {
-      return res.status(400).send({ message: "End date must be after start date" });
+      return res
+        .status(400)
+        .send({ message: "End date must be after start date" });
     }
     if (tags.length > 3) {
       return res.status(400).send("Maximum 3 tags allowed");
@@ -55,12 +61,17 @@ module.exports.createItem = async (req, res) => {
 
     let htmlDescription = converter.convert();
 
+    // remove all tags and check if it is empty
     if (description.replace(/<[^>]*>?/gm, "").trim() === "") {
       return res.status(400).send("Description cannot be empty");
     }
 
     description = sanitizeHtml(htmlDescription, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["b", "strong", "i"]),
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+        "b",
+        "strong",
+        "i",
+      ]),
       allowedAttributes: {
         "*": ["style"],
       },
@@ -68,7 +79,7 @@ module.exports.createItem = async (req, res) => {
 
     description = description.replace(/<br\s*\/?>\s*(<br\s*\/?>)+/g, "<br/>");
 
-    // remove all tags and check if it is empty
+    // also sanitize tags to prevent XSS, hmm actually, theres no need (as long as we don't do .innerHTML or the equivalent)
 
     const item = await Item.create(
       {
@@ -105,7 +116,9 @@ module.exports.createItem = async (req, res) => {
       { transaction: t }
     );
 
-    const tagOps = tags.map((tag) => Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t }));
+    const tagOps = tags.map((tag) =>
+      Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t })
+    );
     const createdTags = await Promise.all(tagOps);
 
     await Item_tag.bulkCreate(
@@ -199,12 +212,58 @@ module.exports.getAllItemsByCategory = async (req, res) => {
     return res.send(er);
   }
 };
-
 module.exports.getAllItems = async (req, res) => {
   const user = req.currentUser;
+  let { status, categories, tags, minPrice, maxPrice, popularity } = req.query;
 
   try {
+    let whereClause = {};
+    let orderClause = [];
+    // Apply filters if provided
+    if (status && status !== "all") {
+      if (status === "live") {
+        whereClause["$Auction.startTime$"] = { [Op.lte]: new Date() };
+      } else if (status === "upcoming") {
+        whereClause["$Auction.startTime$"] = { [Op.gt]: new Date() };
+      }
+    }
+
+    if (categories) {
+      whereClause.categoryId = categories.split(",");
+    }
+
+    if (tags) {
+      whereClause["$Tags.id$"] = tags.split(",");
+    }
+
+    if (minPrice) {
+      minPrice = parseFloat(minPrice);
+      whereClause["$Auction.highestBid$"] = { [Op.gte]: minPrice };
+    }
+
+    if (maxPrice) {
+      maxPrice = parseFloat(maxPrice);
+      whereClause["$Auction.highestBid$"] = { [Op.lt]: maxPrice };
+    }
+
+    if (popularity) {
+      if (popularity === "heigh") {
+        orderClause = [
+          [sequelize.literal("interestsCount"), "DESC"],
+          ...orderClause,
+        ];
+      } else if (popularity === "low") {
+        orderClause = [
+          [sequelize.literal("interestsCount"), "ASC"],
+          ...orderClause,
+        ];
+      }
+    }
+
+    orderClause = [...orderClause, ["id", "DESC"]];
+
     let items = await Item.findAll({
+      where: whereClause,
       include: [
         Category,
         {
@@ -212,11 +271,33 @@ module.exports.getAllItems = async (req, res) => {
           through: "Item_tag",
         },
         Image,
+        {
+          model: Auction,
+          // we'll keep this commented out for now, but in the future, we don't want to show items that have already ended
+          // where: {
+          // itemId: sequelize.col("Item.id"),
+          // finishTime: { [Op.gte]: new Date() } // Filter by auction finish time
+          // },
+        },
+        {
+          model: Interest,
+          attributes: [],
+          duplicating: false,
+        },
       ],
-      order: [["id", "DESC"]],
+      attributes: {
+        include: [
+          [
+            sequelize.literal(
+              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
+            ),
+            "interestsCount",
+          ],
+        ],
+      },
+      order: orderClause,
     });
 
-    let interests = {};
     if (user) {
       await Promise.all(
         items.map(async (item) => {
@@ -226,16 +307,14 @@ module.exports.getAllItems = async (req, res) => {
               userId: user.id,
             },
           });
-          interests[item.id] = interest ? true : false;
+          item.dataValues.isInterested = interest ? true : false;
         })
       );
     }
 
-    const itemsValues = { items, interests };
-
-    return res.send(itemsValues);
-  } catch (er) {
-    return res.send(er);
+    return res.send(items);
+  } catch (error) {
+    return res.send(error);
   }
 };
 
@@ -277,8 +356,8 @@ module.exports.searchItem = async (req, res) => {
       where: {
         [Op.or]: [
           { name: { [Op.like]: "%" + search + "%" } },
-          { '$Tags.name$': { [Op.like]: "%" + search + "%" } }
-        ]
+          { "$Tags.name$": { [Op.like]: "%" + search + "%" } },
+        ],
       },
       include: [
         Category,

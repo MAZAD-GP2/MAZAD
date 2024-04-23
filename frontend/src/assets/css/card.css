@@ -1,70 +1,91 @@
 .card {
-    width: 25rem;
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    cursor: pointer;
-    transition: .25s;
+  width: 20rem;
+  max-width: 20rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  transition: 0.25s;
+  /* height */
 }
 
+
 .item-card:hover {
-    /* background-color: #e4c9af; */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .image {
-    display: block;
-    margin: 10px;
-    /* box-shadow: 1px 4px 8px rgba(0, 0, 0, 0.4); */
-    border-radius: 2%;
-    max-height: 15rem;
-    object-fit: cover;
+  border-radius: 2%;
+  width: 18.5rem;
+  margin: 10px;
+  object-fit: cover;
+  height: 15rem;
+  cursor: pointer;
 }
 
-.card-body { 
-    padding: 10px;
-    margin-bottom: 8px;
-}
 
 .card-text {
-    opacity: 80%;
-    text-align: left;
-    margin-bottom: 10px;
+  opacity: 80%;
+  text-align: left;
 }
-
+ 
 .card-title {
-    margin-top: 4px;
+  cursor: pointer;
 }
 
 .tag-container {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 18px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .tag {
-    font-size: 13px;
-    opacity: 80%;
-    border: 1px rgba(0, 0, 0, 0.2) solid;
-    border-radius: 100px;
-    padding: 1px 10px;
-    margin: 3px 3px;
-    margin-left: 1px;
-    background-color: white;
+  font-size: 13px;
+  opacity: 80%;
+  border: 1px rgba(0, 0, 0, 0.2) solid;
+  border-radius: 100px;
+  background-color: white;
 }
 
 .category {
-    opacity: 80%;
-    font-weight: bold;
-    border: 1px solid var(--secondary-light);
+  opacity: 80%;
+  font-weight: bold;
+  border: 1px solid var(--primary-green);
 }
 
-@media only screen and (max-width: 600px) {
-    .card {
-        width: 100%; /* Adjust the width for smaller screens */
-        box-shadow: none; /* Remove box-shadow for smaller screens if needed */
-    }
+.description{
+  cursor: pointer;
+}
 
-    .card:hover {
-        width: 100%;
-    }
+.interest{
+  cursor: pointer;
+}
+
+#price-label {
+  width: 50px; /* Set the width and height equal for a quarter-circle */
+  height: 50px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: var(--primary-green);
+  border-radius: 0 0 0 25px; /* This creates a quarter-circle shape */
+  transform: rotate(-45deg); /* Rotate the label to form a quarter-circle */
+  overflow: hidden; /* Hide overflow content */
+}
+
+#price-label-text {
+  font-size: 16px; /* Adjust font size as needed */
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  line-height: 50px; /* Vertically center the text within the quarter-circle */
+}
+
+@media only screen and (max-width: 720px) {
+  .card {
+    width: 100%;
+  }
+  #image-container {
+    width: 100%;
+  }
+  .image {
+    width: 94%;
+    height: 15rem;
+  }
 }

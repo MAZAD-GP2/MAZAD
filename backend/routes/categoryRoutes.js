@@ -12,7 +12,10 @@ module.exports.getAllCategories = async (req, res) => {
 
 module.exports.createCategory = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name } = req.body.trim();
+    if (!name) {
+      return res.status(400).send({ message: "Please provide a category name" });
+    }
     const category = await Category.create({ name });
     res.send(category);
   } catch (err) {

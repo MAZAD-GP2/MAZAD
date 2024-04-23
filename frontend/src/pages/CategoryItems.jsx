@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import MobileNavbar from "../components/MobileNavbar";
 
-import Card from "./Card";
+import Card from "../components/Card";
 import * as api from "../api/index";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";

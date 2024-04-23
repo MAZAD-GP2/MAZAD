@@ -1,0 +1,28 @@
+.section {
+  border-left: 1px solid var(--primary-green);
+  padding-left: 10px;
+}
+.section label {
+  font-weight: 300;
+  margin: 0;
+}
+.status.selected {
+  background-color: var(--primary-green);
+  color: white;
+  transition: 0.3s;
+}
+
+.sticky-left {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 1rem;
+  height: 99vh;
+  overflow-y: auto;
+}
+
+
+@media (max-width: 720px) {
+  #filters-container {
+    display: none;
+  }
+}

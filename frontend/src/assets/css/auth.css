@@ -9,11 +9,11 @@
 }
 
 .information {
-  background-image: linear-gradient(to left, var(--secondary-light),  var(--primary-light));
+  background-image: linear-gradient(to left, var(--primary-green),  var(--primary-black));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  /* color: var(--primary-light); */
+  /* color: var(--primary-black); */
 }
 
 #main-container {

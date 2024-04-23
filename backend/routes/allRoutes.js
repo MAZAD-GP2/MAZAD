@@ -3,6 +3,7 @@ const router = express.Router();
 const userRoutes = require("./userRoutes");
 const itemRoutes = require("./itemRoute");
 const categoryRoutes = require("./categoryRoutes");
+const tagRoutes = require("./tagRoutes");
 const authRoutes = require("./authRoutes");
 const interestRoutes = require("./interestRoute");
 const auctionRoutes = require("./auctionRoutes");
@@ -51,8 +52,8 @@ router.route("/category").get(categoryRoutes.getAllCategories);
 router.route("/category/create").post(categoryRoutes.createCategory);
 
 // Interest
-router.route("/interest/add/:id").post(verifyToken(true), interestRoutes.addToInterests);
-router.route("/interest/remove/:id").delete(verifyToken(true), interestRoutes.removeFromInterests);
+router.route("/interest/add/:id").post(verifyToken(true), interestRoutes.updateInterests);
+router.route("/interest/remove/:id").delete(verifyToken(true), interestRoutes.updateInterests);
 
 // Auction
 router.route("/auction/:id").get(auctionRoutes.getAuctionById);
@@ -70,5 +71,11 @@ router.route("/bid/delete/:id").delete(verifyToken(true), bidRoutes.removeBid);
 
 // Search
 router.route('/search').get(verifyToken(false), itemRoutes.searchItem);
+
+// tag
+router.route("/tag").get(tagRoutes.getAllTags);
+router.route("/tag/search/:query").get(tagRoutes.searchTags);
+router.route("/tag/create").post(tagRoutes.createTag);
+router.route("/tag/delete/:id").delete(tagRoutes.deleteTag);
 
 module.exports = router;

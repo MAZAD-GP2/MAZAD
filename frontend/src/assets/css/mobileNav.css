@@ -5,7 +5,7 @@ body {
 #mobile-navbar {
   justify-content: space-between;
   align-items: center;
-  background-color: var(--primary-light);
+  background-color: var(--primary-black);
 
   color: white;
   position: fixed;
@@ -35,7 +35,7 @@ body {
 
 .mobile-nav-item.active,
 .mobile-nav-item.active a {
-  color: var(--secondary-light);
+  color: var(--primary-green);
 }
 
 .mobile-nav-item {
@@ -49,12 +49,12 @@ body {
 }
 .mobile-nav-item:hover {
   & span {
-    color: var(--secondary-light);
+    color: var(--primary-green);
   }
   cursor: pointer;
 }
 .mobile-nav-item a:hover {
-  color: var(--secondary-light);
+  color: var(--primary-green);
 }
 
 .mobile-nav-options {

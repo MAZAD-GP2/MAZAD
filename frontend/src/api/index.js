@@ -23,11 +23,14 @@ export const userUpdate = (data) => API.put(`/user/update`, data);
 export const passwordUpdate = (data) => API.put(`/user/password-update`, data);
 //categories
 export const getAllCategories = () => API.get("/category");
+//tags
+export const getAllTags = () => API.get("/tag");
+export const searchTags = (query) => API.get(`/tag/search/${query}`);
 
 //items
 export const getItemById = (id) => API.get(`/item/${id}`);
 export const getAllItemsByCategory = (id) => API.get(`/item/category/${id}`);
-export const getAllItems = () => API.get(`/item`);
+export const getAllItems = (query) => API.get(`/item?${query}`);
 export const addItem = (data) =>
   API.post("/item/create", data, {
     headers: {
@@ -35,13 +38,13 @@ export const addItem = (data) =>
     },
   });
 export const deleteItem = (id) => API.delete(`/item/delete/${id}`);
-export const addInterest = (id) => API.post(`/interest/add/${id}`);
+export const updateInterest = (id) => API.post(`/interest/add/${id}`);
 export const removeInterest = (id) => API.delete(`/interest/remove/${id}`);
 
 export const getAuctionById = (id) => API.get(`/auction/${id}`);
 export const getAuctionByUser = (id) => API.get(`/auction/user/${id}`);
-export const addAuction = (data) => API.post("/auction/create",data);
-export const updateAuction = (data) => API.put("/auction/update",data);
+export const addAuction = (data) => API.post("/auction/create", data);
+export const updateAuction = (data) => API.put("/auction/update", data);
 export const removeAuction = (id) => API.delete(`/auction/delete/${id}`);
 
 export const getBidById = (id) => API.get(`/bid/${id}`);

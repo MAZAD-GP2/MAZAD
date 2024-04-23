@@ -16,7 +16,7 @@
 }
 
 .nav-item.active {
-  border-bottom: 4px solid var(--secondary-light);
+  border-bottom: 4px solid var(--primary-green);
 }
 
 .nav-item {
@@ -30,12 +30,12 @@
 }
 .nav-item:hover {
   & span {
-    color: var(--secondary-light);
+    color: var(--primary-green);
   }
   cursor: pointer;
 }
 .nav-item a:hover {
-  color: var(--secondary-light);
+  color: var(--primary-green);
 }
 ::placeholder {
   color: var(--muted-light) !important;
@@ -50,16 +50,16 @@
   color: white;
 }
 #navdropdown:hover {
-  color: var(--secondary-light);
+  color: var(--primary-green);
 }
 
 .dropdown-menu {
-  background-color: var(--primary-light);
+  background-color: var(--primary-black);
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
 }
 .dropdown-menu > a:hover {
-  background-color: var(--primary-light);
+  background-color: var(--primary-black);
 }
 .dropdown-menu:hover {
   display: block;
@@ -203,11 +203,11 @@ input::placeholder {
 .add-item {
   background-color: transparent;
   border: none;
-  color: var(--secondary-light);
+  color: var(--primary-green);
 }
 
 .add-item:hover {
-  background-color: var(--secondary-light);
+  background-color: var(--primary-green);
 }
 
 .profile-redirect {
@@ -222,8 +222,8 @@ input::placeholder {
 }
 
 .profile-redirect:hover {
-  color: var(--primary-light);
-  background-color: var(--secondary-light);
+  color: var(--primary-black);
+  background-color: var(--primary-green);
 }
 
 .lgn-sign-up-container {
@@ -234,12 +234,12 @@ input::placeholder {
 }
 
 .lgn-sign-up {
-  color: var(--secondary-light);
+  color: var(--primary-green);
   background-color: transparent;
   border: none;
 }
 
 .lgn-sign-up:hover {
-  background-color: var(--secondary-light);
+  background-color: var(--primary-green);
 }
 

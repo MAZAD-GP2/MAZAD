@@ -3,9 +3,8 @@ import '../assets/css/tag.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-const Tag = ({tags, setTags}) => {
-  const [inputValue, setInputValue] = useState('');
-  const maxTags = 3;
+const Tag = ({tags, setTags, maxTags}) => {
+  const [inputValue, setInputValue] = useState('');  
 
   const createTag = () => {
     return tags.map((tag, index) => (
@@ -24,7 +23,7 @@ const Tag = ({tags, setTags}) => {
   const addTag = (e) => {
     if (e.key === 'Enter') {
       const newTags = e.target.value.replace(/\s+/g, ' ').split(',');
-      const filteredTags = newTags.filter(tag => tag.trim().length > 1 && !tags.includes(tag.trim()));
+      const filteredTags = newTags.filter(tag => (tag.trim().length > 1 && tag.trim().length <= 12) && !tags.includes(tag.trim()));
       
       if (filteredTags.length > 0) {
         const updatedTags = [...tags, ...filteredTags];

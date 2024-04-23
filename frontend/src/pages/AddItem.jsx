@@ -25,6 +25,7 @@ const AddItem = () => {
   const [isFetching, setIsFetching] = useState(true);
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [price, setPrice] = useState(0);
+  const [minPrice, setMinPrice] = useState(1);
   const [tags, setTags] = useState([]);
   const [name, setName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -109,6 +110,14 @@ const AddItem = () => {
     }
     setPrice(event.target.value);
   };
+
+  const handleMinPriceChange = (event) => {
+    if (event.target.value < 1 && event.target.value !== "") {
+      setPrice(1);
+      return;
+    }
+    setPrice(event.target.value);
+  };
   const handleSubmit = async () => {
     // trigger change on the quill editor by adding a new line, to insure its got the last letter, fk om el_handling :)
     let desc_text = quill.getText();
@@ -126,7 +135,11 @@ const AddItem = () => {
       !calendarState.selection.endDate ||
       !selectedCategory ||
       !droppedFiles.length ||
-      !price
+      !price ||
+      price < 0 ||
+      !minPrice ||
+      minPrice < 1 ||
+      !tags
     ) {
       setSubmitValid(false);
     } else {
@@ -282,7 +295,7 @@ const AddItem = () => {
                 className="form-control w-lg-50 w-md-50 w-sm-100"
                 placeholder="Enter auction name"
                 aria-label="Auction Title"
-                aria-describedby="basic-addon1"
+                aria-describedby="currency"
                 maxLength="255"
                 onChange={handleTitleChange}
               />
@@ -412,7 +425,7 @@ const AddItem = () => {
                       <br />
                       <b>At:</b>
                     </label>
-                    <input
+                    <input 
                       type="time"
                       className="form-control"
                       id="end-time"
@@ -433,31 +446,63 @@ const AddItem = () => {
                 </div>
                 <small className="text-muted row ms-1">limited to 7 days</small>
               </div>
-              <div>
-                <h4>Starting price</h4>
-                <div className="d-flex flex-column">
-                  <div className="d-flex flex-row gap-3">
-                    <div className="input-group">
-                      <span className="input-group-text" id="basic-addon1">
-                        JOD
-                      </span>
-                      <input
-                        type="number"
-                        className="form-control"
-                        placeholder="1"
-                        aria-label="Starting price"
-                        aria-describedby="basic-addon1"
-                        min="1"
-                        onChange={(e) => {
-                          handlePriceChange(e);
-                        }}
-                        value={price}
-                      />
+              <div className="price-selector">
+                <h4>Pricing</h4>
+                <div className="d-flex flex-column gap-2">
+                  <div>
+                    <label htmlFor="starting-price" className="form-label">
+                      Starting price
+                    </label>
+                    <div className="d-flex flex-row gap-3">
+                      <div className="input-group">
+                        <span className="input-group-text" id="currency">
+                          JOD
+                        </span>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="0"
+                          aria-label="Starting price"
+                          aria-describedby="currency"
+                          min="0"
+                          onChange={(e) => {
+                            handlePriceChange(e);
+                          }}
+                          value={price}
+                        />
+                      </div>
                     </div>
+                    <small className="form-text text-muted">
+                      Starting at 0 JOD
+                    </small>
                   </div>
-                  <small className="form-text text-muted">
-                    Starting at 0 JOD
-                  </small>
+                  <div>
+                    <label htmlFor="minimum-increment" className="form-label">
+                      Minimum increment
+                    </label>
+                    <div className="d-flex flex-row gap-3">
+                      <div className="input-group">
+                        <span className="input-group-text" id="currency">
+                          JOD
+                        </span>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="1"
+                          aria-label="Starting price"
+                          aria-describedby="currency"
+                          min="1"
+                          onChange={(e) => {
+                            handleMinPriceChange(e);
+                          }}
+                          value={minPrice}
+                        />
+                      </div>
+                    </div>
+                    <small className="form-text text-muted">
+                      Starting at 1 JOD
+                    </small>
+                  </div>
                 </div>
               </div>
               <div>
@@ -492,7 +537,7 @@ const AddItem = () => {
                   )}
                 </div>
               </div>
-              <Tag tags={tags} setTags={setTags} />
+              <Tag tags={tags} setTags={setTags} maxTags={3} />
             </div>
 
             <div id="desc-add">

@@ -1,19 +1,17 @@
 @import url("https://fonts.googleapis.com/css?family=Amiri");
 @import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 :root {
-  --primary-light: #110f0f;
-  --secondary-light: #00e175;
-  --tertiary-light: #826f66;
-  --muted-light: #d7d4d4;
-
-  --primary-dark: #1e1e2e;
-  --secondary-dark: #f7ccac;
-  --tertiary-dark: #ffe2cc;
+  --primary-black: #110F0F;
+  --secondary-black: #1a1a1a;
+  --primary-green: #00e175;
+  --secondary-green: #00c667;
+  --primary-white: #f7f7f7;
+  --muted-light: #d3d2dd;
 }
 
 body {
   font-family: "Poppins", sans-serif;
-  background-color: #efefef;
+  background-color: var(--primary-white);
 }
 
 .link {

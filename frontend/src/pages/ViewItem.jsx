@@ -27,7 +27,7 @@ const ViewItem = () => {
           setItem(response.data.item);
           setInterest(response.data.interests ? true : false);
         }
-        if(!response.data.item) navigate('/not-found', {replace: true}); // response is {"item": null}
+        if (!response.data.item) navigate("/not-found", { replace: true }); // response is {"item": null}
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -60,6 +60,19 @@ const ViewItem = () => {
     setInterest(!interest);
   }
 
+  async function DeleteItem() {
+    await api
+      .deleteItem(id)
+      .then((result) => {
+        enqueueSnackbar("Item deleted successfully", { variant: "success" });
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
+      })
+      .catch((error) => {
+        enqueueSnackbar(error, { variant: "error" });
+      });
+  }
   return (
     <>
       {item && (
@@ -82,12 +95,18 @@ const ViewItem = () => {
                       <span
                         className="text-danger"
                         onClick={changeInterest}
-                        style={{ cursor: "pointer"}}
+                        style={{ cursor: "pointer" }}
                       >
                         {interest ? (
-                          <FontAwesomeIcon icon="fa-solid fa-heart" style={{marginTop: "50%"}} />
+                          <FontAwesomeIcon
+                            icon="fa-solid fa-heart"
+                            style={{ marginTop: "50%" }}
+                          />
                         ) : (
-                          <FontAwesomeIcon icon="fa-regular fa-heart" style={{marginTop: "50%"}} />
+                          <FontAwesomeIcon
+                            icon="fa-regular fa-heart"
+                            style={{ marginTop: "50%" }}
+                          />
                         )}
                       </span>
                     )}
@@ -121,6 +140,15 @@ const ViewItem = () => {
                       ></p>
                     </div>
                   </div>
+                  {user && user.isAdmin && (
+                    <button
+                      type="button"
+                      className="btn btn-danger px-3"
+                      onClick={DeleteItem}
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

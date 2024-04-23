@@ -52,7 +52,9 @@ function App() {
 
         {isLoggedIn && <Route path="/profile" element={<Profile />} />}
         {!isLoggedIn && <Route exact path="/profile" Navigate={<Login />} />}
-        <Route exact path="/profile/:id" element={<Profile />} />
+        
+        {isLoggedIn && <Route path="/profile/:id" element={<Profile />} />}
+        {!isLoggedIn && <Route exact path="/profile/:id" Navigate={<Login />} />}
 
         {isLoggedIn && <Route path="/edit-profile" element={<EditProfile />} />}
         {!isLoggedIn && <Route path="/edit-profile" Navigate={<Login />} />}
