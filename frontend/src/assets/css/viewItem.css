@@ -19,6 +19,43 @@
   border-radius: 10px;
 }
 
+.activity-tab{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  /* background-color: rgba(0, 0, 0, 0.03); */
+  border-radius: 7px;
+  padding: 2%;
+  overflow-y: auto;
+  height: 50vh;
+  gap: 15px;
+}
+
+.activity {
+  display: flex;
+  flex-direction: column;
+  margin: .5%;
+  /* margin-right: 50%; */
+  padding: 5px 5px;
+  gap: 2.5%;
+  word-wrap: break-word;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 6px;
+}
+
+.chat-box {
+  display: flex;
+  /* background-color: rgba(0, 0, 0, 0.1); */
+  border-radius: 15px;
+  padding: 1.2% 0;
+  padding-left: 0;
+  margin-left: 0;
+  gap: 10px;
+  width: 100%;
+}
+
 @media (max-width: 720px) {
   #view-item-container {
     padding: 0.5rem;

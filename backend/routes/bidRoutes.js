@@ -87,12 +87,13 @@ module.exports.addBid = async (req, res) => {
       return res.status(404).send("Auction not found");
     }
 
-    if(new Date(auction.startDate) > new Date()) {
+    const currentDate = new Date();
+    if(new Date(auction.startDate) > currentDate) {
       return res.status(400).send("Auction has not started yet");
     }
 
-    if(new Date(auction.endDate) < new Date()) {
-      return res.status(400).send("Auction has not started yet");
+    if(new Date(auction.endDate) < currentDate) {
+      return res.status(400).send("Auction has ended");
     }
 
     if (bidAmount <= auction.highestBid) {

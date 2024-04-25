@@ -43,13 +43,14 @@ export const removeInterest = (id) => API.delete(`/interest/remove/${id}`);
 
 export const getAuctionById = (id) => API.get(`/auction/${id}`);
 export const getAuctionByUser = (id) => API.get(`/auction/user/${id}`);
+export const getAuctionByItem = (id) => API.get(`/auction/item/${id}`);
 export const addAuction = (data) => API.post("/auction/create", data);
 export const updateAuction = (data) => API.put("/auction/update", data);
 export const removeAuction = (id) => API.delete(`/auction/delete/${id}`);
 
 export const getBidById = (id) => API.get(`/bid/${id}`);
 export const getBidsByUser = (id) => API.get(`/bid/user/${id}`);
-export const getBidsByAuction = (id) => API.get(`/bid/auction/${id}`);
+export const getBidsByAuction = (id, limit) => API.get(`/bid/auction/${id}`, { params: { limit } });
 export const addBid = (data) => API.post("/bid/create", data);
 export const removeBid = (id) => API.delete(`/bid/auction/${id}`);
 

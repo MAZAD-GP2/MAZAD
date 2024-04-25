@@ -58,6 +58,7 @@ router.route("/interest/remove/:id").delete(verifyToken(true), interestRoutes.up
 // Auction
 router.route("/auction/:id").get(auctionRoutes.getAuctionById);
 router.route("/auction/user/:id").get(auctionRoutes.getAuctionsByUser);
+router.route("/auction/item/:id").get(auctionRoutes.getAuctionsByItem);
 router.route("/auction/create").post(verifyToken(true), auctionRoutes.addAuction);
 router.route("/auction/update").put(verifyToken(true), auctionRoutes.updateAuction);
 router.route("/auction/delete/:id").delete(verifyToken(true), auctionRoutes.removeAuction);

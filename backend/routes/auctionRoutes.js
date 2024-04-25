@@ -1,6 +1,7 @@
 require("dotenv").config();
 const sequelize = require("../config/database");
 const User = require("../models/User");
+const Item = require("../models/Item");
 const Auction = require("../models/Auction");
 const Bid = require("../models/Bid");
 
@@ -36,6 +37,28 @@ module.exports.getAuctionsByUser = async (req, res) => {
   }
 };
 
+module.exports.getAuctionsByItem = async (req, res) => {
+  try {
+    let { itemId } = req.params;
+    if (!itemId)
+      return res.status(400).send("Item ID must be provided");
+
+    const item = Item.findByPk(itemId);
+    if (!item) return res.status(404).send("Item not found");
+
+    const auctions = await Auction.findAll({
+      where: { ItemId: itemId },
+      include: [{ model: Item }],
+      limit: limit,
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.send(auctions);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 module.exports.addAuction = async (req, res) => {
   try {
     let { itemId, startDate, endDate, price } = req.body;
@@ -52,18 +75,18 @@ module.exports.addAuction = async (req, res) => {
       return res.status(400).send("Price must be a positive number");
     }
 
-    Auction.create(
+    const auction = Auction.create(
       {
         startTime: startDate,
         finishTime: endDate,
         highestBid: price,
-        itemId: item.id,
+        itemId: itemId,
       },
       { transaction: t }
     );
 
     await t.commit();
-    return res.send(item);
+    return res.send(auction);
   } catch (err) {
     await t.rollback();
     console.error("Error creating auction", err);
