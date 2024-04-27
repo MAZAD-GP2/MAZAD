@@ -213,7 +213,7 @@ input::placeholder {
 .profile-redirect {
   background-color: transparent;
   border: none;
-  color: var(--secondary-light);
+  color: var(--secondary-green);
   padding: 5px 5px;
   border-radius: 6px;
   transition: .25s;

@@ -70,7 +70,6 @@ const Navbar = () => {
                 <div className="input-container bg-dark rounded-5 border-0 d-flex">
                   <FontAwesomeIcon icon="fa-search" color="white" />
                   <input
-                    id="seach-input"
                     type="search"
                     placeholder="Search Items, tags or categories"
                     aria-label="Search"

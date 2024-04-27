@@ -45,7 +45,7 @@
 }
 
 .admin-tag {
-  color: var(--secondary-light);
+  color: var(--secondary-green);
   border-radius: 50px;
   padding: 2px 8px;
   margin-bottom: 30px;
@@ -109,7 +109,7 @@
   font-weight: bold; /* Bold font weight for emphasis */
   margin-bottom: 5px; /* Margin to separate item name from other elements */
   text-decoration: underline;
-  text-decoration-color: var(--secondary-light);
+  text-decoration-color: var(--secondary-green);
   text-underline-offset: 0.2em;
 }
 
