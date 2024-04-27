@@ -10,15 +10,13 @@ import { useParams } from "react-router-dom";
 const CategoryItems = () => {
   const { id } = useParams();
   const [items, setItems] = useState([]);
-  const [interests, setInterests] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
     const fetchItemsByCategory = async () => {
       try {
         const response = await api.getAllItemsByCategory(id);
-        setItems(response.data.items);
-        setInterests(response.data.interests);
+        setItems(response.data)
       } catch (err) {
         console.error(err);
       } finally {
@@ -43,7 +41,7 @@ const CategoryItems = () => {
             </div>
           </div>
         ) : items.length > 0 ? (
-          items.map((item) => <Card item={item} key={item.id} interest={interests[item.id]} />)
+          items.map((item) => <Card item={item} key={item.id} />)
         ) : (
           <h1>No items found</h1>
         )}

@@ -42,6 +42,7 @@ router.route("/user/delete/:id").delete(verifyToken(true), checkAdmin, userRoute
 // item
 router.route("/item").get(verifyToken(false), itemRoutes.getAllItems);
 router.route("/item/user").get(verifyToken(true), itemRoutes.getAllItemsByUserId);
+router.route("/item/favorites").get(verifyToken(true), itemRoutes.getAllItemsByFavorites);
 router.route("/item/:id").get(verifyToken(false), itemRoutes.getItemById);
 router.route("/item/create").post(upload, verifyToken(true), validateItemCreation, itemRoutes.createItem);
 router.route("/item/category/:id").get(verifyToken(false), itemRoutes.getAllItemsByCategory);
@@ -50,6 +51,7 @@ router.route("/item/delete/:id").delete(verifyToken(true), checkAdmin, itemRoute
 // Category
 router.route("/category").get(categoryRoutes.getAllCategories);
 router.route("/category/create").post(categoryRoutes.createCategory);
+router.route("/category/update").put(categoryRoutes.updateCategory)
 
 // Interest
 router.route("/interest/add/:id").post(verifyToken(true), interestRoutes.updateInterests);

@@ -243,20 +243,14 @@ const EditProfile = () => {
       });
   };
 
-  const handleCancelEdit = async (event) => {
+  const handleCancel = async (event) => {
     event.preventDefault();
-    if (userData) {
-      const parsedUserData = JSON.parse(userData);
-      setUsername({ value: parsedUserData.username, isValid: true });
-      setPhoneNumber({ value: parsedUserData.phoneNumber, isValid: true });
-      setEmail({ value: parsedUserData.email, isValid: true });
-    }
-  };
-
-  const handleCancelPassword = async (event) => {
-    event.preventDefault();
-    setPassword({ value: "", isValid: true });
-    setConfirmPassword({ value: "", isValid: true });
+    enqueueSnackbar("Discarded Changes", {
+      variant: "error",
+    });
+    setTimeout(() => {
+      window.location.href = "/profile";
+    }, 1000);
   };
 
   return (
@@ -418,7 +412,7 @@ const EditProfile = () => {
                   </button>
                   <button
                     className="btn btn-danger btn-block confirm-button"
-                    onClick={handleCancelEdit}
+                    onClick={handleCancel}
                     style={{ width: "60%", alignSelf: "center" }}
                   >
                     Cancel
@@ -538,7 +532,7 @@ const EditProfile = () => {
                   </button>
                   <button
                     className="btn btn-danger btn-block confirm-button"
-                    onClick={handleCancelPassword}
+                    onClick={handleCancel}
                     style={{ width: "60%", alignSelf: "center" }}
                   >
                     Cancel

@@ -172,6 +172,60 @@ module.exports.getItemById = async (req, res) => {
   }
 };
 
+module.exports.getAllItemsByFavorites = async (req, res) => {
+  const user = req.currentUser;
+  const userId = user.id;
+
+  try {
+    let items = await Item.findAll({
+      include: [
+        Category,
+        {
+          model: Tag,
+          through: "Item_tag",
+        },
+        Image,
+        {
+          model: Auction,
+        },
+        {
+          model: Interest,
+          where: { userId },
+          attributes: [],
+          duplicating: false,
+        },
+      ],
+      attributes: {
+        include: [
+          [
+            sequelize.literal(
+              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
+            ),
+            "interestsCount",
+          ],
+        ],
+      },
+      order: [["id", "DESC"]],
+    });
+
+    await Promise.all(
+      items.map(async (item) => {
+        const interest = await Interest.findOne({
+          where: {
+            itemId: item.id,
+            userId: user.id,
+          },
+        });
+        item.dataValues.isInterested = interest ? true : false;
+      })
+    );
+    
+    return res.send(items);
+  } catch (er) {
+    return res.send(er);
+  }
+};
+
 module.exports.getAllItemsByCategory = async (req, res) => {
   const user = req.currentUser;
 
@@ -186,11 +240,28 @@ module.exports.getAllItemsByCategory = async (req, res) => {
           through: "Item_tag",
         },
         Image,
+        {
+          model: Auction,
+        },
+        {
+          model: Interest,
+          attributes: [],
+          duplicating: false,
+        },
       ],
+      attributes: {
+        include: [
+          [
+            sequelize.literal(
+              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
+            ),
+            "interestsCount",
+          ],
+        ],
+      },
       order: [["id", "DESC"]],
     });
 
-    let interests = {};
     if (user) {
       await Promise.all(
         items.map(async (item) => {
@@ -200,18 +271,17 @@ module.exports.getAllItemsByCategory = async (req, res) => {
               userId: user.id,
             },
           });
-          interests[item.id] = interest ? true : false;
+          item.dataValues.isInterested = interest ? true : false;
         })
       );
     }
 
-    const itemsValues = { items, interests };
-
-    return res.send(itemsValues);
+    return res.send(items);
   } catch (er) {
     return res.send(er);
   }
 };
+
 module.exports.getAllItems = async (req, res) => {
   const user = req.currentUser;
   let { status, categories, tags, minPrice, maxPrice, popularity } = req.query;

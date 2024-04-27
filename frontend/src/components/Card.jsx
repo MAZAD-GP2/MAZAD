@@ -7,7 +7,7 @@ import * as api from "../api/index";
 const Card = ({ item }) => {
   const user = JSON.parse(sessionStorage.getItem("user"));
   const [isInterest, setIsInterest] = useState(item.isInterested || false);
-
+  const [interestsCount, setInterestsCount] = useState(item.interestsCount);
   function handleCardClick() {
     window.location.href = `/item/${item.id}`;
   }
@@ -20,6 +20,7 @@ const Card = ({ item }) => {
     try {
       const res = await api.updateInterest(itemId);
       setIsInterest(res.data.isInteresting);
+      isInterest ? setInterestsCount(interestsCount-1) : setInterestsCount(interestsCount+1)
     } catch (error) {
       console.error("Error updating interest:", error);
     }
@@ -58,13 +59,17 @@ const Card = ({ item }) => {
     return isInterest;
   };
 
+  const categoryHref=(id)=>{
+    window.location.href = `/category-item/${id}`;
+  }
+
   return (
     <div className="card item-card">
       <img className="image" src={item.Images[0].imgURL} alt="Card image cap" />
       <div className="card-body d-flex flex-column gap-3">
         <div className="d-flex flex-column gap-1">
           <div className="tag-container d-flex flex-row gap-1">
-            <span className="category tag px-2">{item.Category.name}</span>
+            <span className="category tag px-2" style={{cursor:"pointer"}} onClick={()=>categoryHref(item.Category.id)}>{item.Category.name}</span>
             {item.Tags.map((tag) => (
               <span key={tag.id} className="tag px-2">
                 {tag.name}
@@ -103,7 +108,7 @@ const Card = ({ item }) => {
                 className="text-danger"
                 icon={isInterest ? "fa-solid fa-heart" : "fa-regular fa-heart"}
               />
-              <small className="text-muted">{item.interestsCount}</small>
+              <small className="text-muted">{interestsCount}</small>
             </div>
           </div>
           <span className="card-text description" onClick={handleCardClick}>

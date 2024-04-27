@@ -186,6 +186,22 @@ const Navbar = () => {
                   Popular Items
                 </span>
               </a>
+              {user ? 
+                (
+                  <a
+                    className={
+                      "px-3 py-2 nav-item" +
+                      (location.pathname === "/favorites" ? " active" : "")
+                    }
+                    href="/favorites"
+                  >
+                  <span className="link d-inline-block w-auto">
+                    Favorites 
+                  </span>
+                  </a>
+                ):
+                  null
+              }
             </div>
           </div>
         </div>

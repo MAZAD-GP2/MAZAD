@@ -22,3 +22,17 @@ module.exports.createCategory = async (req, res) => {
     res.send(err);
   }
 };
+
+//if u wanna change a category name no frontend cuz ogga booga 
+module.exports.updateCategory = async (req, res) => {
+  try{
+    const {name, id} = req.body;
+    const category = await Category.findByPk(id);
+    const p = await category.update({
+      name,
+    })
+    res.send(p)
+  }catch(e){
+    res.send(e)
+  }
+}

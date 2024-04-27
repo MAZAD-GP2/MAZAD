@@ -15,7 +15,7 @@ const Profile = loadable(() => import("./pages/Profile.jsx"));
 const EditProfile = loadable(() => import("./pages/EditProfile.jsx"));
 const LandingPage = loadable(() => import("./pages/LandingPage.jsx"));
 const SearchResult = loadable(() => import("./pages/SearchResult.jsx"));
-
+const Favorites = loadable(() => import("./pages/Favorites.jsx"));
 const NotFound = loadable(() => import("./components/NotFound.jsx"));
 
 function App() {
@@ -70,6 +70,9 @@ function App() {
 
         {isLoggedIn && <Route path="/add-item" element={<AddItem />} />}
         {!isLoggedIn && <Route exact path="/add-item" element={<Login />} />}
+
+        {isLoggedIn && <Route path="/favorites" element={<Favorites />} />}
+        {!isLoggedIn && <Route exact path="/favorites" element={<Login />} />}
 
         <Route exact path="/search" element={<SearchResult />} />
         <Route exact path="/category-item/:id" element={<CategoryItems />} />

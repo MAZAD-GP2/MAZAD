@@ -116,7 +116,7 @@ const ViewItem = () => {
                     className="row w-100 d-flex flex-row justify-content-between align-items-center"
                   >
                     <div className="row">
-                      <p>By {item.User.username}</p>
+                      <p style={{cursor:"pointer"}} onClick={()=>window.location.href=`/profile/${item.User.id}`}>By {item.User.username}</p>
                     </div>
                     <div className="d-flex flex-column col-auto">
                       <span className="d-flex flex-wrap gap-2">
