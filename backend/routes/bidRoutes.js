@@ -3,6 +3,7 @@ const sequelize = require("../config/database");
 const Auction = require("../models/Auction");
 const User = require("../models/User");
 const Bid = require("../models/Bid");
+const pusher = require("../config/pusher");
 
 module.exports.getBidById = async (req, res) => {
   try {
@@ -17,10 +18,10 @@ module.exports.getBidById = async (req, res) => {
 module.exports.getBidsByUser = async (req, res) => {
   try {
     let { userId } = req.params;
-    if(!userId) return res.status(400).send("User ID must be provided");
+    if (!userId) return res.status(400).send("User ID must be provided");
 
     const user = User.findByPk(userId);
-    if(!user) return res.status(404).send("User not found");
+    if (!user) return res.status(404).send("User not found");
 
     const bids = await Bid.findAll({
       where: { UserId: userId },
@@ -30,8 +31,7 @@ module.exports.getBidsByUser = async (req, res) => {
     });
 
     return res.send(bids);
-  }
-  catch(err) {
+  } catch (err) {
     console.error("Error retrieving bids for user:", err);
     res.status(500).json({ message: "Internal server error" });
   }
@@ -69,18 +69,18 @@ module.exports.addBid = async (req, res) => {
   try {
     const userId = req.currentUser.id;
 
-    if (!req.body.BidAmount || isNaN(parseInt(req.body.BidAmount))) {
+    if (!req.body.bidAmount || isNaN(parseInt(req.body.bidAmount))) {
       return res.status(400).send("Valid bid amount must be provided");
     }
 
-    const bidAmount = parseInt(req.body.BidAmount);
+    const bidAmount = parseInt(req.body.bidAmount);
     const auctionId = req.body.auctionId;
 
     if (!auctionId) {
       return res.status(400).send("Auction ID must be provided");
     }
 
-    const t = await sequelize.transaction();
+    const transaction = await sequelize.transaction();
     const auction = await Auction.findByPk(auctionId);
 
     if (!auction) {
@@ -88,30 +88,33 @@ module.exports.addBid = async (req, res) => {
     }
 
     const currentDate = new Date();
-    if(new Date(auction.startDate) > currentDate) {
+    if (new Date(auction.startDate) > currentDate) {
       return res.status(400).send("Auction has not started yet");
     }
 
-    if(new Date(auction.endDate) < currentDate) {
+    if (new Date(auction.endDate) < currentDate) {
       return res.status(400).send("Auction has ended");
     }
 
     if (bidAmount <= auction.highestBid) {
-      return res.status(400).send("Bid amount must be greater than the highest bid");
+      return res
+        .status(400)
+        .send("Bid amount must be greater than the highest bid");
     }
 
     auction.highestBid = bidAmount;
+    let data = {
+      BidAmount: bidAmount,
+      UserId: userId,
+      AuctionId: auctionId,
+    };
+    pusher.trigger(`auction_${auctionId}`, `add_bid`, data);
+    console.log("Bid added successfully");
+    
+    auction.save();
+    const bid = await Bid.create(data, { transaction: transaction });
 
-    const bid = await Bid.create(
-      {
-        BidAmount: bidAmount,
-        UserId: userId,
-        AuctionId: auctionId,
-      },
-      { transaction: t }
-    );
-
-    await t.commit();
+    await transaction.commit();
     return res.send(bid);
   } catch (err) {
     await t.rollback();

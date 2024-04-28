@@ -21,6 +21,10 @@ const Auction = sequelize.define("Auction", {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
+  min_bid: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
 });
 
 module.exports = Auction;

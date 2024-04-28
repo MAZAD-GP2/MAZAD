@@ -65,7 +65,7 @@ const Card = ({ item }) => {
 
   return (
     <div className="card item-card">
-      <img className="image" src={item.Images[0].imgURL} alt="Card image cap" />
+      <img className="image" src={item.Images[0].imgURL} alt="Card image cap" onClick={handleCardClick} />
       <div className="card-body d-flex flex-column gap-3">
         <div className="d-flex flex-column gap-1">
           <div className="tag-container d-flex flex-row gap-1">

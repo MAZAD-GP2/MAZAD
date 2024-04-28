@@ -157,7 +157,7 @@ const EditProfile = () => {
     setisEditing(true);
     let success = true;
 
-    if (!username.isValid || !username.value) {
+    if (!username.isValid || !username.value || username.value.length < 6 || username.value.length > 20) {
       setUsername({ ...username, isValid: false });
       success = false;
     }
@@ -176,9 +176,9 @@ const EditProfile = () => {
     }
     const formData = new FormData();
     formData.append("profilePicture", profilePicture);
-    formData.append("username", user.username);
-    formData.append("phoneNumber", user.phoneNumber);
-    formData.append("email", user.email);
+    formData.append("username", username.value);
+    formData.append("phoneNumber", phoneNumber.value);
+    formData.append("email", email.value);
     await api
       .userUpdate(formData)
       .then((result) => {

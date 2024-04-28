@@ -20,6 +20,14 @@
   overflow-y: auto;
 }
 
+#filters-container {
+  font-size: 13px;
+}
+
+#filters-container .input-group-text {
+  font-size: 13px !important;
+
+}
 
 @media (max-width: 720px) {
   #filters-container {

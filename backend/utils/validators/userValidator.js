@@ -8,7 +8,9 @@ exports.validateUserCreation = [
     .isLength({ min: 6, max: 20 })
     .withMessage("Username must be between 6 and 20 characters long")
     .matches(/^[a-zA-Z][a-zA-Z0-9_.\s]+$/)
-    .withMessage("Username can only start with a letter and contain letters, numbers, underscores, dots, and spaces")
+    .withMessage(
+      "Username can only start with a letter and contain letters, numbers, underscores, dots, and spaces"
+    )
     .custom(async (value) => {
       const existingUser = await User.findOne({ where: { username: value } });
       if (existingUser) {
@@ -73,10 +75,14 @@ exports.validateUserUpdate = [
     .isLength({ min: 6, max: 20 })
     .withMessage("Username must be between 6 and 20 characters long")
     .matches(/^[a-zA-Z][a-zA-Z0-9_.\s]+$/)
-    .withMessage("Username can only start with a letter and contain letters, numbers, underscores, dots, and spaces")
+    .withMessage(
+      "Username can only start with a letter and contain letters, numbers, underscores, dots, and spaces"
+    )
     .custom(async (value, { req }) => {
-      const existingUser = await User.findOne({ where: { username: value } });
-      if (existingUser && existingUser.id !== req.currentUser.id) {
+      const existingUser = await User.findOne({
+        where: { username: value, id: { [Op.ne]: req.currentUser.id } },
+      });
+      if (existingUser) {
         throw new Error("Username already exists");
       }
     }),
@@ -87,7 +93,7 @@ exports.validateUserUpdate = [
     .withMessage("Invalid email format")
     .custom(async (value, { req }) => {
       const user = await User.findOne({ where: { email: value } });
-      const parsedId=parseInt(req.currentUser.id)
+      const parsedId = parseInt(req.currentUser.id);
       if (user && user.id !== parsedId) {
         throw new Error("Email already exists");
       }
@@ -99,7 +105,7 @@ exports.validateUserUpdate = [
     .withMessage("Invalid phone number format")
     .custom(async (value, { req }) => {
       const user = await User.findOne({ where: { phoneNumber: value } });
-      const parsedId=parseInt(req.currentUser.id)
+      const parsedId = parseInt(req.currentUser.id);
       if (user && user.id !== parsedId) {
         throw new Error("Phone number already exists");
       }

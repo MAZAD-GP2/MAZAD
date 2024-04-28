@@ -28,13 +28,13 @@ const Home = () => {
   return (
     <>
       <Navbar />
-      <div className="d-flex flex-row align-items-start justify-content-start gap-3 px-3 py-3">
+      <div className="d-flex flex-row align-items-start justify-content-start gap-3 px-3 py-3 w-100">
         <div id="filters-container" className="sticky-left col-lg-2 col-md-4 col-sm-5">
           <div  className="w-100">
             <Filters setItems={setItems} />
           </div>
         </div>
-        <div className="d-flex flex-row flex-wrap align-items-stretch justify-content-center gap-5 w-auto">
+        <div className="d-flex flex-row flex-wrap align-items-stretch justify-content-center justify-self-center gap-5 w-100">
           {isFetching ? (
             <div className=" text-center w-100">
               <div
@@ -45,7 +45,7 @@ const Home = () => {
               </div>
             </div>
           ) : items.length > 0 ? (
-            items.map((item) => <Card item={item} />)
+            items.map((item) => <Card item={item} key={item.id} />)
           ) : (
             <h1>No items found</h1>
           )}

@@ -8,8 +8,8 @@ const app = express();
 relations();
 app.use(cors());
 app.use(express.json());
-app.use('/', router);
+app.use("/", router);
 
-app.listen(process.env.PORT,() => {
+app.listen(process.env.PORT, () => {
   console.log(`app listenting to port ${process.env.PORT}`);
 });

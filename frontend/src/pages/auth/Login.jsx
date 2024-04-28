@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "../../assets/css/auth.css";
 import { useSnackbar } from "notistack";
-import { useDispatch, useSelector } from "react-redux";
 import * as api from "../../api/index";
 import { Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,9 +10,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false); // Track login status
   const [showPassword, setShowPassword] = useState(false); // password visibility
-  let isAdmin = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const { enqueueSnackbar } = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -22,7 +19,6 @@ function Login() {
       .login({ usernameOrEmail, password })
       .then((result) => {
         sessionStorage.setItem("user", JSON.stringify(result.data));
-        result.data.isAdmin ? dispatch({ type: "isAdmin" }) : dispatch({ type: "notAdmin" });
         enqueueSnackbar("Login Successful", { variant: "success" });
         setUsernameOrEmail("");
         setPassword("");

@@ -1,6 +1,8 @@
 require("dotenv").config();
 const Tag = require("../models/Tag");
 const { Op } = require("sequelize");
+const pusher = require("../config/pusher");
+
 
 module.exports.getAllTags = async (req, res) => {
   try {

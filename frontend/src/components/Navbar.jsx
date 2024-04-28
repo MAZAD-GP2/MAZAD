@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import "../assets/css/nav.css";
-import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import * as api from "../api/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

@@ -11,6 +11,7 @@ import { useSnackbar } from "notistack";
 import PageTitle from "../components/PageTitle";
 import NotFound from "../components/NotFound";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import pusher from "../api/pusher";
 
 const ViewItem = () => {
   const { id } = useParams();
@@ -22,6 +23,7 @@ const ViewItem = () => {
   const [bidModal, setBidModal] = useState(false);
   const [bidAmount, setBidAmount] = useState(0);
   const [highestBid, setHighestBid] = useState(0);
+  const [minimumBid, setMinimumBid] = useState(0);
 
   const inputRef = useRef(null);
   const activityTabRef = useRef(null);
@@ -41,6 +43,15 @@ const ViewItem = () => {
           setItem(response.data.item);
           setInterest(response.data.interests ? true : false);
           // const auction = await api.getAuctionByItem(id);
+          var channel = pusher.subscribe(
+            `auction_${response.data.item.Auction.id}`
+          );
+
+          channel.bind("add_bid", function (data) {
+            alert(JSON.stringify(data));
+          });
+          setMinimumBid(response.data.item.Auction.min_bid);
+          setHighestBid(response.data.item.Auction.highestBid);
         }
         if (!response.data.item) navigate("/not-found", { replace: true }); // response is {"item": null}
         setLoading(false);
@@ -110,7 +121,7 @@ const ViewItem = () => {
     inputRef.current.value = "";
   };
 
-  const handleBid = () => {
+  const handleBid = async () => {
     if (!bidAmount) {
       enqueueSnackbar({
         message: "Bid amount cannot be empty",
@@ -125,15 +136,27 @@ const ViewItem = () => {
       });
       return;
     }
-    if (parseFloat(bidAmount) < highestBid) {
+    if (parseFloat(bidAmount) <= highestBid) {
       enqueueSnackbar({
         message: "Bid amount must be greater than the highest bid",
         variant: "error",
       });
       return;
     }
-    setBidAmount(parseFloat(bidAmount).toFixed(2));
-    setHighestBid(bidAmount);
+    let res = null;
+    try {
+      res = await api.addBid({ bidAmount, auctionId: item.Auction.id });
+    } catch (error) {
+      enqueueSnackbar({
+        message: "Error adding bid",
+        variant: "error",
+      });
+      return;
+    }
+
+    setBidAmount(0);
+
+    setHighestBid(res.data.bidAmount);
     const bid = {
       text: `made a bid, ${bidAmount} JD`,
       timestamp: new Date().getTime(),
@@ -143,9 +166,9 @@ const ViewItem = () => {
   };
 
   const handleQuickbid = async () => {
-    const newBidAmount = highestBid === 0 ? 1 : parseFloat((highestBid * 1.1).toFixed(2));
+    const newBidAmount = highestBid + minimumBid;
     setHighestBid(newBidAmount);
-  
+
     const bid = {
       text: `made a bid, ${newBidAmount} JD`,
       timestamp: new Date().getTime(),
@@ -219,7 +242,14 @@ const ViewItem = () => {
                     className="row w-100 d-flex flex-row justify-content-between align-items-center"
                   >
                     <div className="row">
-                      <p style={{cursor:"pointer"}} onClick={()=>window.location.href=`/profile/${item.User.id}`}>By {item.User.username}</p>
+                      <p
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          (window.location.href = `/profile/${item.User.id}`)
+                        }
+                      >
+                        By {item.User.username}
+                      </p>
                     </div>
                     <div className="d-flex flex-column col-auto">
                       <span className="d-flex flex-wrap gap-2">
@@ -348,7 +378,8 @@ const ViewItem = () => {
                         bid)
                       </p>
                       <input
-                        type="text"
+                        type="number"
+                        min={highestBid + minimumBid}
                         className="form-control border-1 rounded-3 "
                         onChange={(e) => {
                           setBidAmount(e.target.value);

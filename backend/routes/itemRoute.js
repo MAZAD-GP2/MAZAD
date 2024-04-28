@@ -151,6 +151,7 @@ module.exports.getItemById = async (req, res) => {
           through: "Item_tag",
         },
         Image,
+        Auction,
       ],
     });
 
@@ -317,7 +318,7 @@ module.exports.getAllItems = async (req, res) => {
     }
 
     if (popularity) {
-      if (popularity === "heigh") {
+      if (popularity === "high") {
         orderClause = [
           [sequelize.literal("interestsCount"), "DESC"],
           ...orderClause,

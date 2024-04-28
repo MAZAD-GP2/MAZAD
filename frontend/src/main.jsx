@@ -5,8 +5,6 @@ import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 import "./assets/css/bootstrap_override.scss";
 import "./assets/css/global.css";
-import store from "./redux/store.js";
-import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { SnackbarProvider, useSnackbar } from "notistack";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,7 +14,10 @@ function SnackbarCloseButton({ snackbarKey }) {
   const { closeSnackbar } = useSnackbar();
 
   return (
-    <button onClick={() => closeSnackbar(snackbarKey)} style={{ border: "none", background: "none" }}>
+    <button
+      onClick={() => closeSnackbar(snackbarKey)}
+      style={{ border: "none", background: "none" }}
+    >
       <FontAwesomeIcon icon={faTimes} />
     </button>
   );
@@ -24,13 +25,13 @@ function SnackbarCloseButton({ snackbarKey }) {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <Provider store={store}>
-      <SnackbarProvider
-        autoHideDuration={7000}
-        action={(snackbarKey) => <SnackbarCloseButton snackbarKey={snackbarKey} />}
-      >
-        <App />
-      </SnackbarProvider>
-    </Provider>
+    <SnackbarProvider
+      autoHideDuration={7000}
+      action={(snackbarKey) => (
+        <SnackbarCloseButton snackbarKey={snackbarKey} />
+      )}
+    >
+      <App />
+    </SnackbarProvider>
   </BrowserRouter>
 );
