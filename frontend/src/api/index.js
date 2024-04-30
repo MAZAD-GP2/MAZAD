@@ -57,3 +57,5 @@ export const removeBid = (id) => API.delete(`/bid/auction/${id}`);
 
 export const decodeToken = () => API.post(`/decode-token`);
 export const search = (data) => API.get(`/search?search=${data}`);
+
+export const sendMessage = (data) => API.post(`/comment/add`, data);

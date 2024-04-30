@@ -8,6 +8,7 @@ const authRoutes = require("./authRoutes");
 const interestRoutes = require("./interestRoute");
 const auctionRoutes = require("./auctionRoutes");
 const bidRoutes = require("./bidRoutes");
+const commentRoutes = require("./commentRoutes");
 const verifyToken = require("../middlewares/verifytoken");
 const checkAdmin = require("../middlewares/checkAdmin");
 const {
@@ -80,5 +81,7 @@ router.route("/tag").get(tagRoutes.getAllTags);
 router.route("/tag/search/:query").get(tagRoutes.searchTags);
 router.route("/tag/create").post(tagRoutes.createTag);
 router.route("/tag/delete/:id").delete(tagRoutes.deleteTag);
+
+router.route("/comment/add").post(verifyToken(true), commentRoutes.addComment);
 
 module.exports = router;

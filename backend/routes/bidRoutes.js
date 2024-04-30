@@ -108,14 +108,15 @@ module.exports.addBid = async (req, res) => {
       UserId: userId,
       AuctionId: auctionId,
     };
-    pusher.trigger(`auction_${auctionId}`, `add_bid`, data);
-    console.log("Bid added successfully");
+    const name = req.currentUser.username;
+
+    pusher.trigger(`auction_${auctionId}`, `add_bid`,{ ...data, name });
     
     auction.save();
     const bid = await Bid.create(data, { transaction: transaction });
 
     await transaction.commit();
-    return res.send(bid);
+    return res.send({ ...bid.dataValues, name });
   } catch (err) {
     await t.rollback();
     console.error("Error adding bid:", err);

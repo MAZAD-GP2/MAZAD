@@ -43,12 +43,30 @@ const ViewItem = () => {
           setItem(response.data.item);
           setInterest(response.data.interests ? true : false);
           // const auction = await api.getAuctionByItem(id);
-          var channel = pusher.subscribe(
-            `auction_${response.data.item.Auction.id}`
-          );
+          var channel = pusher.subscribe(`auction_${response.data.item.Auction.id}`);
 
           channel.bind("add_bid", function (data) {
             alert(JSON.stringify(data));
+            setHighestBid(data.BidAmount);
+
+            const bid = {
+              username: data.name,
+              text: `made a bid, ${data.BidAmount} JD`,
+              timestamp: new Date().getTime(),
+            };
+
+            setMessages((prevMessages) => [...prevMessages, bid]);
+          });
+          channel.bind("add_comment", function (data) {
+            alert(JSON.stringify(data));
+
+            const message = {
+              username: data.name,
+              text: data.content,
+              timestamp: new Date().getTime(),
+            };
+
+            setMessages((prevMessages) => [...prevMessages, message]);
           });
           setMinimumBid(response.data.item.Auction.min_bid);
           setHighestBid(response.data.item.Auction.highestBid);
@@ -110,14 +128,16 @@ const ViewItem = () => {
       });
   }
 
-  const handleMessage = () => {
+  const handleMessage = async () => {
     const inputValue = inputRef.current.value;
     if (!inputValue) return;
-    const message = {
-      text: inputValue,
-      timestamp: new Date().getTime(),
-    };
-    setMessages([...messages, message]);
+    await api.sendMessage({ itemId: item.id, content: inputValue, auctionId: item.Auction.id });
+    // const message = {
+    //   username: user.username,
+    //   text: inputValue,
+    //   timestamp: new Date().getTime(),
+    // };
+    // setMessages([...messages, message]);
     inputRef.current.value = "";
   };
 
@@ -156,24 +176,19 @@ const ViewItem = () => {
 
     setBidAmount(0);
 
-    setHighestBid(res.data.bidAmount);
-    const bid = {
-      text: `made a bid, ${bidAmount} JD`,
-      timestamp: new Date().getTime(),
-    };
-    setMessages([...messages, bid]);
     handleClose();
   };
 
   const handleQuickbid = async () => {
     const newBidAmount = highestBid + minimumBid;
-    setHighestBid(newBidAmount);
+    // setHighestBid(newBidAmount);
 
-    const bid = {
-      text: `made a bid, ${newBidAmount} JD`,
-      timestamp: new Date().getTime(),
-    };
-    setMessages([...messages, bid]);
+    // const bid = {
+    //   username: res.data.name,
+    //   text: `made a bid, ${newBidAmount} JD`,
+    //   timestamp: new Date().getTime(),
+    // };
+    // setMessages([...messages, bid]);
     handleClose();
   };
 
@@ -205,10 +220,7 @@ const ViewItem = () => {
         <>
           <Navbar />
           <PageTitle title="Auction" />
-          <div
-            className="d-flex flex-column flex-lg-row gap-1 column-gap-3 w-100"
-            id="view-item-container"
-          >
+          <div className="d-flex flex-column flex-lg-row gap-1 column-gap-3 w-100" id="view-item-container">
             <div className="image-details col-12 col-lg-6 p-3 mb-5 bg-body rounded">
               <div className="d-flex flex-column justify-content-center align-items-center gap-3 w-100">
                 <div className="w-100">
@@ -218,21 +230,11 @@ const ViewItem = () => {
                   <div className="d-flex gap-4 ">
                     <h3>{item.name}</h3>
                     {user && (
-                      <span
-                        className="text-danger"
-                        onClick={changeInterest}
-                        style={{ cursor: "pointer" }}
-                      >
+                      <span className="text-danger" onClick={changeInterest} style={{ cursor: "pointer" }}>
                         {interest ? (
-                          <FontAwesomeIcon
-                            icon="fa-solid fa-heart"
-                            style={{ marginTop: "50%" }}
-                          />
+                          <FontAwesomeIcon icon="fa-solid fa-heart" style={{ marginTop: "50%" }} />
                         ) : (
-                          <FontAwesomeIcon
-                            icon="fa-regular fa-heart"
-                            style={{ marginTop: "50%" }}
-                          />
+                          <FontAwesomeIcon icon="fa-regular fa-heart" style={{ marginTop: "50%" }} />
                         )}
                       </span>
                     )}
@@ -244,9 +246,7 @@ const ViewItem = () => {
                     <div className="row">
                       <p
                         style={{ cursor: "pointer" }}
-                        onClick={() =>
-                          (window.location.href = `/profile/${item.User.id}`)
-                        }
+                        onClick={() => (window.location.href = `/profile/${item.User.id}`)}
                       >
                         By {item.User.username}
                       </p>
@@ -267,18 +267,11 @@ const ViewItem = () => {
                   <div className="row d-flex flex-column w-100 p-3">
                     <h5>Details</h5>
                     <div className="border-start border-3 border-secondary p-3 bg-body">
-                      <p
-                        id="desc"
-                        dangerouslySetInnerHTML={{ __html: item.description }}
-                      ></p>
+                      <p id="desc" dangerouslySetInnerHTML={{ __html: item.description }}></p>
                     </div>
                   </div>
                   {user && user.isAdmin && (
-                    <button
-                      type="button"
-                      className="btn btn-danger px-3"
-                      onClick={DeleteItem}
-                    >
+                    <button type="button" className="btn btn-danger px-3" onClick={DeleteItem}>
                       Delete
                     </button>
                   )}
@@ -299,7 +292,7 @@ const ViewItem = () => {
                           margin: "0",
                         }}
                       >
-                        {user.username}
+                        {message.username}
                       </span>
                       <p
                         style={{
@@ -340,11 +333,7 @@ const ViewItem = () => {
                     className="form-control border-1 rounded-3 "
                     style={{ outline: "none", display: "inline" }}
                   />
-                  <button
-                    className="btn btn-secondary"
-                    style={{ padding: "2px" }}
-                    onClick={handleShow}
-                  >
+                  <button className="btn btn-secondary" style={{ padding: "2px" }} onClick={handleShow}>
                     <FontAwesomeIcon
                       icon="fa-solid fa-gavel"
                       style={{
@@ -354,11 +343,7 @@ const ViewItem = () => {
                       }}
                     />
                   </button>
-                  <button
-                    className="btn btn-secondary"
-                    style={{ padding: "2px" }}
-                    onClick={handleMessage}
-                  >
+                  <button className="btn btn-secondary" style={{ padding: "2px" }} onClick={handleMessage}>
                     <FontAwesomeIcon
                       icon="fa-solid fa-arrow-up"
                       style={{
@@ -373,13 +358,10 @@ const ViewItem = () => {
                       <Modal.Title>Make bid</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      <p>
-                        Enter bid Amount, or make a quick bid (10% of highest
-                        bid)
-                      </p>
+                      <p>Enter bid Amount, or make a quick bid (10% of highest bid)</p>
                       <input
                         type="number"
-                        min={highestBid + minimumBid}
+                        min={parseInt(highestBid) + parseInt(minimumBid)}
                         className="form-control border-1 rounded-3 "
                         onChange={(e) => {
                           setBidAmount(e.target.value);
@@ -387,10 +369,7 @@ const ViewItem = () => {
                       />
                     </Modal.Body>
                     <Modal.Footer>
-                      <button
-                        className="btn btn-secondary"
-                        onClick={handleQuickbid}
-                      >
+                      <button className="btn btn-secondary" onClick={handleQuickbid}>
                         Quick bid
                       </button>
                       <button className="btn btn-secondary" onClick={handleBid}>

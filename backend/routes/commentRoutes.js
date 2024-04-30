@@ -1,6 +1,7 @@
 require("dotenv").config();
 const sequelize = require("../config/database");
 const Comment = require("../models/Comment");
+const pusher = require("../config/pusher");
 
 module.exports.getCommentsbyItemId = async (req, res) => {
   try {
@@ -20,9 +21,11 @@ module.exports.getCommentsbyItemId = async (req, res) => {
 module.exports.addComment = async (req, res) => {
   try {
     const userId = req.currentUser.id;
-    const { itemId, content } = req.body;
+    const name = req.currentUser.username;
+    const { itemId, content, auctionId } = req.body;
     const comment = await Comment.create({ content, userId, itemId });
-    res.send(comment);
+    pusher.trigger(`auction_${auctionId}`, `add_comment`,{ ...comment.dataValues, name });
+    res.send({ ...comment.dataValues, name });
   } catch (err) {
     res.send(err);
   }
