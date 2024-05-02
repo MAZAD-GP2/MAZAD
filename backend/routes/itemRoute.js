@@ -9,6 +9,7 @@ const Item_tag = require("../models/Item_tag");
 const cloudinary = require("../config/cloudinaryConfig");
 const sanitizeHtml = require("sanitize-html");
 const User = require("../models/User");
+const Comment = require("../models/Comment");
 const Interest = require("../models/Interest");
 const { Op } = require("sequelize");
 
@@ -138,24 +139,27 @@ module.exports.getItemById = async (req, res) => {
           model: Tag,
           through: "Item_tag",
         },
+        {
+          model: Comment,
+          include: [User],
+          order: [["id", "DESC"]],
+        },
         Image,
         Auction,
       ],
     });
 
-    let interests;
     if (user) {
-      interests = await Interest.findOne({
+      const interest = await Interest.findOne({
         where: {
           itemId: itemId,
           userId: user.id,
         },
       });
+      item.dataValues.isInterested = interest ? true : false;
     }
 
-    const itemValues = { item, interests };
-
-    return res.send(itemValues);
+    return res.send({ item });
   } catch (error) {
     return res.send(error);
   }

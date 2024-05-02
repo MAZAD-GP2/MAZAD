@@ -18,12 +18,12 @@ const ViewItem = () => {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [interest, setInterest] = useState(false);
   const [messages, setMessages] = useState([]);
   const [bidModal, setBidModal] = useState(false);
   const [bidAmount, setBidAmount] = useState(0);
   const [highestBid, setHighestBid] = useState(0);
   const [minimumBid, setMinimumBid] = useState(0);
+  const [isInterest, setIsInterest] = useState(false);
 
   const inputRef = useRef(null);
   const activityTabRef = useRef(null);
@@ -41,8 +41,14 @@ const ViewItem = () => {
         const response = await api.getItemById(id);
         if (Object.keys(response.data).length) {
           setItem(response.data.item);
-          setInterest(response.data.interests ? true : false);
-          // const auction = await api.getAuctionByItem(id);
+          setMessages(() => {
+            return response.data.item.Comments.map((comment) => ({
+              username: comment.User.username,
+              text: comment.content,
+              timestamp: new Date(comment.createdAt).getTime(),
+            }));
+          });
+          setIsInterest(response.data.item.isInterested || false);
           var channel = pusher.subscribe(`auction_${response.data.item.Auction.id}`);
 
           channel.bind("add_bid", function (data) {
@@ -91,6 +97,15 @@ const ViewItem = () => {
     }
   }, [messages]);
 
+  const changeInterest = async () => {
+    try {
+      const res = await api.updateInterest(item.id);
+      setIsInterest(res.data.isInteresting);
+    } catch (error) {
+      console.error("Error updating interest:", error);
+    }
+  };
+
   if (loading) {
     return (
       <div className=" text-center w-100 mt-5">
@@ -103,15 +118,6 @@ const ViewItem = () => {
 
   if (error) {
     return <p>Error: {error}</p>;
-  }
-
-  async function changeInterest() {
-    if (interest) {
-      await api.removeInterest(item.id);
-    } else {
-      await api.addInterest(item.id);
-    }
-    setInterest(!interest);
   }
 
   async function DeleteItem() {
@@ -231,7 +237,7 @@ const ViewItem = () => {
                     <h3>{item.name}</h3>
                     {user && (
                       <span className="text-danger" onClick={changeInterest} style={{ cursor: "pointer" }}>
-                        {interest ? (
+                        {isInterest ? (
                           <FontAwesomeIcon icon="fa-solid fa-heart" style={{ marginTop: "50%" }} />
                         ) : (
                           <FontAwesomeIcon icon="fa-regular fa-heart" style={{ marginTop: "50%" }} />
@@ -244,11 +250,13 @@ const ViewItem = () => {
                     className="row w-100 d-flex flex-row justify-content-between align-items-center"
                   >
                     <div className="row">
-                      <p
-                        style={{ cursor: "pointer" }}
-                        onClick={() => (window.location.href = `/profile/${item.User.id}`)}
-                      >
-                        By {item.User.username}
+                      <p>
+                        <span
+                          style={{ cursor: "pointer" }}
+                          onClick={() => (window.location.href = `/profile/${item.User.id}`)}
+                        >
+                          By {item.User.username}
+                        </span>
                       </p>
                     </div>
                     <div className="d-flex flex-column col-auto">
