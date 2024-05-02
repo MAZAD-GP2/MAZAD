@@ -5,7 +5,7 @@ import MobileNavbar from "../components/MobileNavbar";
 import Card from "../components/Card";
 import * as api from "../api/index";
 
-const Home = () => {
+const Favorites = () => {
   const [items, setItems] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
 
@@ -22,7 +22,11 @@ const Home = () => {
     };
 
     fetchItems();
-  }, []);
+  }, [items]);
+
+  const removeItemFromFavorites = (id) => {
+    setItems[items => items.filter(item => item.id !== id)];
+  }
 
   return (
     <>
@@ -38,7 +42,7 @@ const Home = () => {
               </div>
             </div>
           ) : items.length > 0 ? (
-            items.map((item) => <Card item={item} />)
+            items.map((item) => <Card item={item} key={item.id} removeItemFromFavorites={removeItemFromFavorites} />)
           ) : (
             <h1>No items found</h1>
           )}
@@ -49,4 +53,4 @@ const Home = () => {
 
 };
 
-export default Home;
+export default Favorites;

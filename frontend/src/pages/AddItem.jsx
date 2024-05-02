@@ -289,11 +289,11 @@ const AddItem = () => {
         <div id="main" className="container p-3 shadow bg-white">
           <div className="d-flex flex-column gap-3">
             <div>
-              <h4>Auction title</h4>
+              <h4>Item Name</h4>
               <input
                 type="text"
                 className="form-control w-lg-50 w-md-50 w-sm-100"
-                placeholder="Enter auction name"
+                placeholder="Enter Item name"
                 aria-label="Auction Title"
                 aria-describedby="currency"
                 maxLength="255"

@@ -12,28 +12,22 @@ const User = require("../models/User");
 const Interest = require("../models/Interest");
 const { Op } = require("sequelize");
 
-const QuillDeltaToHtmlConverter =
-  require("quill-delta-to-html").QuillDeltaToHtmlConverter;
+const QuillDeltaToHtmlConverter = require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 
 module.exports.createItem = async (req, res) => {
   const t = await sequelize.transaction();
   try {
-    let { name, description, startDate, endDate, tags, price, categoryId } =
-      req.body;
+    let { name, description, startDate, endDate, tags, price, categoryId } = req.body;
     tags = tags.split(",").filter((tag) => tag.trim() !== "");
     price = parseFloat(price);
     if (!name || !description || !startDate || !endDate || !tags || !price) {
       return res.status(400).send({ message: "All fields are required" });
     }
     if (new Date(startDate) < new Date()) {
-      return res
-        .status(400)
-        .send({ message: "Start date must be in the future" });
+      return res.status(400).send({ message: "Start date must be in the future" });
     }
     if (new Date(endDate) < new Date(startDate)) {
-      return res
-        .status(400)
-        .send({ message: "End date must be after start date" });
+      return res.status(400).send({ message: "End date must be after start date" });
     }
     if (tags.length > 3) {
       return res.status(400).send("Maximum 3 tags allowed");
@@ -67,11 +61,7 @@ module.exports.createItem = async (req, res) => {
     }
 
     description = sanitizeHtml(htmlDescription, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-        "b",
-        "strong",
-        "i",
-      ]),
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["b", "strong", "i"]),
       allowedAttributes: {
         "*": ["style"],
       },
@@ -116,9 +106,7 @@ module.exports.createItem = async (req, res) => {
       { transaction: t }
     );
 
-    const tagOps = tags.map((tag) =>
-      Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t })
-    );
+    const tagOps = tags.map((tag) => Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t }));
     const createdTags = await Promise.all(tagOps);
 
     await Item_tag.bulkCreate(
@@ -199,9 +187,7 @@ module.exports.getAllItemsByFavorites = async (req, res) => {
       attributes: {
         include: [
           [
-            sequelize.literal(
-              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
-            ),
+            sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
             "interestsCount",
           ],
         ],
@@ -220,7 +206,7 @@ module.exports.getAllItemsByFavorites = async (req, res) => {
         item.dataValues.isInterested = interest ? true : false;
       })
     );
-    
+
     return res.send(items);
   } catch (er) {
     return res.send(er);
@@ -253,9 +239,7 @@ module.exports.getAllItemsByCategory = async (req, res) => {
       attributes: {
         include: [
           [
-            sequelize.literal(
-              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
-            ),
+            sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
             "interestsCount",
           ],
         ],
@@ -319,15 +303,9 @@ module.exports.getAllItems = async (req, res) => {
 
     if (popularity) {
       if (popularity === "high") {
-        orderClause = [
-          [sequelize.literal("interestsCount"), "DESC"],
-          ...orderClause,
-        ];
+        orderClause = [[sequelize.literal("interestsCount"), "DESC"], ...orderClause];
       } else if (popularity === "low") {
-        orderClause = [
-          [sequelize.literal("interestsCount"), "ASC"],
-          ...orderClause,
-        ];
+        orderClause = [[sequelize.literal("interestsCount"), "ASC"], ...orderClause];
       }
     }
 
@@ -359,9 +337,7 @@ module.exports.getAllItems = async (req, res) => {
       attributes: {
         include: [
           [
-            sequelize.literal(
-              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
-            ),
+            sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
             "interestsCount",
           ],
         ],
@@ -425,12 +401,10 @@ module.exports.searchItem = async (req, res) => {
   try {
     const items = await Item.findAll({
       where: {
-        [Op.or]: [
-          { name: { [Op.like]: "%" + search + "%" } },
-          { "$Tags.name$": { [Op.like]: "%" + search + "%" } },
-        ],
+        [Op.or]: [{ name: { [Op.like]: "%" + search + "%" } }, { "$Tags.name$": { [Op.like]: "%" + search + "%" } }],
       },
       include: [
+        Auction,
         Category,
         {
           model: Tag,
@@ -438,9 +412,16 @@ module.exports.searchItem = async (req, res) => {
         Image,
       ],
       order: [["id", "DESC"]],
+      attributes: {
+        include: [
+          [
+            sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
+            "interestsCount",
+          ],
+        ],
+      },
     });
 
-    let interests = {};
     if (user) {
       await Promise.all(
         items.map(async (item) => {
@@ -450,14 +431,12 @@ module.exports.searchItem = async (req, res) => {
               userId: user.id,
             },
           });
-          interests[item.id] = interest ? true : false;
+          item.dataValues.isInterested = interest ? true : false;
         })
       );
     }
 
-    const itemsValues = { items, interests };
-
-    return res.send(itemsValues);
+    return res.send(items);
   } catch (err) {
     return res.status(400).send(err);
   }

@@ -307,53 +307,6 @@ const Filters = ({ setItems }) => {
             </div>
           </div>
         </div>
-        {/* <div className="d-flex flex-column w-100 section">
-          <label className="form-check-label" htmlFor="price">
-            Location
-          </label>
-          <div className="w-100 gap-3">
-            <Select
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              defaultValue={[]}
-              isMulti
-              placeholder="Select cities"
-              options={[
-                { value: "amman", label: "Amman" },
-                { value: "irbid", label: "Irbid" },
-                { value: "zarqa", label: "Zarqa" },
-                { value: "madaba", label: "Madaba" },
-                { value: "aqaba", label: "Aqaba" },
-                { value: "mafraq", label: "Mafraq" },
-                { value: "tafila", label: "Tafila" },
-                { value: "karak", label: "Karak" },
-                { value: "maan", label: "Maan" },
-                { value: "ajloun", label: "Ajloun" },
-                { value: "jerash", label: "Jerash" },
-                { value: "balqa", label: "Balqa" },
-              ]}
-              theme={(theme) => ({
-                ...theme,
-                borderRadius: 4,
-                colors: {
-                  ...theme.colors,
-                  primary25: "#00e175",
-                  primary: "#00e175",
-                },
-              })}
-              styles={{
-                multiValueLabel: (styles) => ({
-                  ...styles,
-                  color: "#110F0F",
-                }),
-                multiValueRemove: (styles) => ({
-                  ...styles,
-                  color: "red",
-                }),
-              }}
-            />
-          </div>
-        </div> */}
         <div className="d-flex flex-column w-100 section">
           <label className="form-check-label" htmlFor="price">
             Popularity
@@ -391,7 +344,7 @@ const Filters = ({ setItems }) => {
           {/* filter button */}
           <button
             type="button"
-            className="btn btn-primary w-100"
+            className="btn btn-secondary w-100 text-white"
             onClick={handleSubmit}
           >
             Filter

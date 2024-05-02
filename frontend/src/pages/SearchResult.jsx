@@ -6,7 +6,6 @@ import * as api from "../api/index";
 
 const Home = () => {
   const [items, setItems] = useState([]);
-  const [interests, setInterests] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const queryParams = new URLSearchParams(window.location.search);
   const search = queryParams.get('search');
@@ -15,9 +14,7 @@ const Home = () => {
     const fetchItems = async () => {
       try {
         const response = await api.search(search);
-        setItems(response.data.items);
-        setInterests(response.data.interests);
-        console.log(response.data.items);
+        setItems(response.data);
       } catch (err) {
         console.error(err);
       } finally {
@@ -39,7 +36,7 @@ const Home = () => {
             </div>
           </div>
         ) : items.length > 0 ? (
-          items.map((item) => <Card item={item} key={item.id} interest={interests[item.id]} />)
+          items.map((item) => <Card item={item} key={item.id} />)
         ) : (
           <h1>No items found</h1>
         )}

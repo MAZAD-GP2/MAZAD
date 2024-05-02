@@ -4,7 +4,7 @@ import sanitizeHtml from "sanitize-html";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as api from "../api/index";
 
-const Card = ({ item }) => {
+const Card = ({ item, removeItemFromFavorites }) => {
   const user = JSON.parse(sessionStorage.getItem("user"));
   const [isInterest, setIsInterest] = useState(item.isInterested || false);
   const [interestsCount, setInterestsCount] = useState(item.interestsCount);
@@ -23,6 +23,8 @@ const Card = ({ item }) => {
       isInterest ? setInterestsCount(interestsCount-1) : setInterestsCount(interestsCount+1)
     } catch (error) {
       console.error("Error updating interest:", error);
+    } finally {
+      if(removeItemFromFavorites)removeItemFromFavorites(itemId);
     }
   };
 
@@ -68,7 +70,7 @@ const Card = ({ item }) => {
       <img className="image" src={item.Images[0].imgURL} alt="Card image cap" onClick={handleCardClick} />
       <div className="card-body d-flex flex-column gap-3">
         <div className="d-flex flex-column gap-1">
-          <div className="tag-container d-flex flex-row gap-1">
+          <div className="tag-container d-flex flex-row gap-1 mb-1">
             <span className="category tag px-2" style={{cursor:"pointer"}} onClick={()=>categoryHref(item.Category.id)}>{item.Category.name}</span>
             {item.Tags.map((tag) => (
               <span key={tag.id} className="tag px-2">

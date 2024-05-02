@@ -46,7 +46,7 @@ const ViewItem = () => {
           var channel = pusher.subscribe(`auction_${response.data.item.Auction.id}`);
 
           channel.bind("add_bid", function (data) {
-            alert(JSON.stringify(data));
+            // alert(JSON.stringify(data));
             setHighestBid(data.BidAmount);
 
             const bid = {
@@ -58,7 +58,7 @@ const ViewItem = () => {
             setMessages((prevMessages) => [...prevMessages, bid]);
           });
           channel.bind("add_comment", function (data) {
-            alert(JSON.stringify(data));
+            // alert(JSON.stringify(data));
 
             const message = {
               username: data.name,
@@ -257,7 +257,7 @@ const ViewItem = () => {
                           {item.Category.name}
                         </p>
                         {item.Tags.map((tag, idx) => (
-                          <p className="tag" key={idx}>
+                          <p className="tag" key={idx} style={{ fontWeight: "normal" }}>
                             {tag.name}
                           </p>
                         ))}
@@ -292,7 +292,8 @@ const ViewItem = () => {
                           margin: "0",
                         }}
                       >
-                        {message.username}
+                        {/* {message.username} */}
+                        {message.username === user.username ? "You" : message.username}
                       </span>
                       <p
                         style={{
