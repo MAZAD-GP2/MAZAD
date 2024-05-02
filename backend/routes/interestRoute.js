@@ -31,7 +31,7 @@ module.exports.updateInterests = async (req, res) => {
       isInteresting: isInteresting,
     });
   } catch (err) {
-    return res.send({
+    return res.status(400).send({
       success: false,
       err: err.message,
     });
