@@ -167,7 +167,7 @@ const AddItem = () => {
         enqueueSnackbar("Added item", { variant: "success" });
         setName("");
         setDescription("");
-        window.location.href = "/home";        
+        window.location.href = "/home";
       } catch (error) {
         // Handle errors
         enqueueSnackbar(error.response.data.message, {
@@ -299,7 +299,9 @@ const AddItem = () => {
                 maxLength="255"
                 onChange={handleTitleChange}
               />
-              <small className="form-text text-muted">limited to 255 characters</small>
+              <small className="form-text text-muted">
+                limited to 255 characters
+              </small>
             </div>
             <div
               id="image-details"
@@ -425,7 +427,7 @@ const AddItem = () => {
                       <br />
                       <b>At:</b>
                     </label>
-                    <input 
+                    <input
                       type="time"
                       className="form-control"
                       id="end-time"

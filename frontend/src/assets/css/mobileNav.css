@@ -23,14 +23,15 @@ body {
   font-size: 4.5vw;
 }
 #mobile-navbar.mobile-nav-item .small {
-  font-size: 3vw;
+  font-size: 2.5vw;
   color: var(--muted-light);
 }
 
 .mobile-nav-item {
   display: inline-block;
-  width: 10rem;
+  width: 100%;
   box-sizing: border-box;
+  border-bottom: 4px solid transparent;
 }
 
 .mobile-nav-item.active,
@@ -38,9 +39,6 @@ body {
   color: var(--primary-green);
 }
 
-.mobile-nav-item {
-  border-bottom: 4px solid transparent;
-}
 
 .mobile-nav-item span,
 .mobile-nav-item a {
@@ -70,7 +68,7 @@ body {
 }
 
 .mobile-nav-options.show {
-  transform: translateY(-100%); /* Slide up from below the navbar */
+  transform: translateY(-100%);
 }
 
 #mobile-navbar .overlay {
@@ -81,7 +79,16 @@ body {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 99;
-  animation: fadeInOut 0.3s forwards; /* Use fadeInOut animation */
+  animation: fadeInOut 0.3s forwards;
+}
+
+.sub-nav-item {
+  min-width: 1rem;
+  
+}
+.sub-nav-item a {
+  color: white;
+  text-decoration: none;
 }
 
 @keyframes fadeInOut {

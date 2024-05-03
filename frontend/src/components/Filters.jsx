@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../assets/css/Filters.css";
+import "../assets/css/filters.css";
 import AsyncSelect from "react-select/async";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
@@ -132,7 +132,6 @@ const Filters = ({ setItems }) => {
 
     const response = await api.getAllItems(parameters);
     setItems(response.data);
-    
   };
 
   return (
@@ -340,7 +339,7 @@ const Filters = ({ setItems }) => {
             </div>
           </div>
         </div>
-        <div className="d-flex flex-column w-100">
+        <div className="d-flex flex-column gap-2 w-100">
           {/* filter button */}
           <button
             type="button"
@@ -348,6 +347,21 @@ const Filters = ({ setItems }) => {
             onClick={handleSubmit}
           >
             Filter
+          </button>
+          {/* reset button, it will empty out all fields */}
+          <button
+            type="button"
+            className="btn btn-primary w-100 text-white"
+            onClick={() => {
+              setSelectedCategories([]);
+              setSelectedTags([]);
+              setMinPrice(0);
+              setMaxPrice(0);
+              setSelectedStatus("all");
+              setSelectedPopularity("");
+            }}
+          >
+            Reset
           </button>
         </div>
       </div>

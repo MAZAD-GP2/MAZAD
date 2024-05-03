@@ -21,7 +21,7 @@
 
 .activity-tab{
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.1);
   /* background-color: rgba(0, 0, 0, 0.03); */
@@ -47,6 +47,7 @@
 
 .chat-box {
   display: flex;
+  /* flex-direction: column-reverse; */
   /* background-color: rgba(0, 0, 0, 0.1); */
   border-radius: 15px;
   padding: 1.2% 0;
@@ -54,6 +55,22 @@
   margin-left: 0;
   gap: 10px;
   width: 100%;
+}
+
+.liked {
+  animation: pulse 0.5s linear;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @media (max-width: 720px) {

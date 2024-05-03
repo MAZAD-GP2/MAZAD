@@ -12,6 +12,7 @@ import PageTitle from "../components/PageTitle";
 import NotFound from "../components/NotFound";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pusher from "../api/pusher";
+import LoginForm from "../components/LoginForm";
 
 const ViewItem = () => {
   const { id } = useParams();
@@ -24,12 +25,15 @@ const ViewItem = () => {
   const [highestBid, setHighestBid] = useState(0);
   const [minimumBid, setMinimumBid] = useState(0);
   const [isInterest, setIsInterest] = useState(false);
-
+  const [interestsCount, setInterestsCount] = useState(0);
+  const [loginModal, setLoginModal] = useState(false);
   const inputRef = useRef(null);
   const activityTabRef = useRef(null);
 
-  const handleClose = () => setBidModal(false);
-  const handleShow = () => setBidModal(true);
+  const handleBidModalShow = () => setBidModal(true);
+  const handleBidModalClose = () => setBidModal(false);
+  const handleLoginModalClose = () => setLoginModal(false);
+  const handleLoginModalShow = () => setLoginModal(true);
 
   const user = JSON.parse(sessionStorage.getItem("user"));
   const navigate = useNavigate();
@@ -41,15 +45,18 @@ const ViewItem = () => {
         const response = await api.getItemById(id);
         if (Object.keys(response.data).length) {
           setItem(response.data.item);
+          setInterestsCount(response.data.item.interestsCount);
           setMessages(() => {
-            return response.data.item.Comments.map((comment) => ({
+            return response.data.item.Comments.reverse().map((comment) => ({
               username: comment.User.username,
               text: comment.content,
               timestamp: new Date(comment.createdAt).getTime(),
             }));
           });
           setIsInterest(response.data.item.isInterested || false);
-          var channel = pusher.subscribe(`auction_${response.data.item.Auction.id}`);
+          var channel = pusher.subscribe(
+            `auction_${response.data.item.Auction.id}`
+          );
 
           channel.bind("add_bid", function (data) {
             // alert(JSON.stringify(data));
@@ -61,7 +68,7 @@ const ViewItem = () => {
               timestamp: new Date().getTime(),
             };
 
-            setMessages((prevMessages) => [...prevMessages, bid]);
+            setMessages((prevMessages) => [bid, ...prevMessages]);
           });
           channel.bind("add_comment", function (data) {
             // alert(JSON.stringify(data));
@@ -72,7 +79,7 @@ const ViewItem = () => {
               timestamp: new Date().getTime(),
             };
 
-            setMessages((prevMessages) => [...prevMessages, message]);
+            setMessages((prevMessages) => [ message, ...prevMessages]);
           });
           setMinimumBid(response.data.item.Auction.min_bid);
           setHighestBid(response.data.item.Auction.highestBid);
@@ -87,25 +94,37 @@ const ViewItem = () => {
     fetchItem();
   }, [id]);
 
-  useEffect(() => {
-    // Scroll to the bottom of the container whenever messages change
-    if (activityTabRef.current) {
-      const lastMessage = activityTabRef.current.lastElementChild;
-      if (lastMessage) {
-        lastMessage.scrollIntoView({ behavior: "smooth", block: "end" });
-      }
-    }
-  }, [messages]);
+  // useEffect(() => {
+  //   // Scroll to the bottom of the container whenever messages change
+  //   if (activityTabRef.current) {
+  //     const lastMessage = activityTabRef.current.lastElementChild;
+  //     if (lastMessage) {
+  //       lastMessage.scrollIntoView({ behavior: "smooth", block: "end" });
+  //     }
+  //   }
+  // }, [messages]);
 
-  const changeInterest = async () => {
+  const handleChangeInterest = async (itemId) => {
+    if (!user) {
+      setLoginModal(true);
+      return;
+    }
     try {
-      const res = await api.updateInterest(item.id);
-      setIsInterest(res.data.isInteresting);
+      setIsInterest(!isInterest);
+
+      isInterest
+        ? setInterestsCount(interestsCount - 1)
+        : setInterestsCount(interestsCount + 1);
+      api
+        .updateInterest(itemId)
+        .then((res) => {})
+        .catch((error) => {
+          setIsInterest(!isInterest);
+        });
     } catch (error) {
       console.error("Error updating interest:", error);
     }
   };
-
   if (loading) {
     return (
       <div className=" text-center w-100 mt-5">
@@ -137,7 +156,11 @@ const ViewItem = () => {
   const handleMessage = async () => {
     const inputValue = inputRef.current.value;
     if (!inputValue) return;
-    await api.sendMessage({ itemId: item.id, content: inputValue, auctionId: item.Auction.id });
+    await api.sendMessage({
+      itemId: item.id,
+      content: inputValue,
+      auctionId: item.Auction.id,
+    });
     // const message = {
     //   username: user.username,
     //   text: inputValue,
@@ -182,7 +205,7 @@ const ViewItem = () => {
 
     setBidAmount(0);
 
-    handleClose();
+    handleBidModalClose();
   };
 
   const handleQuickbid = async () => {
@@ -195,7 +218,7 @@ const ViewItem = () => {
     //   timestamp: new Date().getTime(),
     // };
     // setMessages([...messages, bid]);
-    handleClose();
+    handleBidModalClose();
   };
 
   // Function to format timestamp as "x time ago"
@@ -226,24 +249,35 @@ const ViewItem = () => {
         <>
           <Navbar />
           <PageTitle title="Auction" />
-          <div className="d-flex flex-column flex-lg-row gap-1 column-gap-3 w-100" id="view-item-container">
+          <div
+            className="d-flex flex-column flex-lg-row gap-1 column-gap-3 w-100"
+            id="view-item-container"
+          >
             <div className="image-details col-12 col-lg-6 p-3 mb-5 bg-body rounded">
               <div className="d-flex flex-column justify-content-center align-items-center gap-3 w-100">
                 <div className="w-100">
                   <ImageSlider images={item.Images} />
                 </div>
                 <div className="details w-100 d-flex flex-column justify-content-start align-items-start gap-3">
-                  <div className="d-flex gap-4 ">
+                  <div className="d-flex justify-content-between align-items-center w-100 pe-4">
                     <h3>{item.name}</h3>
-                    {user && (
-                      <span className="text-danger" onClick={changeInterest} style={{ cursor: "pointer" }}>
+                    <div className="d-flex flex-row gap-3 align-items-center">
+                      <span
+                        className="text-danger"
+                        onClick={handleChangeInterest}
+                        style={{ cursor: "pointer" }}
+                      >
                         {isInterest ? (
-                          <FontAwesomeIcon icon="fa-solid fa-heart" style={{ marginTop: "50%" }} />
+                          <FontAwesomeIcon
+                            icon="fa-solid fa-heart"
+                            className="liked"
+                          />
                         ) : (
-                          <FontAwesomeIcon icon="fa-regular fa-heart" style={{ marginTop: "50%" }} />
+                          <FontAwesomeIcon icon="fa-regular fa-heart" />
                         )}
                       </span>
-                    )}
+                      <small className="text-muted">{interestsCount}</small>
+                    </div>
                   </div>
                   <div
                     id="auctioneer-name"
@@ -253,7 +287,9 @@ const ViewItem = () => {
                       <p>
                         <span
                           style={{ cursor: "pointer" }}
-                          onClick={() => (window.location.href = `/profile/${item.User.id}`)}
+                          onClick={() =>
+                            (window.location.href = `/profile/${item.User.id}`)
+                          }
                         >
                           By {item.User.username}
                         </span>
@@ -265,7 +301,11 @@ const ViewItem = () => {
                           {item.Category.name}
                         </p>
                         {item.Tags.map((tag, idx) => (
-                          <p className="tag" key={idx} style={{ fontWeight: "normal" }}>
+                          <p
+                            className="tag"
+                            key={idx}
+                            style={{ fontWeight: "normal" }}
+                          >
                             {tag.name}
                           </p>
                         ))}
@@ -275,11 +315,18 @@ const ViewItem = () => {
                   <div className="row d-flex flex-column w-100 p-3">
                     <h5>Details</h5>
                     <div className="border-start border-3 border-secondary p-3 bg-body">
-                      <p id="desc" dangerouslySetInnerHTML={{ __html: item.description }}></p>
+                      <p
+                        id="desc"
+                        dangerouslySetInnerHTML={{ __html: item.description }}
+                      ></p>
                     </div>
                   </div>
                   {user && user.isAdmin && (
-                    <button type="button" className="btn btn-danger px-3" onClick={DeleteItem}>
+                    <button
+                      type="button"
+                      className="btn btn-danger px-3"
+                      onClick={DeleteItem}
+                    >
                       Delete
                     </button>
                   )}
@@ -342,7 +389,11 @@ const ViewItem = () => {
                     className="form-control border-1 rounded-3 "
                     style={{ outline: "none", display: "inline" }}
                   />
-                  <button className="btn btn-secondary" style={{ padding: "2px" }} onClick={handleShow}>
+                  <button
+                    className="btn btn-secondary"
+                    style={{ padding: "2px" }}
+                    onClick={handleBidModalShow}
+                  >
                     <FontAwesomeIcon
                       icon="fa-solid fa-gavel"
                       style={{
@@ -352,7 +403,11 @@ const ViewItem = () => {
                       }}
                     />
                   </button>
-                  <button className="btn btn-secondary" style={{ padding: "2px" }} onClick={handleMessage}>
+                  <button
+                    className="btn btn-secondary"
+                    style={{ padding: "2px" }}
+                    onClick={handleMessage}
+                  >
                     <FontAwesomeIcon
                       icon="fa-solid fa-arrow-up"
                       style={{
@@ -362,34 +417,51 @@ const ViewItem = () => {
                       }}
                     />
                   </button>
-                  <Modal show={bidModal} onHide={handleClose}>
-                    <Modal.Header closeButton>
-                      <Modal.Title>Make bid</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <p>Enter bid Amount, or make a quick bid (10% of highest bid)</p>
-                      <input
-                        type="number"
-                        min={parseInt(highestBid) + parseInt(minimumBid)}
-                        className="form-control border-1 rounded-3 "
-                        onChange={(e) => {
-                          setBidAmount(e.target.value);
-                        }}
-                      />
-                    </Modal.Body>
-                    <Modal.Footer>
-                      <button className="btn btn-secondary" onClick={handleQuickbid}>
-                        Quick bid
-                      </button>
-                      <button className="btn btn-secondary" onClick={handleBid}>
-                        Confirm
-                      </button>
-                    </Modal.Footer>
-                  </Modal>
                 </div>
               )}
             </div>
           </div>
+          <Modal show={bidModal} onHide={handleBidModalClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Make bid</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <p>Enter bid Amount, or make a quick bid (10% of highest bid)</p>
+              <input
+                type="number"
+                min={parseInt(highestBid) + parseInt(minimumBid)}
+                className="form-control border-1 rounded-3 "
+                onChange={(e) => {
+                  setBidAmount(e.target.value);
+                }}
+              />
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btn-secondary" onClick={handleQuickbid}>
+                Quick bid
+              </button>
+              <button className="btn btn-secondary" onClick={handleBid}>
+                Confirm
+              </button>
+            </Modal.Footer>
+          </Modal>
+          <Modal show={loginModal} onHide={handleLoginModalClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Login</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <p>To perform this action you must be logged in</p>
+              <LoginForm {...{ next: window.location.href }} />
+            </Modal.Body>
+            <Modal.Footer>
+              <button
+                className="btn btn-primary"
+                onClick={handleLoginModalClose}
+              >
+                cancel
+              </button>
+            </Modal.Footer>
+          </Modal>
           <MobileNavbar />
         </>
       )}

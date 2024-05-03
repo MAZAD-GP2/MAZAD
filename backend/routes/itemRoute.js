@@ -147,6 +147,14 @@ module.exports.getItemById = async (req, res) => {
         Image,
         Auction,
       ],
+      attributes: {
+        include: [
+          [
+            sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
+            "interestsCount",
+          ],
+        ],
+      },
     });
 
     if (user) {

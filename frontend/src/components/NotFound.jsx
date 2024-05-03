@@ -1,28 +1,25 @@
 import React from "react";
 import notFoundImage from "../assets/images/404-image.webp";
 import Navbar from "./Navbar";
+import MobileNavbar from "./MobileNavbar";
 
 const NotFound = () => {
   return (
     <>
-    <Navbar />
-    <div
-      style={{
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        display: "flex",
-        gap: "15px",
-        zIndex: "-1",
-      }}
-    >
-      <img src={notFoundImage} alt="" style={{userSelect: "none"}}/>
-      <div className="d-flex flex-column justify-content-center">
-        <h4 style={{fontWeight: "630"}}>Page not found</h4>
-        <p>Sorry, but we can't find the page you're looking for...</p>
+      <Navbar />
+      <div className="container">
+        <div className="row justify-content-center align-items-center">
+          <div className="col-lg-6 col-md-8 col-sm-10 col-12 text-center">
+            <img src={notFoundImage} alt="404 Page not found" className="img-fluid" style={{ userSelect: "none" }} />
+            <div>
+              <h4 style={{ fontWeight: "bold" }}>Page not found</h4>
+              <p>Sorry, but we can't find the page you're looking for...</p>
+              <a href="/home" className="btn btn-secondary text-white">Go back to home</a>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+      <MobileNavbar />
     </>
   );
 };

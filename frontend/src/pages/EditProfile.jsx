@@ -50,7 +50,7 @@ const EditProfile = () => {
 
   const popoverPhoneNumber = (
     <Popover id="popover-basic">
-      <Popover.Body>Enter a jordanian valid phone number</Popover.Body>
+      <Popover.Body>Enter a Jordanian valid phone number</Popover.Body>
     </Popover>
   );
 

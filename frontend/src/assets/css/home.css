@@ -1,0 +1,6 @@
+@media (max-width: 704px) {
+  #cards-container {
+    display: flex;
+    justify-content: center !important;
+  }
+}
