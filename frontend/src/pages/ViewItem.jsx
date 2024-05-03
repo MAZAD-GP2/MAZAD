@@ -301,7 +301,7 @@ const ViewItem = () => {
                         }}
                       >
                         {/* {message.username} */}
-                        {message.username === user.username ? "You" : message.username}
+                        {user && message.username === user.username ? "You" : message.username}
                       </span>
                       <p
                         style={{
