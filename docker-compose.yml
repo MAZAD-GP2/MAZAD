@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  mazad-frontend:
+    build:
+      dockerfile: Dockerfile
+      context: "./frontend/"
+    container_name: "mazad-frontend"
+    restart: "always"
+    env_file: ./frontend/.env
+    ports:
+      - "6969:5173"
+
+  mazad-backend:
+    build:
+      dockerfile: Dockerfile
+      context: "./backend/"
+    container_name: "mazad-backend"
+    restart: "always"
+    env_file: ./backend/.env
+    ports:
+      - "6868:3000"

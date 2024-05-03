@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: `http://localhost:${import.meta.env.VITE_PORT}`,
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 API.interceptors.request.use((req) => {
@@ -51,7 +51,8 @@ export const removeAuction = (id) => API.delete(`/auction/delete/${id}`);
 
 export const getBidById = (id) => API.get(`/bid/${id}`);
 export const getBidsByUser = (id) => API.get(`/bid/user/${id}`);
-export const getBidsByAuction = (id, limit) => API.get(`/bid/auction/${id}`, { params: { limit } });
+export const getBidsByAuction = (id, limit) =>
+  API.get(`/bid/auction/${id}`, { params: { limit } });
 export const addBid = (data) => API.post("/bid/create", data);
 export const removeBid = (id) => API.delete(`/bid/auction/${id}`);
 
