@@ -183,7 +183,7 @@ const Card = ({ item, removeItemFromFavorites }) => {
           </span>
         </div>
       </div>
-      <Modal show={loginModal} onHide={handleLoginModalClose}>
+      <Modal centered show={loginModal} onHide={handleLoginModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Login</Modal.Title>
         </Modal.Header>
@@ -191,11 +191,11 @@ const Card = ({ item, removeItemFromFavorites }) => {
           <p>To perform this action you must be logged in</p>
           <LoginForm {...{ next: window.location.href }} />
         </Modal.Body>
-        <Modal.Footer>
+        {/* <Modal.Footer>
           <button className="btn btn-primary" onClick={handleLoginModalClose}>
             cancel
           </button>
-        </Modal.Footer>
+        </Modal.Footer> */}
       </Modal>
     </div>
   );

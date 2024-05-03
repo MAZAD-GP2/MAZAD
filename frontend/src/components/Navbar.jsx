@@ -131,7 +131,7 @@ const Navbar = () => {
                             href="/register"
                             role="button"
                           >
-                            Create a free account
+                            Sign Up
                           </a>
                       </div>
                     </div>

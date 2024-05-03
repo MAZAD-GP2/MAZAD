@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../assets/css/filters.css";
+import "../assets/css/Filters.css";
 import AsyncSelect from "react-select/async";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
@@ -134,9 +134,20 @@ const Filters = ({ setItems }) => {
     setItems(response.data);
   };
 
+  const handleReset = async () => {
+    setSelectedCategories([]);
+    setSelectedTags([]);
+    setMinPrice(0);
+    setMaxPrice(0);
+    setSelectedStatus("all");
+    setSelectedPopularity("");
+    const response = await api.getAllItems();
+    setItems(response.data);
+  };
+
   return (
-    <div className="card w-100 d-flex flex-column flex-wrap align-items-center justify-content-center gap-3 p-2">
-      <h3>Filters</h3>
+    <div className="card w-100 d-flex flex-column flex-wrap align-items-center justify-content-center p-2">
+      <h3 className="pt-3">Filters</h3>
       <div className="w-100 d-flex flex-column flex-wrap align-items-start justify-content-start p-2 gap-3">
         <div className="w-100 section" id="status-filter">
           <label className="form-check-label">Status</label>
@@ -166,9 +177,7 @@ const Filters = ({ setItems }) => {
             <div
               id="upcoming"
               className={`status col p-2 border rounded m-1 px-2 ${
-                selectedStatus && selectedStatus === "upcoming"
-                  ? "selected"
-                  : ""
+                selectedStatus && selectedStatus === "upcoming" ? "selected" : ""
               }`}
               onClick={() => {
                 handleStatusChange("upcoming");
@@ -314,9 +323,7 @@ const Filters = ({ setItems }) => {
             <div
               id="high"
               className={`status col p-2 border rounded m-1 px-2 ${
-                selectedPopularity && selectedPopularity === "high"
-                  ? "selected"
-                  : ""
+                selectedPopularity && selectedPopularity === "high" ? "selected" : ""
               }`}
               onClick={() => {
                 handlePopularityChange("high");
@@ -327,9 +334,7 @@ const Filters = ({ setItems }) => {
             <div
               id="low"
               className={`status col p-2 border rounded m-1 px-2 ${
-                selectedPopularity && selectedPopularity === "low"
-                  ? "selected"
-                  : ""
+                selectedPopularity && selectedPopularity === "low" ? "selected" : ""
               }`}
               onClick={() => {
                 handlePopularityChange("low");
@@ -339,28 +344,13 @@ const Filters = ({ setItems }) => {
             </div>
           </div>
         </div>
-        <div className="d-flex flex-column gap-2 w-100">
+        <div className="d-flex flex-row gap-2 w-100">
           {/* filter button */}
-          <button
-            type="button"
-            className="btn btn-secondary w-100 text-white"
-            onClick={handleSubmit}
-          >
+          <button type="button" className="btn btn-secondary w-50 text-white" onClick={handleSubmit}>
             Filter
           </button>
           {/* reset button, it will empty out all fields */}
-          <button
-            type="button"
-            className="btn btn-primary w-100 text-white"
-            onClick={() => {
-              setSelectedCategories([]);
-              setSelectedTags([]);
-              setMinPrice(0);
-              setMaxPrice(0);
-              setSelectedStatus("all");
-              setSelectedPopularity("");
-            }}
-          >
+          <button type="button" className="btn btn-white w-50 text-primary border-primary" onClick={handleReset}>
             Reset
           </button>
         </div>
