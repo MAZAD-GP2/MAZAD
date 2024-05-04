@@ -10,8 +10,6 @@ services:
     env_file: ./frontend/.env
     ports:
       - "6969:80"
-    volumes:
-      - frontend-build:/opt
 
   mazad-backend:
     build:
@@ -22,8 +20,3 @@ services:
     env_file: ./backend/.env
     ports:
       - "6868:3000"
-    volumes:
-      - frontend-build:/app/frontend
-
-volumes:
-  frontend-build: {}
