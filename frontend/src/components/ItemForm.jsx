@@ -23,8 +23,8 @@ const ItemForm = ({
   isFetching,
   price,
   setPrice,
-  minPrice,
-  setMinPrice,
+  minBid,
+  setMinBid,
   tags,
   setTags,
   name,
@@ -80,15 +80,15 @@ const ItemForm = ({
       setPrice(0);
       return;
     }
-    setPrice(event.target.value);
+    setPrice(parseFloat(event.target.value));
   };
 
-  const handleMinPriceChange = (event) => {
+  const handleMinBidChange = (event) => {
     if (event.target.value < 1 && event.target.value !== "") {
-      setMinPrice(1);
+      setMinBid(1);
       return;
     }
-    setMinPrice(event.target.value);
+    setMinBid(parseFloat(event.target.value));
   };
   const handleDescriptionChange = useCallback(
     (lastChange, deltaBefore, source) => {
@@ -119,11 +119,9 @@ const ItemForm = ({
       !calendarState.selection.endDate ||
       !selectedCategory ||
       !droppedFiles.length ||
-      !price ||
       price < 0 ||
-      !minPrice ||
-      minPrice < 1 ||
-      !tags
+      !minBid ||
+      minBid < 1
     ) {
       setSubmitValid(false);
     } else {
@@ -138,6 +136,8 @@ const ItemForm = ({
       formData.append("categoryId", selectedCategory.id);
       formData.append("tags", tags);
       formData.append("price", price);
+      formData.append("minBid", minBid);
+
       formData.append("showNumber", showNumber);
       formData.append("isHidden", visibility);
 
@@ -148,7 +148,9 @@ const ItemForm = ({
       try {
         setIsAddingItem(true);
         // Send the FormData object using Axios
-        const response = await api.addItem(formData);
+        const response = await api.addItem(formData).catch((error) => {
+          throw error;
+        });
         // Handle the response as needed
         enqueueSnackbar("Added item", { variant: "success" });
         setName("");
@@ -157,9 +159,15 @@ const ItemForm = ({
           visibility === true ? `/item/${response.data.id}` : `/profile`;
       } catch (error) {
         // Handle errors
-        enqueueSnackbar(error.response.data.message, {
-          variant: "error",
-        });
+        if (error.response?.data?.message) {
+          enqueueSnackbar(error.response.data.message, {
+            variant: "error",
+          });
+        } else {
+          enqueueSnackbar("An unexpected error occurred", {
+            variant: "error",
+          });
+        }
         // reenable the button
         setIsAddingItem(false);
       }
@@ -523,9 +531,9 @@ const ItemForm = ({
                     aria-describedby="currency"
                     min="1"
                     onChange={(e) => {
-                      handleMinPriceChange(e);
+                      handleMinBidChange(e);
                     }}
-                    value={minPrice}
+                    value={minBid}
                   />
                 </div>
               </div>
@@ -646,9 +654,9 @@ const ItemForm = ({
             type="checkbox"
             id="visibility-checkbox"
             name="visibility-checkbox"
-            value={visibility}
-            checked={visibility}
-            onChange={(e) => setVisibility(e.target.checked)}
+            value={!visibility}
+            checked={!visibility}
+            onChange={(e) => setVisibility(!visibility)}
           />
           <label htmlFor="visibility-checkbox">
             Add Auction to the public feed.

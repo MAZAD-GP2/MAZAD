@@ -44,7 +44,7 @@ const ViewItem = () => {
   const [isFetching, setIsFetching] = useState(true);
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [price, setPrice] = useState(0);
-  const [minPrice, setMinPrice] = useState(1);
+  const [minBid, setMinBid] = useState(1);
   const [tags, setTags] = useState([]);
   const [name, setName] = useState("");
   const [visibility, setVisibility] = useState(true);
@@ -72,7 +72,7 @@ const ViewItem = () => {
       // setCategories(item.Category);
 
       setPrice(item.Auction.highestBid);
-      setMinPrice(item.Auction.min_bid);
+      setMinBid(item.Auction.min_bid);
       let tags = item.Tags.map((tag) => tag.name);
       setTags(tags);
       setName(item.name);
@@ -288,8 +288,8 @@ const ViewItem = () => {
       !droppedFiles.length ||
       !price ||
       price < 0 ||
-      !minPrice ||
-      minPrice < 1 ||
+      !minBid ||
+      minBid < 1 ||
       !tags
     ) {
       setSubmitValid(false);
@@ -305,13 +305,16 @@ const ViewItem = () => {
     formData.append("categoryId", selectedCategory.id);
     formData.append("tags", tags);
     formData.append("price", price);
+    formData.append("minBid", minBid);
     formData.append("showNumber", showNumber);
     formData.append("isHidden", visibility);
 
     droppedFiles.forEach((file) => {
       if (file.id) {
         formData.append("oldImages", file.id);
-      } else formData.append("images", file);
+      } else {
+        formData.append("images", file);
+      }
     });
 
     try {
@@ -928,8 +931,8 @@ const ViewItem = () => {
                   isFetching,
                   price,
                   setPrice,
-                  minPrice,
-                  setMinPrice,
+                  minBid,
+                  setMinBid,
                   tags,
                   setTags,
                   name,

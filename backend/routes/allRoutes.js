@@ -73,11 +73,7 @@ router
   .get(verifyToken(false), itemRoutes.getAllItemsByCategory);
 router
   .route("/item/update/:id")
-  .post(
-    uploadUpdate,
-    verifyToken(true),
-    itemRoutes.updateItem
-  );
+  .post(uploadUpdate, verifyToken(true), itemRoutes.updateItem);
 router
   .route("/item/delete/:id")
   .delete(verifyToken(true), itemRoutes.deleteItem);

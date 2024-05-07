@@ -29,11 +29,20 @@ module.exports.createItem = async (req, res) => {
       categoryId,
       showNumber,
       isHidden,
-      minPrice
+      minBid,
     } = req.body;
     tags = tags.split(",").filter((tag) => tag.trim() !== "");
     price = parseFloat(price);
-    if (!name || !description || !startDate || !endDate || !tags || !price|| !minPrice) {
+    if (
+      !name ||
+      !description ||
+      !startDate ||
+      !endDate ||
+      !price === null ||
+      !price === undefined ||
+      !minBid === null ||
+      !minBid === undefined
+    ) {
       return res.status(400).send({ message: "All fields are required" });
     }
     if (name.length > 255) {
@@ -100,7 +109,7 @@ module.exports.createItem = async (req, res) => {
     description = description.replace(/<br\s*\/?>\s*(<br\s*\/?>)+/g, "<br/>");
 
     // also sanitize tags to prevent XSS, hmm actually, theres no need (as long as we don't do .innerHTML or the equivalent)
-
+    isHidden = isHidden === "true" ? false : true;
     const item = await Item.create(
       {
         name,
@@ -119,7 +128,7 @@ module.exports.createItem = async (req, res) => {
         highestBid: price,
         itemId: item.id,
         showNumber: showNumber,
-        min_price: minPrice
+        min_bid: minBid,
       },
       { transaction: t }
     );
@@ -378,7 +387,7 @@ module.exports.getAllItemsByCategory = async (req, res) => {
 
 module.exports.getAllItems = async (req, res) => {
   const requestUser = req.currentUser;
-  let { status, categories, tags, minPrice, maxPrice, popularity } = req.query;
+  let { status, categories, tags, minBid, maxPrice, popularity } = req.query;
   let user = null;
   if (requestUser) {
     user = await User.findByPk(requestUser.id);
@@ -410,9 +419,9 @@ module.exports.getAllItems = async (req, res) => {
       whereClause["$Tags.id$"] = tags.split(",");
     }
 
-    if (minPrice) {
-      minPrice = parseFloat(minPrice);
-      whereClause["$Auction.highestBid$"] = { [Op.gte]: minPrice };
+    if (minBid) {
+      minBid = parseFloat(minBid);
+      whereClause["$Auction.highestBid$"] = { [Op.gte]: minBid };
     }
 
     if (maxPrice) {
@@ -516,6 +525,7 @@ module.exports.deleteItem = async (req, res) => {
   try {
     const itemId = req.params.id;
     const requestUser = req.currentUser;
+    const t = await sequelize.transaction();
     if (!requestUser) {
       return res.status(401).send("Unauthorized");
     }
@@ -524,14 +534,31 @@ module.exports.deleteItem = async (req, res) => {
     if (!user) {
       return res.status(401).send("Unauthorized");
     }
-    if (user.isAdmin !== true) {
-      await Item.destroy({ where: { id: itemId } });
-    } else {
-      await Item.destroy({ where: { id: itemId, userId: userId } });
+    const images = await Image.findAll({
+      where: {
+        itemId: itemId,
+      },
+    });
+    try {
+      if (user.isAdmin == true) {
+        await Item.destroy({ where: { id: itemId }, transaction: t });
+      } else {
+        await Item.destroy({
+          where: { id: itemId, userId: userId },
+          transaction: t,
+        });
+      }
+    } catch (err) {
+      return res.status(404).send("Item not found");
     }
+    const deleteOps = images.map((image) =>
+      cloudinary.uploader.destroy(image.imgURL.split("/").pop().split(".")[0])
+    );
+    await Promise.all(deleteOps);
+    t.commit();
     return res.send("successfully");
   } catch (err) {
-    return res.send(err);
+    return res.status(500).send(err);
   }
 };
 
@@ -698,7 +725,8 @@ module.exports.updateItem = async (req, res) => {
       categoryId,
       showNumber,
       isHidden,
-      oldImages: oldImagesIds,
+      oldImages,
+      minBid,
     } = req.body;
 
     if (!requestUser) {
@@ -806,14 +834,18 @@ module.exports.updateItem = async (req, res) => {
     }
 
     const images = req.files;
-    // const oldImages = item.oldImages;
-    if (oldImagesIds === undefined) {
-      oldImagesIds = [];
+    if (typeof oldImages === "string" && oldImages !== "") {
+      oldImages = [oldImages];
+    } else if (oldImages === null || oldImages === undefined) {
+      oldImages = [];
+    } else {
+      oldImages = oldImages.map((image) => parseInt(image));
     }
-    if (images.length + oldImagesIds.length < 1) {
+    let oldImagesCount = oldImages.length;
+    if (images.length + oldImagesCount < 1) {
       return res.status(400).send("At least one image is required");
     }
-    if (images.length > 10) {
+    if (images.length + oldImagesCount > 10) {
       return res.status(400).send("Maximum 10 images allowed");
     }
     if (showNumber === null || showNumber === undefined) {
@@ -867,48 +899,40 @@ module.exports.updateItem = async (req, res) => {
         finishTime: endDate,
         highestBid: price,
         showNumber: showNumber,
+        min_bid: minBid,
       },
       { where: { itemId: req.params.id }, transaction: t }
     );
 
     // check if there are new images based on the names
-
     let itemImages = await Image.findAll({
       where: {
         itemId: item.id,
+        id: { [Op.notIn]: oldImages },
       },
     });
 
-    const imagesToDelete = itemImages.filter(
-      (image) => !oldImagesIds.includes(image.id)
+    const deleteOps = itemImages.map((image) =>
+      cloudinary.uploader.destroy(image.imgURL.split("/").pop().split(".")[0])
     );
+    await Promise.all(deleteOps);
 
-    const deleteImagePromises = imagesToDelete.map(async (image) => {
-      await cloudinary.uploader.destroy(image.imgURL.split("/").pop());
-      await Image.destroy({
-        where: {
-          id: image.id,
-        },
-        transaction: t,
-      });
-    });
+    if (images.length > 0) {
+      const imageURLs = await Promise.all(
+        images.map(async (image) => {
+          const result = await cloudinary.uploader.upload(image.path);
+          return result.url;
+        })
+      );
 
-    await Promise.all(deleteImagePromises);
-
-    const imageURLs = await Promise.all(
-      images.map(async (image) => {
-        const result = await cloudinary.uploader.upload(image.path);
-        return result.url;
-      })
-    );
-
-    await Image.bulkCreate(
-      imageURLs.map((url) => ({
-        imgURL: url,
-        itemId: req.params.id,
-      })),
-      { transaction: t }
-    );
+      await Image.bulkCreate(
+        imageURLs.map((url) => ({
+          imgURL: url,
+          itemId: req.params.id,
+        })),
+        { transaction: t }
+      );
+    }
 
     const tagOps = tags.map((tag) =>
       Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t })
@@ -916,6 +940,7 @@ module.exports.updateItem = async (req, res) => {
 
     const createdTags = await Promise.all(tagOps);
 
+    // fk it, just delete all the tags and reinsert them 🤗
     await Item_tag.destroy({
       where: {
         itemId: req.params.id,

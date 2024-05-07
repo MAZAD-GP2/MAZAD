@@ -16,7 +16,7 @@ const Filters = ({ setItems, user }) => {
   const [selectedTags, setSelectedTags] = useState([]);
   const [isFetchingCategory, setIsFetchingCategory] = useState(true);
   const [isFetchingTag, setIsFetchingTag] = useState(null);
-  const [minPrice, setMinPrice] = useState(0);
+  const [minBid, setMinBid] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedPopularity, setSelectedPopularity] = useState(null);
@@ -24,7 +24,7 @@ const Filters = ({ setItems, user }) => {
   useEffect(() => {
     setSelectedStatus("all");
     setMaxPrice("");
-    setMinPrice("");
+    setMinBid("");
     // setSelectedPopularity("high");
     const fetchCategories = async () => {
       try {
@@ -71,20 +71,20 @@ const Filters = ({ setItems, user }) => {
     const value = event.target.value;
     const id = event.target.id;
     const intValue = parseInt(value);
-    if (id === "minPrice") {
+    if (id === "minBid") {
       if (isNaN(intValue)) {
-        setMinPrice("");
+        setMinBid("");
         return;
       }
       if (intValue < 0) {
-        setMinPrice(0);
+        setMinBid(0);
         return;
       }
       if (intValue > maxPrice) {
-        setMinPrice(intValue);
+        setMinBid(intValue);
         return;
       }
-      setMinPrice(intValue);
+      setMinBid(intValue);
     } else {
       if (isNaN(intValue)) {
         setMaxPrice("");
@@ -94,7 +94,7 @@ const Filters = ({ setItems, user }) => {
         setMaxPrice(0);
         return;
       }
-      if (intValue < minPrice) {
+      if (intValue < minBid) {
         setMaxPrice(intValue);
         return;
       }
@@ -114,7 +114,7 @@ const Filters = ({ setItems, user }) => {
       status: selectedStatus,
       categories: selectedCategories.length > 0 ? selectedCategories : null,
       tags: selectedTags.length > 0 ? selectedTags : null,
-      minPrice: minPrice,
+      minBid: minBid,
       maxPrice: maxPrice,
       popularity: selectedPopularity,
     };
@@ -137,7 +137,7 @@ const Filters = ({ setItems, user }) => {
   const handleReset = async () => {
     setSelectedCategories([]);
     setSelectedTags([]);
-    setMinPrice(0);
+    setMinBid(0);
     setMaxPrice(0);
     setSelectedStatus("all");
     setSelectedPopularity("");
@@ -302,8 +302,8 @@ const Filters = ({ setItems, user }) => {
                     onChange={(e) => {
                       handlePriceChange(e);
                     }}
-                    id="minPrice"
-                    value={minPrice}
+                    id="minBid"
+                    value={minBid}
                   />
                 </div>
               </div>

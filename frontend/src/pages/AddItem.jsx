@@ -21,7 +21,7 @@ const AddItem = () => {
   const [isFetching, setIsFetching] = useState(true);
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [price, setPrice] = useState(0);
-  const [minPrice, setMinPrice] = useState(1);
+  const [minBid, setMinBid] = useState(1);
   const [tags, setTags] = useState([]);
   const [name, setName] = useState("");
   const [visibility, setVisibility] = useState(true);
@@ -53,8 +53,8 @@ const AddItem = () => {
               isFetching,
               price,
               setPrice,
-              minPrice,
-              setMinPrice,
+              minBid,
+              setMinBid,
               tags,
               setTags,
               name,
