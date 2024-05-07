@@ -21,13 +21,12 @@ const ImageSlider = ({ images }) => {
     const interval = setInterval(() => {
       showNextImage();
     }, imageChangeInterval);
-    // Clear interval on component unmount
     return () => clearInterval(interval);
   }, []);
   
   return (
-    <div className="image-slider-container w-100">
-      <div className="main-image d-flex flex-row justify-content-center align-items-center">
+    <div className="image-slider-container w-100  h-100">
+      <div className="main-image d-flex flex-row justify-content-center align-items-center w-100 h-100">
         <img
           src={images[imageIndex].imgURL}
           alt="https://archive.org/download/placeholder-image/placeholder-image.jpg"

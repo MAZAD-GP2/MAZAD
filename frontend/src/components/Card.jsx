@@ -78,20 +78,15 @@ const Card = ({ item, removeItemFromFavorites }) => {
     return <small className="text-muted">{formattedDate}</small>;
   };
 
-  const markInterested = () => {
-    if (!user) return false;
-
-    return isInterest;
-  };
 
   const categoryHref = (id) => {
     window.location.href = `/category-item/${id}`;
   };
 
   return (
-    <div className="card item-card">
+    <div className="w-100">
       <img
-        className="image"
+        className="image "
         src={item.Images[0].imgURL}
         alt="Card image cap"
         onClick={handleCardClick}
@@ -127,12 +122,12 @@ const Card = ({ item, removeItemFromFavorites }) => {
               </span>
             ))}
           </div>
-          <div className="d-flex justify-content-between align-items-center w-100 border border-secondary rounded-5 px-5">
-            <small className="text-muted">
+          <div className="date d-flex justify-content-evenly align-items-center w-100 border border-secondary rounded-5">
+            <small className="text-muted text-center">
               {formatDateTime(item.Auction.startTime)}
             </small>
             <div> - </div>
-            <small className="text-muted">
+            <small className="text-muted text-center">
               {formatDateTime(item.Auction.finishTime)}
             </small>
             {/* <small className="text-muted"> */}
@@ -149,7 +144,7 @@ const Card = ({ item, removeItemFromFavorites }) => {
               </h5>
             </div>
             <div
-              className="interest col-auto d-flex flex-column justify-content-center align-items-center"
+              className="interest col-auto d-flex flex-column justify-content-center flex-wrap align-items-center"
               onClick={() => handleChangeInterest(item.id)}
               title={!user ? "Login to like" : "I am interested in this"}
             >

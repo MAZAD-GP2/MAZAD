@@ -1,7 +1,7 @@
 const checkAdmin = (req, res, next) => {
   try {
     if (!req.currentUser.isAdmin) {
-      throw new Error("you're not admin");
+      throw new Error("Unauthorized 401");
     }
     next();
   } catch (err) {

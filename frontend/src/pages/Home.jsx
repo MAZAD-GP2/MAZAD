@@ -10,7 +10,7 @@ import "../assets/css/home.css";
 const Home = () => {
   const [items, setItems] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
-
+  const user = JSON.parse(sessionStorage.getItem("user"));
   useEffect(() => {
     const fetchItems = async () => {
       try {
@@ -32,12 +32,14 @@ const Home = () => {
       <div className="d-flex flex-row align-items-start justify-content-start gap-3 px-3 py-3 w-100">
         <div
           id="filters-container"
-          className="sticky-left col-lg-2 col-md-4 col-sm-5"
+          className="sticky-left"
+          // style={{ width: "20%", maxWidth: "200px" }} // Adjust width as needed
         >
           <div className="w-100">
-            <Filters setItems={setItems} />
+            <Filters setItems={setItems} user={user} />
           </div>
         </div>
+
         <div
           id="cards-container"
           className="d-flex flex-row flex-wrap align-items-stretch justify-content-start justify-self-center gap-3 w-100"
@@ -53,11 +55,17 @@ const Home = () => {
             </div>
           ) : items.length > 0 ? (
             items.map((item) => (
-              <div className="position-relative d-flex flex-row" key={item.id}>
-                <div id="price" className="position-absolute end-0 top-0 py-1 px-3 m-2 z-2 rounded-5 bg-primary text-white">
-                <span>${item.Auction.highestBid}</span>
+              <div
+                className="position-relative d-flex flex-row card item-card"
+                key={item.id}
+              >
+                <div
+                  id="price"
+                  className="position-absolute end-0 top-0 py-1 px-3 m-2 z-2 rounded-5 bg-primary text-white border border-secondary"
+                >
+                  <span>${item.Auction.highestBid}</span>
                 </div>
-                <Card item={item} key={item.id} className="h1-00"/>
+                <Card item={item} key={item.id} className="h1-00" />
               </div>
             ))
           ) : (

@@ -4,3 +4,8 @@
     justify-content: center !important;
   }
 }
+#filters-container {
+  width: 20%;
+  min-width: 300px; /* Adjust as needed */
+}
+

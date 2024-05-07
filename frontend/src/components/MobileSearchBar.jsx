@@ -15,7 +15,7 @@ const MobileSearchBar = ({ search, setSearch, SubmitSearch }) => {
           M
           </a>
 
-          <div className="d-flex align-items-center justify-content-center gap-1 px-3 bg-dark rounded-5 border-0">
+          <div className="d-flex align-items-center justify-content-center gap-1 px-3 bg-dark rounded-5 border-0 w-100">
             <FontAwesomeIcon icon="fa-search" color="white" />
             <input
               type="search"

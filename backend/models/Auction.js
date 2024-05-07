@@ -25,6 +25,14 @@ const Auction = sequelize.define("Auction", {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
+  showNumber: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  status: {
+    type: DataTypes.STRING,
+    defaultValue: "new",
+  },
 });
 
 module.exports = Auction;

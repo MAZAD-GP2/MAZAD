@@ -38,7 +38,22 @@ export const addItem = (data) =>
       "Content-Type": "multipart/form-data",
     },
   });
+export const editItem = (id, data) =>
+  API.post(`/item/update/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
 export const deleteItem = (id) => API.delete(`/item/delete/${id}`);
+export const hideItem = (id) => API.delete(`/item/hide/${id}`);
+export const reenlistItem = (data) =>
+  API.post("/item/reenlist", data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
 export const updateInterest = (id) => API.post(`/interest/add/${id}`);
 export const removeInterest = (id) => API.delete(`/interest/remove/${id}`);
 

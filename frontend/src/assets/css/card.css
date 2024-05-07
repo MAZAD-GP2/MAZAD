@@ -1,4 +1,4 @@
-.card {
+.item-card {
   width: 20rem;
   max-width: 20rem;
   border: 1px solid rgba(0, 0, 0, 0.12);
@@ -91,15 +91,48 @@
   }
 }
 
-@media only screen and (max-width: 720px) {
-  .card {
-    width: 100%;
-  }
-  #image-container {
-    width: 100%;
+@media only screen and (max-width: 1357px) {
+  .item-card {
+    width: 50%;
+    max-width: 45%;
   }
   .image {
+    max-width: 94%;
     width: 94%;
+    height: 15rem;
+  }
+}
+
+@media only screen and (max-width: 880px) {
+  .item-card {
+    width: 100%;
+    max-width: none;
+  }
+  .image {
+    /* width: 94%; */
+    height: 15rem;
+  }
+}
+
+@media only screen and (max-width: 722px) {
+  .item-card {
+    width: 50%;
+    max-width: 45%;
+  }
+  .image {
+    max-width: 94%;
+    width: 94%;
+    height: 15rem;
+  }
+}
+
+@media only screen and (max-width: 580px) {
+  .item-card {
+    width: 100%;
+    max-width: none;
+  }
+  .image {
+    /* width: 94%; */
     height: 15rem;
   }
 }

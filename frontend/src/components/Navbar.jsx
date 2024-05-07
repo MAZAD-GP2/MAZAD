@@ -43,6 +43,7 @@ const Navbar = () => {
   }
 
   async function SubmitSearch(e) {
+    if (!search) return;
     if (e.key === "Enter") {
       window.location.href = `/search?search=${search}`;
       setSearch("");
@@ -65,7 +66,7 @@ const Navbar = () => {
                 href="/home"
                 style={{ cursor: "pointer" }}
               >
-                MAZAD &#128184;
+                <img src="/src/assets/images/logo_english_white.png" alt="logo" height="50px" />
               </a>
               <div id="search-create-nav-container" className="col">
                 <div

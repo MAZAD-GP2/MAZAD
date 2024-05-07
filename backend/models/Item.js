@@ -20,6 +20,10 @@ const Item = sequelize.define("Item", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  isHidden: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 module.exports = Item;

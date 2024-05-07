@@ -9,7 +9,7 @@ import { useSnackbar } from "notistack";
 import axios from "axios";
 const animatedComponents = makeAnimated();
 
-const Filters = ({ setItems }) => {
+const Filters = ({ setItems, user }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -177,7 +177,9 @@ const Filters = ({ setItems }) => {
             <div
               id="upcoming"
               className={`status col p-2 border rounded m-1 px-2 ${
-                selectedStatus && selectedStatus === "upcoming" ? "selected" : ""
+                selectedStatus && selectedStatus === "upcoming"
+                  ? "selected"
+                  : ""
               }`}
               onClick={() => {
                 handleStatusChange("upcoming");
@@ -185,6 +187,21 @@ const Filters = ({ setItems }) => {
             >
               Upcoming
             </div>
+            {user && user.isAdmin && (
+              <div
+                id="hidden"
+                className={`status col p-2 border rounded m-1 px-2 ${
+                  selectedStatus && selectedStatus === "hidden"
+                    ? "selected"
+                    : ""
+                }`}
+                onClick={() => {
+                  handleStatusChange("hidden");
+                }}
+              >
+                Hidden
+              </div>
+            )}
           </div>
         </div>
         <div className="w-100 section">
@@ -323,7 +340,9 @@ const Filters = ({ setItems }) => {
             <div
               id="high"
               className={`status col p-2 border rounded m-1 px-2 ${
-                selectedPopularity && selectedPopularity === "high" ? "selected" : ""
+                selectedPopularity && selectedPopularity === "high"
+                  ? "selected"
+                  : ""
               }`}
               onClick={() => {
                 handlePopularityChange("high");
@@ -334,7 +353,9 @@ const Filters = ({ setItems }) => {
             <div
               id="low"
               className={`status col p-2 border rounded m-1 px-2 ${
-                selectedPopularity && selectedPopularity === "low" ? "selected" : ""
+                selectedPopularity && selectedPopularity === "low"
+                  ? "selected"
+                  : ""
               }`}
               onClick={() => {
                 handlePopularityChange("low");
@@ -346,11 +367,19 @@ const Filters = ({ setItems }) => {
         </div>
         <div className="d-flex flex-row gap-2 w-100">
           {/* filter button */}
-          <button type="button" className="btn btn-secondary w-50 text-white" onClick={handleSubmit}>
+          <button
+            type="button"
+            className="btn btn-secondary w-50 text-white"
+            onClick={handleSubmit}
+          >
             Filter
           </button>
           {/* reset button, it will empty out all fields */}
-          <button type="button" className="btn btn-white w-50 text-primary border-primary" onClick={handleReset}>
+          <button
+            type="button"
+            className="btn btn-white w-50 text-primary border-primary"
+            onClick={handleReset}
+          >
             Reset
           </button>
         </div>
