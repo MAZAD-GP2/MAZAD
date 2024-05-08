@@ -13,6 +13,14 @@ const Bid = sequelize.define("Bid", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  UserId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  AuctionId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  }
 });
 
 module.exports = Bid;

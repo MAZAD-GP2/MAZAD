@@ -66,7 +66,7 @@ const Navbar = () => {
                 href="/home"
                 style={{ cursor: "pointer" }}
               >
-                <img src="/src/assets/images/logo_english_white.png" alt="logo" height="50px" />
+                <img src="/src/assets/images/Mazad Logo English With Z.png" alt="logo" height="50px" />
               </a>
               <div id="search-create-nav-container" className="col">
                 <div

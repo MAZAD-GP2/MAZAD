@@ -29,6 +29,10 @@
 
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 @media (max-width: 720px) {
   #filters-container {
     display: none;

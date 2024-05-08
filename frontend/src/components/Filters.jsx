@@ -154,7 +154,7 @@ const Filters = ({ setItems, user }) => {
           <div>
             <div
               id="all"
-              className={`status col p-2 border rounded m-1 px-2 ${
+              className={`status pointer col p-2 border rounded m-1 px-2 ${
                 selectedStatus && selectedStatus === "all" ? "selected" : ""
               }`}
               onClick={() => {
@@ -165,7 +165,7 @@ const Filters = ({ setItems, user }) => {
             </div>
             <div
               id="live"
-              className={`status col p-2 border rounded m-1 px-2 ${
+              className={`status pointer col p-2 border rounded m-1 px-2 ${
                 selectedStatus && selectedStatus === "live" ? "selected" : ""
               }`}
               onClick={() => {
@@ -176,7 +176,7 @@ const Filters = ({ setItems, user }) => {
             </div>
             <div
               id="upcoming"
-              className={`status col p-2 border rounded m-1 px-2 ${
+              className={`status pointer col p-2 border rounded m-1 px-2 ${
                 selectedStatus && selectedStatus === "upcoming"
                   ? "selected"
                   : ""
@@ -190,7 +190,7 @@ const Filters = ({ setItems, user }) => {
             {user && user.isAdmin && (
               <div
                 id="hidden"
-                className={`status col p-2 border rounded m-1 px-2 ${
+                className={`status pointer col p-2 border rounded m-1 px-2 ${
                   selectedStatus && selectedStatus === "hidden"
                     ? "selected"
                     : ""
@@ -333,13 +333,13 @@ const Filters = ({ setItems, user }) => {
           </div>
         </div>
         <div className="d-flex flex-column w-100 section">
-          <label className="form-check-label" htmlFor="price">
+          <label className="form-check-label " htmlFor="price">
             Popularity
           </label>
           <div className="w-100 gap-3">
             <div
               id="high"
-              className={`status col p-2 border rounded m-1 px-2 ${
+              className={`status pointer col p-2 border rounded m-1 px-2 ${
                 selectedPopularity && selectedPopularity === "high"
                   ? "selected"
                   : ""
@@ -352,7 +352,7 @@ const Filters = ({ setItems, user }) => {
             </div>
             <div
               id="low"
-              className={`status col p-2 border rounded m-1 px-2 ${
+              className={`status col pointer p-2 border rounded m-1 px-2 ${
                 selectedPopularity && selectedPopularity === "low"
                   ? "selected"
                   : ""
