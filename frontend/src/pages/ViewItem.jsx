@@ -117,6 +117,7 @@ const ViewItem = () => {
               username: comment.User.username,
               text: comment.content,
               timestamp: new Date(comment.createdAt).getTime(),
+              id: comment.User.id,
             }));
           });
           setIsInterest(response.data.item.isInterested || false);
@@ -632,7 +633,7 @@ const ViewItem = () => {
 
                     <div className="d-flex flex-column col-auto">
                       <span className="d-flex flex-wrap gap-2">
-                        <p className="tag" style={{ borderColor: "#00E175" }}>
+                        <p className="tag" style={{ borderColor: "#00E175", cursor: "pointer" }} onClick={()=>window.location.href=`/category-item/${item.Category.id}`}>
                           {item.Category.name}
                         </p>
                         {item.Tags.map((tag, idx) => (
@@ -671,6 +672,7 @@ const ViewItem = () => {
                             fontSize: "19px",
                             margin: "0",
                           }}
+                          onClick={()=>window.location.href = `/profile/${message.id}`}
                         >
                           {/* {message.username} */}
                           {user && message.username === user.username

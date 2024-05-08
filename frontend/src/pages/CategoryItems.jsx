@@ -31,7 +31,7 @@ const CategoryItems = () => {
       <Navbar />
       <div className="d-flex flex-row flex-wrap align-items-stretch justify-content-center gap-5 m-5 w-auto">
         {isFetching ? (
-          <div className=" text-center w-100 mt-5">
+          <div className=" text-center w-100">
             <div
               className="spinner-border text-primary opacity-25"
               role="status"
@@ -40,7 +40,20 @@ const CategoryItems = () => {
             </div>
           </div>
         ) : items.length > 0 ? (
-          items.map((item) => <Card item={item} key={item.id} />)
+          items.map((item) => (
+            <div
+              className="position-relative d-flex flex-row card item-card"
+              key={item.id}
+            >
+              <div
+                id="price"
+                className="position-absolute end-0 top-0 py-1 px-3 m-2 z-2 rounded-5 bg-primary text-white border border-secondary"
+              >
+                <span>${item.Auction.highestBid}</span>
+              </div>
+              <Card item={item} key={item.id} className="h1-00" />
+            </div>
+          ))
         ) : (
           <h1>No items found</h1>
         )}

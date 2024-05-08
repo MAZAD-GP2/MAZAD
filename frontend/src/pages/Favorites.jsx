@@ -22,30 +22,45 @@ const Favorites = () => {
     };
 
     fetchItems();
-  }, [items]);
+  }, []);
 
   const removeItemFromFavorites = (id) => {
-    setItems[(items) => items.filter((item) => item.id !== id)];
+    setItems(items.filter((item) => item.id !== id));
   };
 
   return (
     <>
       <Navbar />
-      <div className="d-flex flex-row align-items-start justify-content-start gap-3 px-3 py-3 w-100">
-        <div className="d-flex flex-row flex-wrap align-items-stretch justify-content-center justify-self-center gap-5 w-100">
-          {isFetching ? (
-            <div className=" text-center w-100">
-              <div className="spinner-border text-primary opacity-25" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
+      <div className="d-flex flex-row flex-wrap align-items-stretch justify-content-center gap-5 m-5 w-auto">
+        {isFetching ? (
+          <div className=" text-center w-100">
+            <div
+              className="spinner-border text-primary opacity-25"
+              role="status"
+            >
+              <span className="visually-hidden">Loading...</span>
             </div>
-          ) : items.length > 0 ? (
-            items.map((item) => <Card item={item} key={item.id} removeItemFromFavorites={removeItemFromFavorites} />)
-          ) : (
-            <h1>No items found</h1>
-          )}
-        </div>
+          </div>
+        ) : items.length > 0 ? (
+          items.map((item) => (
+            <div
+              className="position-relative d-flex flex-row card item-card"
+              key={item.id}
+            >
+              <div
+                id="price"
+                className="position-absolute end-0 top-0 py-1 px-3 m-2 z-2 rounded-5 bg-primary text-white border border-secondary"
+              >
+                <span>${item.Auction.highestBid}</span>
+              </div>
+              <Card item={item} key={item.id} removeItemFromFavorites={removeItemFromFavorites} className="h1-00" />
+            </div>
+          ))
+        ) : (
+          <h1>No items found</h1>
+        )}
       </div>
+      
       <MobileNavbar />
     </>
   );
