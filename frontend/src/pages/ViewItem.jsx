@@ -21,20 +21,26 @@ import "react-date-range/dist/theme/default.css";
 const ViewItem = () => {
   const { id } = useParams();
   const [item, setItem] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [messages, setMessages] = useState([]);
   const [bidModal, setBidModal] = useState(false);
   const [bidAmount, setBidAmount] = useState(0);
   const [highestBid, setHighestBid] = useState(0);
+  const [highestBidder, setHighestBidder] = useState('');
   const [minimumBid, setMinimumBid] = useState(0);
+
   const [isInterest, setIsInterest] = useState(false);
   const [interestsCount, setInterestsCount] = useState(0);
+
   const [loginModal, setLoginModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [hideModal, setHideModal] = useState(false);
   const [reenlistModal, setReenlistModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
+
   const isEdit = true;
   const inputRef = useRef(null);
   const activityTabRef = useRef(null);
@@ -45,16 +51,21 @@ const ViewItem = () => {
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [price, setPrice] = useState(0);
   const [minBid, setMinBid] = useState(1);
+
   const [tags, setTags] = useState([]);
   const [name, setName] = useState("");
   const [visibility, setVisibility] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
+
   const [submitValid, setSubmitValid] = useState(true);
   const [droppedFiles, setDroppedFiles] = useState([]);
   const [showNumber, setShowNumber] = useState(false);
 
+  const [bids, setBids] = useState([]);
   const [currentDescriptionLength, SetCurrentDescriptionLength] = useState(1);
+
   const quillRef = useRef();
+  const bidInputRef = useRef(null);
 
   const handleBidModalShow = () => setBidModal(true);
   const handleBidModalClose = () => setBidModal(false);
@@ -66,6 +77,7 @@ const ViewItem = () => {
   const handleHideModalClose = () => setHideModal(false);
   const handleReenlistModalShow = () => setReenlistModal(true);
   const handleReenlistModalClose = () => setReenlistModal(false);
+
   const handleEditModalShow = async () => {
     if (user && (user.id === item.userId || user.isAdmin)) {
       setDescription(item.description);
@@ -121,11 +133,26 @@ const ViewItem = () => {
             }));
           });
           setIsInterest(response.data.item.isInterested || false);
-          var channel = pusher.subscribe(`auction_${response.data.item.Auction.id}`);
+          var channel = pusher.subscribe(
+            `auction_${response.data.item.Auction.id}`
+          );
+
+          const newestBid = await api.getBidsByAuction(
+            response.data.item.Auction.id,
+            1
+          );
+          const newestBidder = await api.getUserById(
+            newestBid.data[0].UserId
+          ) // not sure if this is the best way 
+          
+          setBids(newestBid.data);
+          setHighestBidder(newestBidder.data.username);
 
           channel.bind("add_bid", function (data) {
             // alert(JSON.stringify(data));
+
             setHighestBid(data.BidAmount);
+            setHighestBidder(data.name);
 
             const bid = {
               username: data.name,
@@ -133,6 +160,7 @@ const ViewItem = () => {
               timestamp: new Date().getTime(),
             };
 
+            setBids((prevBids) => [bid, ...prevBids]);
             setMessages((prevMessages) => [bid, ...prevMessages]);
           });
           channel.bind("add_comment", function (data) {
@@ -186,7 +214,9 @@ const ViewItem = () => {
     try {
       setIsInterest(!isInterest);
 
-      isInterest ? setInterestsCount(interestsCount - 1) : setInterestsCount(interestsCount + 1);
+      isInterest
+        ? setInterestsCount(interestsCount - 1)
+        : setInterestsCount(interestsCount + 1);
       api
         .updateInterest(itemId)
         .then((res) => {})
@@ -228,7 +258,9 @@ const ViewItem = () => {
       .then((result) => {
         enqueueSnackbar("Item hidden successfully", { variant: "success" });
         setTimeout(() => {
-          window.location.href = user.isAdmin ? "/user/" : "/user/" + item.User.id;
+          window.location.href = user.isAdmin
+            ? "/user/"
+            : "/user/" + item.User.id;
         }, 2000);
       })
       .catch((error) => {
@@ -318,7 +350,8 @@ const ViewItem = () => {
       enqueueSnackbar("Added item", { variant: "success" });
       setName("");
       setDescription("");
-      window.location.href = visibility === true ? `/item/${response.data.id}` : `/profile`;
+      window.location.href =
+        visibility === true ? `/item/${response.data.id}` : `/profile`;
     } catch (error) {
       // Handle errors
       enqueueSnackbar(error.response.data.message, {
@@ -418,6 +451,10 @@ const ViewItem = () => {
   };
 
   const handleBid = async () => {
+    if (!user) {
+      setLoginModal(true);
+      return;
+    }
     if (!bidAmount) {
       enqueueSnackbar({
         message: "Bid amount cannot be empty",
@@ -442,6 +479,11 @@ const ViewItem = () => {
     let res = null;
     try {
       res = await api.addBid({ bidAmount, auctionId: item.Auction.id });
+      await api.sendMessage({
+        itemId: item.id,
+        content: `Made a bid ${bidAmount} JD`,
+        auctionId: item.Auction.id,
+      });
     } catch (error) {
       enqueueSnackbar({
         message: "Error adding bid",
@@ -449,22 +491,9 @@ const ViewItem = () => {
       });
       return;
     }
-
+    setHighestBid(bidAmount);
     setBidAmount(0);
 
-    handleBidModalClose();
-  };
-
-  const handleQuickbid = async () => {
-    const newBidAmount = highestBid + minimumBid;
-    // setHighestBid(newBidAmount);
-
-    // const bid = {
-    //   username: res.data.name,
-    //   text: `made a bid, ${newBidAmount} JD`,
-    //   timestamp: new Date().getTime(),
-    // };
-    // setMessages([...messages, bid]);
     handleBidModalClose();
   };
 
@@ -501,13 +530,19 @@ const ViewItem = () => {
               <div className="row-lg d-flex flex-row w-auto flex-wrap justify-content-start align-items-center mx-lg-3 mx-md-1 mx-sm-1">
                 <div className="col-auto h-100 w-100 d-flex flex-row flex-wrap align-items-center justify-content-start gap-lg-3 gap-md-2 gap-1 bg-white py-2 px-3 border rounded">
                   {user.isAdmin === true ? (
-                    <span className="col-auto d-lg-block d-md-block d-none">Admin controls</span>
+                    <span className="col-auto d-lg-block d-md-block d-none">
+                      Admin controls
+                    </span>
                   ) : null}
                   {user.id === item.userId && !user.isAdmin === true ? (
                     <span className="col-auto">controls</span>
                   ) : null}
 
-                  <button type="button" className="col-auto btn btn-sm btn-warning px-3" onClick={handleEditModalShow}>
+                  <button
+                    type="button"
+                    className="col-auto btn btn-sm btn-warning px-3"
+                    onClick={handleEditModalShow}
+                  >
                     Edit
                   </button>
                   {user.isAdmin === true ? (
@@ -542,19 +577,32 @@ const ViewItem = () => {
                 </div>
               </div>
             )}
-            <div className="d-flex flex-column flex-lg-row gap-1 column-gap-3 w-100" id="view-item-container">
+            <div
+              className="d-flex flex-column flex-lg-row gap-1 column-gap-3 w-100"
+              id="view-item-container"
+            >
               <div className="image-details col-12 col-lg-6 p-3 mb-5 bg-body rounded">
                 <div className="d-flex flex-column justify-content-center align-items-center gap-3 w-100">
-                  <div className="w-100 d-flex align-items center justify-content-center" style={{ height: "400px" }}>
+                  <div
+                    className="w-100 d-flex align-items center justify-content-center"
+                    style={{ height: "400px" }}
+                  >
                     <ImageSlider images={item.Images} />
                   </div>
                   <div className="details w-100 d-flex flex-column justify-content-start align-items-start gap-3">
                     <div className="d-flex justify-content-between align-items-center w-100 pe-4">
                       <h3>{item.name}</h3>
                       <div className="d-flex flex-row gap-3 align-items-center">
-                        <span className="text-danger" onClick={handleChangeInterest} style={{ cursor: "pointer" }}>
+                        <span
+                          className="text-danger"
+                          onClick={handleChangeInterest}
+                          style={{ cursor: "pointer" }}
+                        >
                           {isInterest ? (
-                            <FontAwesomeIcon icon="fa-solid fa-heart" className="liked" />
+                            <FontAwesomeIcon
+                              icon="fa-solid fa-heart"
+                              className="liked"
+                            />
                           ) : (
                             <FontAwesomeIcon icon="fa-regular fa-heart" />
                           )}
@@ -570,7 +618,9 @@ const ViewItem = () => {
                         <div className="col-auto">
                           <strong
                             style={{ cursor: "pointer" }}
-                            onClick={() => (window.location.href = `/profile/${item.User.id}`)}
+                            onClick={() =>
+                              (window.location.href = `/profile/${item.User.id}`)
+                            }
                           >
                             By {item.User.username}
                           </strong>
@@ -579,15 +629,25 @@ const ViewItem = () => {
                           <span id="phone">
                             {item.Auction.showNumber
                               ? item.User.phoneNumber
-                              : item.User.phoneNumber.slice(0, 3) + "****" + item.User.phoneNumber.slice(9, 10)}
+                              : item.User.phoneNumber.slice(0, 3) +
+                                "****" +
+                                item.User.phoneNumber.slice(9, 10)}
                           </span>
                           {user && item.userId === user.id ? (
                             <i
-                              className={item.Auction.showNumber ? "fas fa-eye-slash" : "fas fa-eye"}
+                              className={
+                                item.Auction.showNumber
+                                  ? "fas fa-eye-slash"
+                                  : "fas fa-eye"
+                              }
                               style={{ cursor: "pointer" }}
                             ></i>
                           ) : item.Auction.showNumber ? (
-                            <i className="fas fa-copy" style={{ cursor: "pointer" }} onClick={handleCopyNumber}></i>
+                            <i
+                              className="fas fa-copy"
+                              style={{ cursor: "pointer" }}
+                              onClick={handleCopyNumber}
+                            ></i>
                           ) : null}
                         </div>
                       </div>
@@ -597,13 +657,24 @@ const ViewItem = () => {
                       <span className="d-flex flex-wrap gap-2">
                         <p
                           className="tag"
-                          style={{ borderColor: "#00E175", cursor: "pointer", fontWeight: "bold", opacity: "80%" }}
-                          onClick={() => (window.location.href = `/category-item/${item.Category.id}`)}
+                          style={{
+                            borderColor: "#00E175",
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            opacity: "80%",
+                          }}
+                          onClick={() =>
+                            (window.location.href = `/category-item/${item.Category.id}`)
+                          }
                         >
                           {item.Category.name}
                         </p>
                         {item.Tags.map((tag, idx) => (
-                          <p className="tag" key={idx} style={{ fontWeight: "normal" }}>
+                          <p
+                            className="tag"
+                            key={idx}
+                            style={{ fontWeight: "normal" }}
+                          >
                             {tag.name}
                           </p>
                         ))}
@@ -612,118 +683,176 @@ const ViewItem = () => {
                     <div className="row d-flex flex-column w-100 p-3">
                       <h5>Details</h5>
                       <div className="border-start border-3 border-secondary p-3 bg-body">
-                        <p id="desc" dangerouslySetInnerHTML={{ __html: item.description }}></p>
+                        <p
+                          id="desc"
+                          dangerouslySetInnerHTML={{ __html: item.description }}
+                        ></p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="d-flex flex-column col-lg-6 col-sm-12 p-4 mb-5 bg-body rounded">
-                <h3>Activity</h3>
-                <div ref={activityTabRef} className="activity-tab">
-                  {messages.map((message, index) => (
-                    <div key={index} className="activity">
-                      <div className="d-flex gap-5">
-                        <span
-                          style={{
-                            color: "var(--primary-green)",
-                            cursor: "pointer",
-                            fontSize: "19px",
-                            margin: "0",
-                          }}
-                          onClick={() => (window.location.href = `/profile/${message.id}`)}
-                        >
-                          {/* {message.username} */}
-                          {user && message.username === user.username ? "You" : message.username}
-                        </span>
-                        <p
-                          style={{
-                            color: "rgba(0,0,0,.4)",
-                            fontSize: "12px",
-                            marginLeft: "auto",
-                            marginBottom: "0",
-                            alignSelf: "center",
-                          }}
-                        >
-                          {getTimeAgo(message.timestamp)}
-                        </p>
+              <div className="d-flex flex-column w-100 gap-3">
+                <div className="d-flex gap-2 bg-body p-3">
+                  <div className="rounded w-50 d-flex flex-column align-items-center justify-content-center">
+                    {bids.length > 0 ? (
+                      <div className="d-flex flex-column mb-2 align-items-center">
+                        <h2 className="fw-bolder">{highestBidder}</h2>
+                        <h4 className="text-secondary py-2 px-3 my-1 mx-0">
+                          {highestBid} JD
+                        </h4>
                       </div>
-
-                      <div
-                        style={{
-                          fontSize: "14px",
-                          margin: "8px 0",
-                        }}
-                      >
-                        {message.text}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {user && (
-                  <div className="chat-box">
+                    ) : (
+                      <h4 className=" text-black-50 ">No bids yet</h4>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      borderLeft: "2px solid var(--primary-green)",
+                      margin: "25px 0",
+                    }}
+                  ></div>
+                  <div className="rounded p-3 w-75">
+                    <h4 className="mb-4">Make a bid</h4>
                     <input
-                      type="text"
-                      ref={inputRef}
-                      placeholder="Enter a message"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && e.target.value) {
-                          handleMessage();
-                          e.target.value = "";
-                        }
+                      className="form-control border-2 rounded-3"
+                      onChange={(e) => {
+                        setBidAmount(e.target.value);
                       }}
-                      className="form-control border-1 rounded-3 "
-                      style={{ outline: "none", display: "inline" }}
-                    />
-                    <button className="btn btn-secondary" style={{ padding: "2px" }} onClick={handleBidModalShow}>
-                      <FontAwesomeIcon
-                        icon="fa-solid fa-gavel"
-                        style={{
-                          alignSelf: "center",
-                          fontSize: "22px",
-                          padding: "2px 5px",
+                      ref={bidInputRef}
+                      type="number"
+                      min={parseInt(highestBid) + parseInt(minimumBid)}
+                      placeholder="Enter bid amount"
+                    ></input>
+                    <div className="d-flex pt-3 justify-content-end gap-2">
+                      <button
+                        onClick={() => {
+                          bidInputRef.current.value = highestBid + 5;
+                          setBidAmount(bidInputRef.current.value);
                         }}
-                      />
-                    </button>
-                    <button className="btn btn-secondary" style={{ padding: "2px" }} onClick={handleMessage}>
-                      <FontAwesomeIcon
-                        icon="fa-solid fa-arrow-up"
-                        style={{
-                          alignSelf: "center",
-                          fontSize: "22px",
-                          padding: "2px 5px",
+                        className="btn btn-secondary bg-white text-secondary"
+                        style={{ padding: ".3px 3.5px", fontWeight: "600" }}
+                      >
+                        {highestBid + 5} JD
+                      </button>
+                      <button
+                        onClick={() => {
+                          bidInputRef.current.value = highestBid + 10;
+                          setBidAmount(bidInputRef.current.value);
                         }}
-                      />
+                        className="btn btn-secondary bg-white text-secondary"
+                        style={{ padding: "1px 3.5px", fontWeight: "600" }}
+                      >
+                        {highestBid + 10} JD
+                      </button>
+                      <button
+                        onClick={() => {
+                          bidInputRef.current.value = highestBid + 15;
+                          setBidAmount(bidInputRef.current.value);
+                        }}
+                        className="btn btn-secondary bg-white text-secondary"
+                        style={{ padding: "1px 3.5px", fontWeight: "600" }}
+                      >
+                        {highestBid + 20} JD
+                      </button>
+                    </div>
+                    <button
+                      className="btn btn-secondary text-white p-1 px-3 mt-3"
+                      onClick={handleBid}
+                    >
+                      Confirm
                     </button>
                   </div>
-                )}
+                </div>
+                <div className="d-flex flex-column col-lg-6 col-sm-12 p-4 mb-5 bg-body rounded w-100">
+                  <h4 className="mb-3">Comments</h4>
+                  <div ref={activityTabRef} className="activity-tab">
+                    {messages.length != 0 ? (
+                      messages.map((message, index) => (
+                        <div key={index} className="activity">
+                          <div className="d-flex gap-5">
+                            <span
+                              style={{
+                                color: "var(--primary-green)",
+                                cursor: "pointer",
+                                fontSize: "19px",
+                                margin: "0",
+                              }}
+                              onClick={() =>
+                                (window.location.href = `/profile/${message.id}`)
+                              }
+                            >
+                              {/* {message.username} */}
+                              {user && message.username === user.username
+                                ? "You"
+                                : message.username}
+                            </span>
+                            <p
+                              style={{
+                                color: "rgba(0,0,0,.4)",
+                                fontSize: "12px",
+                                marginLeft: "auto",
+                                marginBottom: "0",
+                                alignSelf: "center",
+                              }}
+                            >
+                              {getTimeAgo(message.timestamp)}
+                            </p>
+                          </div>
+
+                          <div
+                            style={{
+                              fontSize: "14px",
+                              margin: "8px 0",
+                            }}
+                          >
+                            {message.text}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <h6 className=" align-self-center m-auto text-black-50 ">
+                        It looks like you're the first here, feel free to say hi
+                        in the comments or make a bid
+                      </h6>
+                    )}
+                  </div>
+                  {user && (
+                    <div className="chat-box">
+                      <input
+                        type="text"
+                        ref={inputRef}
+                        placeholder="Enter a message"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && e.target.value) {
+                            handleMessage();
+                            e.target.value = "";
+                          }
+                        }}
+                        className="form-control border-2 rounded-3 "
+                        style={{ outline: "none", display: "inline" }}
+                      />
+                      <button
+                        className="btn btn-secondary"
+                        style={{ padding: "3px" }}
+                        onClick={handleMessage}
+                      >
+                        <FontAwesomeIcon
+                          icon="fa-solid fa-arrow-up"
+                          style={{
+                            alignSelf: "center",
+                            fontSize: "22px",
+                            padding: "2px 5px",
+                          }}
+                        />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-          <Modal show={bidModal} onHide={handleBidModalClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Make bid</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <p>Enter bid Amount, or make a quick bid (10% of highest bid)</p>
-              <input
-                type="number"
-                min={parseInt(highestBid) + parseInt(minimumBid)}
-                className="form-control border-1 rounded-3 "
-                onChange={(e) => {
-                  setBidAmount(e.target.value);
-                }}
-              />
-            </Modal.Body>
-            <Modal.Footer>
-              <button className="btn btn-secondary" onClick={handleQuickbid}>
-                Quick bid
-              </button>
-              <button className="btn btn-secondary" onClick={handleBid}>
-                Confirm
-              </button>
-            </Modal.Footer>
-          </Modal>
+
           <Modal show={deleteModal} onHide={handleDeleteModalClose}>
             <Modal.Header closeButton>
               <Modal.Title>Delete Auction and Item</Modal.Title>
@@ -749,7 +878,10 @@ const ViewItem = () => {
               <p>
                 Are you sure you want to Hide this item?
                 <br />
-                <span>you can show it again later, other users will not be able to see this item!</span>
+                <span>
+                  you can show it again later, other users will not be able to
+                  see this item!
+                </span>
               </p>
             </Modal.Body>
             <Modal.Footer>
@@ -799,7 +931,9 @@ const ViewItem = () => {
                       name="start-time"
                       value={
                         calendarState.selection.startDate
-                          ? `${String(calendarState.selection.startDate.getHours()).padStart(2, "0")}:${String(
+                          ? `${String(
+                              calendarState.selection.startDate.getHours()
+                            ).padStart(2, "0")}:${String(
                               calendarState.selection.startDate.getMinutes()
                             ).padStart(2, "0")}`
                           : ""
@@ -824,7 +958,9 @@ const ViewItem = () => {
                       name="end-time"
                       value={
                         calendarState.selection.endDate
-                          ? `${String(calendarState.selection.endDate.getHours()).padStart(2, "0")}:${String(
+                          ? `${String(
+                              calendarState.selection.endDate.getHours()
+                            ).padStart(2, "0")}:${String(
                               calendarState.selection.endDate.getMinutes()
                             ).padStart(2, "0")}`
                           : ""
@@ -834,7 +970,9 @@ const ViewItem = () => {
                     />
                   </div>
                 </div>
-                <small className="text-muted row ms-1">At least 1 hour, not more that 7 days</small>
+                <small className="text-muted row ms-1">
+                  At least 1 hour, not more that 7 days
+                </small>
               </div>
             </Modal.Body>
             <Modal.Footer>
@@ -852,7 +990,10 @@ const ViewItem = () => {
               <LoginForm {...{ next: window.location.href }} />
             </Modal.Body>
             <Modal.Footer>
-              <button className="btn btn-primary" onClick={handleLoginModalClose}>
+              <button
+                className="btn btn-primary"
+                onClick={handleLoginModalClose}
+              >
                 cancel
               </button>
             </Modal.Footer>
@@ -905,7 +1046,10 @@ const ViewItem = () => {
                   Edit
                 </button>
               </div>
-              <button className="btn btn-primary" onClick={handleEditModalClose}>
+              <button
+                className="btn btn-primary"
+                onClick={handleEditModalClose}
+              >
                 Cancel
               </button>
             </Modal.Footer>
