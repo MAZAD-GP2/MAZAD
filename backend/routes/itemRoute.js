@@ -9,28 +9,17 @@ const Item_tag = require("../models/Item_tag");
 const cloudinary = require("../config/cloudinaryConfig");
 const sanitizeHtml = require("sanitize-html");
 const User = require("../models/User");
+const Bid = require("../models/Bid");
 const Comment = require("../models/Comment");
 const Interest = require("../models/Interest");
 const { Op } = require("sequelize");
 
-const QuillDeltaToHtmlConverter =
-  require("quill-delta-to-html").QuillDeltaToHtmlConverter;
+const QuillDeltaToHtmlConverter = require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 
 module.exports.createItem = async (req, res) => {
   const t = await sequelize.transaction();
   try {
-    let {
-      name,
-      description,
-      startDate,
-      endDate,
-      tags,
-      price,
-      categoryId,
-      showNumber,
-      isHidden,
-      minBid,
-    } = req.body;
+    let { name, description, startDate, endDate, tags, price, categoryId, showNumber, isHidden, minBid } = req.body;
     tags = tags.split(",").filter((tag) => tag.trim() !== "");
     price = parseFloat(price);
     if (
@@ -52,14 +41,10 @@ module.exports.createItem = async (req, res) => {
       return res.status(400).send("Name is too short");
     }
     if (new Date(startDate) < new Date()) {
-      return res
-        .status(400)
-        .send({ message: "Start date must be in the future" });
+      return res.status(400).send({ message: "Start date must be in the future" });
     }
     if (new Date(endDate) < new Date(startDate)) {
-      return res
-        .status(400)
-        .send({ message: "End date must be after start date" });
+      return res.status(400).send({ message: "End date must be after start date" });
     }
     if (tags.length > 3) {
       return res.status(400).send("Maximum 3 tags allowed");
@@ -96,11 +81,7 @@ module.exports.createItem = async (req, res) => {
     }
 
     description = sanitizeHtml(htmlDescription, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-        "b",
-        "strong",
-        "i",
-      ]),
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["b", "strong", "i"]),
       allowedAttributes: {
         "*": ["style"],
       },
@@ -148,9 +129,7 @@ module.exports.createItem = async (req, res) => {
       { transaction: t }
     );
 
-    const tagOps = tags.map((tag) =>
-      Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t })
-    );
+    const tagOps = tags.map((tag) => Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t }));
     const createdTags = await Promise.all(tagOps);
 
     await Item_tag.bulkCreate(
@@ -194,14 +173,22 @@ module.exports.getItemById = async (req, res) => {
             order: [["id", "DESC"]],
           },
           Image,
-          Auction,
+          {
+            model: Auction,
+            include: [
+              {
+                model: Bid,
+                include: [User],
+                order: [["createdAt", "DESC"]],
+                limit: 1,
+              },
+            ],
+          },
         ],
         attributes: {
           include: [
             [
-              sequelize.literal(
-                "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
-              ),
+              sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
               "interestsCount",
             ],
           ],
@@ -242,14 +229,22 @@ module.exports.getItemById = async (req, res) => {
           order: [["id", "DESC"]],
         },
         Image,
-        Auction,
+        {
+          model: Auction,
+          include: [
+            {
+              model: Bid,
+              include: [User],
+              order: [["createdAt", "DESC"]],
+              limit: 1,
+            },
+          ],
+        },
       ],
       attributes: {
         include: [
           [
-            sequelize.literal(
-              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
-            ),
+            sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
             "interestsCount",
           ],
         ],
@@ -301,9 +296,7 @@ module.exports.getAllItemsByFavorites = async (req, res) => {
       attributes: {
         include: [
           [
-            sequelize.literal(
-              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
-            ),
+            sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
             "interestsCount",
           ],
         ],
@@ -355,9 +348,7 @@ module.exports.getAllItemsByCategory = async (req, res) => {
       attributes: {
         include: [
           [
-            sequelize.literal(
-              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
-            ),
+            sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
             "interestsCount",
           ],
         ],
@@ -431,15 +422,9 @@ module.exports.getAllItems = async (req, res) => {
 
     if (popularity) {
       if (popularity === "high") {
-        orderClause = [
-          [sequelize.literal("interestsCount"), "DESC"],
-          ...orderClause,
-        ];
+        orderClause = [[sequelize.literal("interestsCount"), "DESC"], ...orderClause];
       } else if (popularity === "low") {
-        orderClause = [
-          [sequelize.literal("interestsCount"), "ASC"],
-          ...orderClause,
-        ];
+        orderClause = [[sequelize.literal("interestsCount"), "ASC"], ...orderClause];
       }
     }
 
@@ -471,9 +456,7 @@ module.exports.getAllItems = async (req, res) => {
       attributes: {
         include: [
           [
-            sequelize.literal(
-              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
-            ),
+            sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
             "interestsCount",
           ],
         ],
@@ -551,9 +534,7 @@ module.exports.deleteItem = async (req, res) => {
     } catch (err) {
       return res.status(404).send("Item not found");
     }
-    const deleteOps = images.map((image) =>
-      cloudinary.uploader.destroy(image.imgURL.split("/").pop().split(".")[0])
-    );
+    const deleteOps = images.map((image) => cloudinary.uploader.destroy(image.imgURL.split("/").pop().split(".")[0]));
     await Promise.all(deleteOps);
     t.commit();
     return res.send("successfully");
@@ -681,9 +662,7 @@ module.exports.reenlistItem = async (req, res) => {
     if (item.Auction.status == "admin_hidden" && user.isAdmin !== true) {
       return res
         .status(401)
-        .send(
-          "This item was hidden by and admin, please contact our support to resolve this issue."
-        );
+        .send("This item was hidden by and admin, please contact our support to resolve this issue.");
     }
 
     await item.Auction.update(
@@ -715,19 +694,8 @@ module.exports.updateItem = async (req, res) => {
     let itemId = req.params.id;
     const requestUser = req.currentUser;
     const userId = requestUser.id;
-    let {
-      name,
-      description,
-      startDate,
-      endDate,
-      tags,
-      price,
-      categoryId,
-      showNumber,
-      isHidden,
-      oldImages,
-      minBid,
-    } = req.body;
+    let { name, description, startDate, endDate, tags, price, categoryId, showNumber, isHidden, oldImages, minBid } =
+      req.body;
 
     if (!requestUser) {
       return res.status(401).send("Unauthorized");
@@ -760,9 +728,7 @@ module.exports.updateItem = async (req, res) => {
         attributes: {
           include: [
             [
-              sequelize.literal(
-                "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
-              ),
+              sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
               "interestsCount",
             ],
           ],
@@ -792,9 +758,7 @@ module.exports.updateItem = async (req, res) => {
         attributes: {
           include: [
             [
-              sequelize.literal(
-                "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
-              ),
+              sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
               "interestsCount",
             ],
           ],
@@ -817,14 +781,10 @@ module.exports.updateItem = async (req, res) => {
       return res.status(400).send("Name is too short");
     }
     if (new Date(startDate) < new Date()) {
-      return res
-        .status(400)
-        .send({ message: "Start date must be in the future" });
+      return res.status(400).send({ message: "Start date must be in the future" });
     }
     if (new Date(endDate) < new Date(startDate)) {
-      return res
-        .status(400)
-        .send({ message: "End date must be after start date" });
+      return res.status(400).send({ message: "End date must be after start date" });
     }
     if (tags.length > 3) {
       return res.status(400).send("Maximum 3 tags allowed");
@@ -868,11 +828,7 @@ module.exports.updateItem = async (req, res) => {
     }
 
     description = sanitizeHtml(htmlDescription, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-        "b",
-        "strong",
-        "i",
-      ]),
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["b", "strong", "i"]),
       allowedAttributes: {
         "*": ["style"],
       },
@@ -934,9 +890,7 @@ module.exports.updateItem = async (req, res) => {
       );
     }
 
-    const tagOps = tags.map((tag) =>
-      Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t })
-    );
+    const tagOps = tags.map((tag) => Tag.findOrCreate({ where: { name: tag.trim() }, transaction: t }));
 
     const createdTags = await Promise.all(tagOps);
 
@@ -971,10 +925,7 @@ module.exports.searchItem = async (req, res) => {
     const items = await Item.findAll({
       where: {
         isHidden: false,
-        [Op.or]: [
-          { name: { [Op.like]: "%" + search + "%" } },
-          { "$Tags.name$": { [Op.like]: "%" + search + "%" } },
-        ],
+        [Op.or]: [{ name: { [Op.like]: "%" + search + "%" } }, { "$Tags.name$": { [Op.like]: "%" + search + "%" } }],
       },
       include: [
         Auction,
@@ -988,9 +939,7 @@ module.exports.searchItem = async (req, res) => {
       attributes: {
         include: [
           [
-            sequelize.literal(
-              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
-            ),
+            sequelize.literal("(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"),
             "interestsCount",
           ],
         ],
