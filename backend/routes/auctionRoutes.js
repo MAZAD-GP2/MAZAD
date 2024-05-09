@@ -7,8 +7,8 @@ const Bid = require("../models/Bid");
 
 module.exports.getAuctionById = async (req, res) => {
   try {
-    let { auctionId } = req.params;
-    const auction = Auction.findByPk(auctionId);
+    let { id } = req.params;
+    const auction = Auction.findByPk(id);
     return res.send(auction);
   } catch (err) {
     console.error(err);
@@ -17,15 +17,15 @@ module.exports.getAuctionById = async (req, res) => {
 
 module.exports.getAuctionsByUser = async (req, res) => {
   try {
-    let { userId } = req.params;
-    if (!userId)
+    let { id } = req.params;
+    if (!id)
       return res.status(400).send("User ID must be provided");
 
-    const user = User.findByPk(userId);
+    const user = User.findByPk(id);
     if (!user) return res.status(404).send("User not found");
 
     const auctions = await Auction.findAll({
-      where: { UserId: userId },
+      where: { UserId: id },
       include: [{ model: User }],
       limit: limit,
       order: [["createdAt", "DESC"]],
@@ -39,15 +39,15 @@ module.exports.getAuctionsByUser = async (req, res) => {
 
 module.exports.getAuctionsByItem = async (req, res) => {
   try {
-    let { itemId } = req.params;
-    if (!itemId)
+    let { id } = req.params;
+    if (!id)
       return res.status(400).send("Item ID must be provided");
 
-    const item = Item.findByPk(itemId);
+    const item = Item.findByPk(id);
     if (!item) return res.status(404).send("Item not found");
 
     const auctions = await Auction.findAll({
-      where: { ItemId: itemId },
+      where: { ItemId: id },
       include: [{ model: Item }],
       limit: limit,
       order: [["createdAt", "DESC"]],
@@ -118,8 +118,8 @@ module.exports.updateAuction = async (req, res) => {
 
 module.exports.removeAuction = async (req, res) => {
   try {
-    let { auctionId } = req.params;
-    await Auction.destroy({ where: { id: auctionId } });
+    let { id } = req.params;
+    await Auction.destroy({ where: { id: id } });
     return res.send("Auction deleted successfully");
   } catch (err) {
     console.error("Error deleting auction", err);

@@ -7,8 +7,8 @@ const pusher = require("../config/pusher");
 
 module.exports.getBidById = async (req, res) => {
   try {
-    let { bidId } = req.params;
-    const bid = Bid.findByPk(bidId, { include: Auction });
+    let { id } = req.params;
+    const bid = Bid.findByPk(id, { include: Auction });
     return res.send(bid);
   } catch (err) {
     console.error(err);
@@ -17,14 +17,14 @@ module.exports.getBidById = async (req, res) => {
 
 module.exports.getBidsByUser = async (req, res) => {
   try {
-    let { userId } = req.params;
-    if (!userId) return res.status(400).send("User ID must be provided");
+    let { id } = req.params;
+    if (!id) return res.status(400).send("User ID must be provided");
 
-    const user = User.findByPk(userId);
+    const user = User.findByPk(id);
     if (!user) return res.status(404).send("User not found");
 
     const bids = await Bid.findAll({
-      where: { UserId: userId },
+      where: { UserId: id },
       include: [{ model: User }],
       limit: limit,
       order: [["createdAt", "DESC"]],
@@ -39,20 +39,20 @@ module.exports.getBidsByUser = async (req, res) => {
 
 module.exports.getBidsByAuction = async (req, res) => {
   try {
-    const { auctionId } = req.params;
+    const { id } = req.params;
     const limit = parseInt(req.query.limit) || 10;
 
-    if (!auctionId) {
+    if (!id) {
       return res.status(400).send("Auction ID must be provided");
     }
 
-    const auction = await Auction.findByPk(auctionId);
+    const auction = await Auction.findByPk(id);
     if (!auction) {
       return res.status(404).send("Auction not found");
     }
 
     const bids = await Bid.findAll({
-      where: { AuctionId: auctionId },
+      where: { AuctionId: id },
       include: [{ model: Auction }],
       limit: limit,
       order: [["createdAt", "DESC"]],
