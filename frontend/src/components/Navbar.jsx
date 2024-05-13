@@ -7,6 +7,8 @@ import { useLocation } from "react-router-dom";
 import * as api from "../api/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MobileSearchBar from "./MobileSearchBar";
+import logo from "../assets/images/Mazad Logo English With Z.png";
+
 const Navbar = () => {
   const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -66,7 +68,7 @@ const Navbar = () => {
                 href="/home"
                 style={{ cursor: "pointer" }}
               >
-                <img src="/src/assets/images/Mazad Logo English With Z.png" alt="logo" height="50px" />
+                <img src="https://res.cloudinary.com/djwhrh0w7/image/upload/v1715589905/Mazad_Logo_English_With_Z_qorc8g.png" alt="logo" height="50px" />
               </a>
               <div id="search-create-nav-container" className="col">
                 <div

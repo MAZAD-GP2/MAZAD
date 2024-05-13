@@ -775,7 +775,7 @@ const ViewItem = () => {
                       className="form-control border-2 rounded-3 "
                       style={{ outline: "none", display: "inline" }}
                     />
-                    <button className="btn btn-secondary" style={{ padding: "3px" }} onClick={handleMessage}>
+                    <button className="btn btn-secondary" style={{ padding: "3px", color: "white" }} onClick={handleMessage}>
                       <FontAwesomeIcon
                         icon="fa-solid fa-arrow-up"
                         style={{

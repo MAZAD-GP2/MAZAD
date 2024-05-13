@@ -16,7 +16,7 @@ module.exports.searchTags = async (req, res) => {
   try {
     if (!req.params.query.trim()) {
       return res.status(400).send({ message: "Query parameter is missing" });
-    }
+    }mo
 
     const query = req.params.query.trim().split(" ").join("%");
 
