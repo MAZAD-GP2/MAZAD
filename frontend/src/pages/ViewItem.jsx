@@ -145,10 +145,11 @@ const ViewItem = () => {
 
             const bid = {
               username: data.name,
+              BidAmount: data.BidAmount,
               text: `made a bid, ${data.BidAmount} JD`,
               timestamp: new Date().getTime(),
             };
-
+            console.log(bid);
             setBids(bid);
             setMessages((prevMessages) => [bid, ...prevMessages]);
           });
@@ -645,7 +646,7 @@ const ViewItem = () => {
                   <div className="rounded w-50 d-flex flex-column align-items-center justify-content-center">
                     {bids ? (
                       <div className="d-flex flex-column mb-2 align-items-center">
-                        <h2 className="fw-bolder">{bids.User.username}</h2>
+                        <h2 className="fw-bolder">{bids.User?.username || bids.username}</h2>
                         <h4 className="text-secondary py-2 px-3 my-1 mx-0">{bids.BidAmount} JD</h4>
                       </div>
                     ) : (
