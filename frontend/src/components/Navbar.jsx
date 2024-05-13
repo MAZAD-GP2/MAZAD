@@ -149,7 +149,9 @@ const Navbar = () => {
                   }
                   href="/home"
                 >
-                  <span className="link d-inline-block w-auto">Home</span>
+                  <span className={"link d-inline-block w-auto" +  (location.pathname === "/home" ? " active-nav-link" : "")}
+                  >
+                    Home</span>
                 </a>
                 <Nav>
                   <NavDropdown
@@ -161,7 +163,7 @@ const Navbar = () => {
                     className={
                       "nav-item" +
                       (location.pathname.includes("/category-item/")
-                        ? " active"
+                        ? " active active-nav-link"
                         : "")
                     }
                   >
@@ -181,22 +183,22 @@ const Navbar = () => {
                 <a
                   className={
                     "px-3 py-2 nav-item" +
-                    (location.pathname === "/liveMazads" ? " active" : "")
+                    (location.pathname === "/livemazads" ? " active" : "")
                   }
                   href="/livemazads"
                 >
-                  <span className="link d-inline-block w-auto" id="liveMazad">
+                  <span className={"link d-inline-block w-auto" +  (location.pathname === "/livemazads" ? " active-nav-link" : "")} id="liveMazad">
                     Live Mazads
                   </span>
                 </a>
                 <a
                   className={
                     "px-3 py-2 nav-item" +
-                    (location.pathname === "/Popular" ? " active" : "")
+                    (location.pathname === "/popular" ? " active" : "")
                   }
                   href="/popular"
                 >
-                  <span className="link d-inline-block w-auto">
+                  <span className={"link d-inline-block w-auto" +  (location.pathname === "/popular" ? " active-nav-link" : "")}>
                     Popular Items
                   </span>
                 </a>
@@ -208,7 +210,7 @@ const Navbar = () => {
                     }
                     href="/favorites"
                   >
-                    <span className="link d-inline-block w-auto">
+                    <span className={"link d-inline-block w-auto" +  (location.pathname === "/favorites" ? " active-nav-link" : "")}>
                       Favorites
                     </span>
                   </a>

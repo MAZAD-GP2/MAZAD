@@ -486,19 +486,57 @@ module.exports.getAllItems = async (req, res) => {
 
 module.exports.getAllItemsByUserId = async (req, res) => {
   try {
-    const page = req.query.page || 1;
-    const limit = 3;
-    const skip = (page - 1) * limit;
-    const items = await Item.findAndCountAll({
-      where: {
-        userId: req.currentUser.id,
+    const userId = req.currentUser.id;
+    const page = parseInt(req.query.page) || 1; // Parse the page parameter
+    const limit = parseInt(req.query.limit) || 10; // Parse the limit parameter
+    const offset = (page - 1) * limit; // Calculate the offset
+
+    const items = await Item.findAll({
+      where: { userId },
+      include: [
+        Category,
+        { 
+          model: Tag,
+          through: "Item_tag" 
+        },
+        Image,
+        { 
+          model: Auction 
+        },
+        { 
+          model: Interest,
+          attributes: [], 
+          duplicating: false 
+        },
+      ],
+      attributes: {
+        include: [
+          [
+            sequelize.literal(
+              "(SELECT COUNT(*) FROM `Interests` WHERE `Interests`.`itemId` = `Item`.`id`)"
+            ),
+            "interestsCount",
+          ],
+        ],
       },
-      offset: skip,
-      limit: limit,
+      offset,
+      limit,
       order: [["id", "DESC"]],
     });
+    const count = await Item.count({where: { userId }})// find allandcount returned a wrong value due to associations or smth idk
+    await Promise.all(
+      items.map(async (item) => {
+        const interest = await Interest.findOne({
+          where: {
+            itemId: item.id,
+            userId: req.currentUser.id,
+          },
+        });
+        item.dataValues.isInterested = interest ? true : false;
+      })
+    );
 
-    return res.send(items);
+    return res.send({ count, items });
   } catch (err) {
     return res.send(err);
   }

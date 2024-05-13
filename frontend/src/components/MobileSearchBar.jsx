@@ -12,7 +12,7 @@ const MobileSearchBar = ({ search, setSearch, SubmitSearch }) => {
             href="/home"
             style={{ cursor: "pointer" }}
           >
-            <img src="/src/assets/images/logo_english_white_mobile.png" alt="logo" height="50px" />
+            <img src="/src/assets/images/logo_english_black_mobile.png" alt="logo" height="50px" />
           </a>
 
           <div className="d-flex align-items-center justify-content-center gap-1 px-3 bg-dark rounded-5 border-0 w-100">

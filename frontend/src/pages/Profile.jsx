@@ -70,7 +70,7 @@ const Profile = () => {
           <div className="d-flex">
             <SideProfile user={user} isCurrentUser={isCurrentUser} />
             <div className="user-history-container">
-              <RecentItems />
+              <RecentItems isCurrentUser={isCurrentUser}/>
               <h3>Bid History</h3>
               <div className="user-history">
                 <div className="item-container">

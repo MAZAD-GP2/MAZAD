@@ -11,6 +11,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
 import { OverlayTrigger, Popover } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Editor from "./Editor";
 import "quill/dist/quill.snow.css";
@@ -583,11 +584,11 @@ const ItemForm = ({
           <h4>Phone Number</h4>
           <OverlayTrigger
             className="overlay"
-            trigger="focus"
+            trigger="hover"
             placement="right"
             overlay={popoverPhone}
           >
-            <i className="fas fa-question-circle fa-sm"></i>
+            <FontAwesomeIcon icon="fa-question-circle"  size="sm" />
           </OverlayTrigger>
         </div>
         <div className="d-flex flex-row justify-content-start align-items-center gap-3 p-3 border rounded">
@@ -612,11 +613,11 @@ const ItemForm = ({
           </div>
           <OverlayTrigger
             className="overlay"
-            trigger="focus"
+            trigger="hover"
             placement="right"
             overlay={popoverDescription}
           >
-            <i className="fas fa-question-circle fa-sm"></i>
+            <FontAwesomeIcon icon="fa-question-circle"  size="sm" />
           </OverlayTrigger>
         </div>
         <div className="h-100 mb-1">
@@ -642,11 +643,11 @@ const ItemForm = ({
           <h4>Visibility</h4>
           <OverlayTrigger
             className="overlay"
-            trigger="focus"
+            trigger="hover"
             placement="right"
             overlay={popoverVisibility}
           >
-            <i className="fas fa-question-circle fa-sm"></i>
+            <FontAwesomeIcon icon="fa-question-circle"  size="sm" />
           </OverlayTrigger>
         </div>
         <div className="d-flex flex-row justify-content-start align-items-center gap-3 p-3 border rounded">

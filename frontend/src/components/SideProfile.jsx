@@ -42,7 +42,7 @@ const SideProfile = ({ user, isCurrentUser }) => {
       >
         {isCurrentUser && (
           <a
-            className="edit-profile btn btn-secondary align-self-center"
+            className="edit-profile btn btn-secondary text-white align-self-center"
             href="/edit-profile"
           >
             Edit Profile

@@ -20,6 +20,13 @@
   border-bottom: 4px solid var(--primary-green);
 }
 
+.active-nav-link {
+  color: var(--primary-green) !important;
+}
+.active-nav-link>a{
+  color: var(--primary-green) !important;
+}
+
 .nav-item span,
 .nav-item a {
   text-decoration: none;
