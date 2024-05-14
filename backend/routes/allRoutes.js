@@ -72,6 +72,9 @@ router
   .route("/item/category/:id")
   .get(verifyToken(false), itemRoutes.getAllItemsByCategory);
 router
+  .route("/item/toggle-number/:id")
+  .post(verifyToken(true), itemRoutes.toggleShowNumber);
+router
   .route("/item/update/:id")
   .post(uploadUpdate, verifyToken(true), itemRoutes.updateItem);
 router
@@ -84,7 +87,6 @@ router
   .route("/item/admin-hide/:id")
   .delete(verifyToken(true), checkAdmin, itemRoutes.adminHideItem);
 router.route("/item/reenlist").post(verifyToken(true), itemRoutes.reenlistItem);
-
 // Category
 router.route("/category").get(categoryRoutes.getAllCategories);
 router.route("/category/create").post(categoryRoutes.createCategory);

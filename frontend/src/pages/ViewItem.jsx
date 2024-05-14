@@ -25,11 +25,10 @@ const ViewItem = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [messages, setMessages] = useState([]);
+  const [comments, setComments] = useState([]);
   const [bidModal, setBidModal] = useState(false);
   const [bidAmount, setBidAmount] = useState(0);
-  const [highestBid, setHighestBid] = useState(0);
-  const [highestBidder, setHighestBidder] = useState("");
+  
   const [minimumBid, setMinimumBid] = useState(0);
 
   const [isInterest, setIsInterest] = useState(false);
@@ -61,13 +60,40 @@ const ViewItem = () => {
   const [droppedFiles, setDroppedFiles] = useState([]);
   const [showNumber, setShowNumber] = useState(false);
 
-  const [bids, setBids] = useState([]);
+  const [lastBid, setLastBid] = useState([]);
   const [currentDescriptionLength, SetCurrentDescriptionLength] = useState(1);
-
+	
   const quillRef = useRef();
   const bidInputRef = useRef(null);
 
-  const handleBidModalShow = () => setBidModal(true);
+  const handleBidModalShow = () => {
+		if (!user) {
+			setLoginModal(true);
+			return;
+		}
+		if (user.id === item.userId) {
+			enqueueSnackbar("You cannot bid on your own item", { variant: "error" });
+			return;
+		}
+		if (item.Auction.finishTime < new Date()) {
+			enqueueSnackbar("Auction has ended", { variant: "error" });
+			return;
+		}
+		if (item.Auction.startTime > new Date()) {
+			enqueueSnackbar("Auction has not started yet", { variant: "error" });
+			return;
+		}
+		
+		if (bidAmount && bidAmount <= lastBid.bidAmount) {
+			enqueueSnackbar("Bid amount must be greater than the highest bid", {
+				variant: "error",
+			});
+			return;
+		}
+
+		setBidModal(true);
+	}
+
   const handleBidModalClose = () => setBidModal(false);
   const handleLoginModalShow = () => setLoginModal(true);
   const handleLoginModalClose = () => setLoginModal(false);
@@ -120,54 +146,95 @@ const ViewItem = () => {
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const response = await api.getItemById(id);
-        if (Object.keys(response.data).length) {
-          setItem(response.data.item);
-          setInterestsCount(response.data.item.interestsCount);
-          setMessages(() => {
-            return response.data.item.Comments.reverse().map((comment) => ({
-              username: comment.User.username,
-              text: comment.content,
-              timestamp: new Date(comment.createdAt).getTime(),
-              id: comment.User.id,
-            }));
-          });
-          setIsInterest(response.data.item.isInterested || false);
-          var channel = pusher.subscribe(`auction_${response.data.item.Auction.id}`);
+        const itemData = await api.getItemById(id);
+        const AuctionBids = await api.getBidsByAuction(
+          itemData.data.item.Auction.id
+        );
+        // merge comments and bids, based on createdAt
+        const allActivities = [
+          ...itemData.data.item.Comments,
+          ...AuctionBids.data,
+        ];
+        allActivities.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
 
-          setBids(response.data.item.Auction.Bids[0]);
+        if (Object.keys(itemData.data).length) {
+          setItem(itemData.data.item);
+          setInterestsCount(itemData.data.item.interestsCount);
+          const comments = allActivities.map((activity) => {
+            if (activity.bidAmount === undefined) {
+              return {
+                username: activity.User.username,
+                text: activity.content,
+                timestamp: new Date(activity.createdAt).getTime(),
+                User: activity.User,
+                id: activity.id,
+                type: "comment",
+              };
+            } else {
+              return {
+                User: activity.User,
+                bidAmount: activity.bidAmount,
+                timestamp: new Date(activity.createdAt).getTime(),
+                type: "bid",
+              };
+            }
+          });
+          setComments(comments);
+          setIsInterest(itemData.data.item.isInterested || false);
+          var channel = pusher.subscribe(
+            `auction_${itemData.data.item.Auction.id}`
+          );
+          setShowNumber(itemData.data.item.Auction.showNumber);
+          let bidObject = {
+            createdAt: itemData.data.item.Auction.Bids[0].createdAt,
+            id: itemData.data.item.Auction.Bids[0].id,
+            itemId: itemData.data.item.Auction.Bids[0].itemId,
+            User: itemData.data.item.Auction.Bids[0].User,
+            bidAmount: itemData.data.item.Auction.Bids[0].bidAmount,
+            userId: itemData.data.item.Auction.Bids[0].userId,
+          };
+          setLastBid(bidObject);
 
           channel.bind("add_bid", function (data) {
             // alert(JSON.stringify(data));
-
-            setHighestBid(data.BidAmount);
-            setHighestBidder(data.name);
-
+            if (user && data.User.id === user.id) {
+              return;
+            }
+						
             const bid = {
-              username: data.name,
-              BidAmount: data.BidAmount,
-              text: `made a bid, ${data.BidAmount} JD`,
+							User: data.User,
+              bidAmount: data.bidAmount,
+              text: `made a bid, ${data.bidAmount} JD`,
               timestamp: new Date().getTime(),
+              type: "bid",
             };
             console.log(bid);
-            setBids(bid);
-            setMessages((prevMessages) => [bid, ...prevMessages]);
+            setLastBid(bid);
+            setComments((prevMessages) => [bid, ...prevMessages]);
+						if (bidModal && data.bidAmount <= lastBid.bidAmount) {
+								enqueueSnackbar("A new bid has been made, try again!", { variant: "error" });
+								setBidModal(false);
+						}
           });
           channel.bind("add_comment", function (data) {
             // alert(JSON.stringify(data));
-
+            if (user && data.User.id === user.id) {
+              return;
+            }
             const message = {
-              username: data.name,
+              username: data.User.username,
               text: data.content,
               timestamp: new Date().getTime(),
+              type: "comment",
             };
 
-            setMessages((prevMessages) => [message, ...prevMessages]);
+            setComments((prevMessages) => [message, ...prevMessages]);
           });
-          setMinimumBid(response.data.item.Auction.min_bid);
-          setHighestBid(response.data.item.Auction.highestBid);
+          setMinimumBid(itemData.data.item.Auction.min_bid);
         }
-        if (!response.data.item) navigate("/not-found", { replace: true }); // response is {"item": null}
+        if (!itemData.data.item) navigate("/not-found", { replace: true }); // response is {"item": null}
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -196,7 +263,7 @@ const ViewItem = () => {
     enqueueSnackbar("Phone number copied to clipboard", { variant: "success" });
   };
 
-  const handleChangeInterest = async (itemId) => {
+  const handleChangeInterest = async () => {
     if (!user) {
       setLoginModal(true);
       return;
@@ -204,15 +271,18 @@ const ViewItem = () => {
     try {
       setIsInterest(!isInterest);
 
-      isInterest ? setInterestsCount(interestsCount - 1) : setInterestsCount(interestsCount + 1);
+      isInterest
+        ? setInterestsCount(interestsCount - 1)
+        : setInterestsCount(interestsCount + 1);
       api
-        .updateInterest(itemId)
+        .updateInterest(item.id)
         .then((res) => {})
         .catch((error) => {
           setIsInterest(!isInterest);
         });
     } catch (error) {
-      console.error("Error updating interest:", error);
+      encodeSnackbar("Error updating interest", { variant: "error" });
+      setIsInterest(!isInterest);
     }
   };
 
@@ -246,7 +316,9 @@ const ViewItem = () => {
       .then((result) => {
         enqueueSnackbar("Item hidden successfully", { variant: "success" });
         setTimeout(() => {
-          window.location.href = user.isAdmin ? "/user/" : "/user/" + item.User.id;
+          window.location.href = user.isAdmin
+            ? "/user/"
+            : "/user/" + item.User.id;
         }, 2000);
       })
       .catch((error) => {
@@ -336,7 +408,8 @@ const ViewItem = () => {
       enqueueSnackbar("Added item", { variant: "success" });
       setName("");
       setDescription("");
-      window.location.href = visibility === true ? `/item/${response.data.id}` : `/profile`;
+      window.location.href =
+        visibility === true ? `/item/${response.data.id}` : `/profile`;
     } catch (error) {
       // Handle errors
       enqueueSnackbar(error.response.data.message, {
@@ -425,17 +498,24 @@ const ViewItem = () => {
     }
     const inputValue = inputRef.current.value;
     if (!inputValue) return;
-    await api.sendMessage({
+    const comment = {
+      username: user.username,
+      text: inputValue,
+      timestamp: new Date().getTime(),
+      User: user,
+      type: "comment",
+    };
+    setComments((prevMessages) => [comment, ...prevMessages]);
+    let res = await api.addComment({
       itemId: item.id,
       content: inputValue,
       auctionId: item.Auction.id,
     });
-    // const message = {
-    //   username: user.username,
-    //   text: inputValue,
-    //   timestamp: new Date().getTime(),
-    // };
-    // setMessages([...messages, message]);
+    comment.id = res.data.id;
+    setComments((prevMessages) => [
+      comment,
+      ...prevMessages.slice(1, prevMessages.length - 1),
+    ]);
     inputRef.current.value = "";
   };
 
@@ -458,7 +538,7 @@ const ViewItem = () => {
       });
       return;
     }
-    if (parseFloat(bidAmount) <= highestBid) {
+    if (parseFloat(bidAmount) <= lastBid.bidAmount) {
       enqueueSnackbar({
         message: "Bid amount must be greater than the highest bid",
         variant: "error",
@@ -466,21 +546,33 @@ const ViewItem = () => {
       return;
     }
     let res = null;
+    let prevLast = lastBid;
+    let bidObject = {
+      username: user.username,
+      bidAmount: bidAmount,
+      timestamp: new Date().getTime(),
+      createdAt: new Date().getTime(),
+      itemId: item.id,
+      User: user,
+      type: "bid",
+    };
     try {
-      res = await api.addBid({ bidAmount, auctionId: item.Auction.id });
-      await api.sendMessage({
-        itemId: item.id,
-        content: `Made a bid ${bidAmount} JD`,
+      setLastBid(bidObject);
+			setComments((prevMessages) => [bidObject, ...prevMessages]);
+      res = await api.addBid({
+				bidAmount: bidAmount,
         auctionId: item.Auction.id,
       });
+      bidObject.id = res.data.id;
+      setLastBid(bidObject);
     } catch (error) {
       enqueueSnackbar({
         message: "Error adding bid",
         variant: "error",
       });
+      setLastBid(prevLast);
       return;
     }
-    setHighestBid(bidAmount);
     setBidAmount(0);
 
     handleBidModalClose();
@@ -508,6 +600,17 @@ const ViewItem = () => {
     }
   };
 
+  const handleToggleShowNumber = async () => {
+    setShowNumber(res.data.showNumber);
+    let res;
+    try {
+      res = await api.toggleShowNumber(item.id);
+    } catch (error) {
+      enqueueSnackbar("Error toggling show number", { variant: "error" });
+      setShowNumber(!res.data.showNumber);
+    }
+  };
+
   return (
     <>
       {item && (
@@ -519,13 +622,19 @@ const ViewItem = () => {
               <div className="row-lg d-flex flex-row w-auto flex-wrap justify-content-start align-items-center mx-lg-3 mx-md-1 mx-sm-1">
                 <div className="col-auto h-100 w-100 d-flex flex-row flex-wrap align-items-center justify-content-start gap-lg-3 gap-md-2 gap-1 bg-white py-2 px-3 border rounded">
                   {user.isAdmin === true ? (
-                    <span className="col-auto d-lg-block d-md-block d-none">Admin controls</span>
+                    <span className="col-auto d-lg-block d-md-block d-none">
+                      Admin controls
+                    </span>
                   ) : null}
                   {user.id === item.userId && !user.isAdmin === true ? (
                     <span className="col-auto">controls</span>
                   ) : null}
 
-                  <button type="button" className="col-auto btn btn-sm btn-warning px-3" onClick={handleEditModalShow}>
+                  <button
+                    type="button"
+                    className="col-auto btn btn-sm btn-warning px-3"
+                    onClick={handleEditModalShow}
+                  >
                     Edit
                   </button>
                   {user.isAdmin === true ? (
@@ -560,25 +669,40 @@ const ViewItem = () => {
                 </div>
               </div>
             )}
-            <div className="d-flex flex-column flex-lg-row gap-1 column-gap-3 w-100" id="view-item-container">
+            <div
+              className="d-flex flex-column flex-lg-row gap-1 column-gap-3 w-100"
+              id="view-item-container"
+            >
               <div className="image-details col-12 col-lg-6 p-3 mb-5 bg-body rounded">
                 <div className="d-flex flex-column justify-content-center align-items-center gap-3 w-100">
-                  <div className="w-100 d-flex align-items center justify-content-center" style={{ height: "400px" }}>
+                  <div
+                    className="w-100 d-flex align-items center justify-content-center"
+                    style={{ height: "400px" }}
+                  >
                     <ImageSlider images={item.Images} />
                   </div>
                   <div className="details w-100 d-flex flex-column justify-content-start align-items-start gap-3">
-                    <div className="d-flex justify-content-between align-items-center w-100 pe-4">
+                    <div className="d-flex justify-content-between align-items-center w-100">
                       <h3>{item.name}</h3>
-                      <div className="d-flex flex-row gap-3 align-items-center">
-                        <span className="text-danger" onClick={handleChangeInterest} style={{ cursor: "pointer" }}>
-                          {isInterest ? (
-                            <FontAwesomeIcon icon="fa-solid fa-heart" className="liked" />
-                          ) : (
-                            <FontAwesomeIcon icon="fa-regular fa-heart" />
-                          )}
-                        </span>
-                        <small className="text-muted">{interestsCount}</small>
-                      </div>
+                      <h2>
+                        <div
+                          className="badge border-2 border-danger shadow p-2 d-flex flex-row gap-3 align-items-center"
+                          onClick={handleChangeInterest}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <small className="text-muted">{interestsCount}</small>
+                          <span className="text-danger">
+                            {isInterest ? (
+                              <FontAwesomeIcon
+                                icon="fa-solid fa-heart"
+                                className="liked"
+                              />
+                            ) : (
+                              <FontAwesomeIcon icon="fa-regular fa-heart" />
+                            )}
+                          </span>
+                        </div>
+                      </h2>
                     </div>
                     <div
                       id="auctioneer-name"
@@ -588,26 +712,47 @@ const ViewItem = () => {
                         <div className="col-auto">
                           <strong
                             style={{ cursor: "pointer" }}
-                            onClick={() => (window.location.href = `/profile/${item.User.id}`)}
+                            onClick={() =>
+                              (window.location.href = `/profile/${item.User.id}`)
+                            }
                           >
                             By {item.User.username}
                           </strong>
                         </div>
-                        <div className="col-auto d-flex flex-row gap-3 align-items-center">
-                          <span id="phone">
-                            {item.Auction.showNumber
-                              ? item.User.phoneNumber
-                              : item.User.phoneNumber.slice(0, 3) + "****" + item.User.phoneNumber.slice(9, 10)}
-                          </span>
-                          {user && item.userId === user.id ? (
-                            <i
-                              className={item.Auction.showNumber ? "fas fa-eye-slash" : "fas fa-eye"}
+                      </div>
+                      <div className="col-auto d-flex flex-row gap-3 align-items-center">
+                        <span id="phone">
+                          {showNumber
+                            ? item.User.phoneNumber
+                            : item.User.phoneNumber.slice(0, 3) +
+                              "*******"}
+                        </span>
+                        {user && item.userId === user.id ? (
+                          <div>
+                            <span
+                              onClick={handleToggleShowNumber}
+                              hidden={showNumber}
                               style={{ cursor: "pointer" }}
-                            ></i>
-                          ) : item.Auction.showNumber ? (
-                            <i className="fas fa-copy" style={{ cursor: "pointer" }} onClick={handleCopyNumber}></i>
-                          ) : null}
-                        </div>
+                            >
+                              <i className="fas fa-eye-slash"></i>
+                            </span>
+
+                            <span
+                              onClick={handleToggleShowNumber}
+                              style={{ cursor: "pointer" }}
+                              hidden={!showNumber}
+                            >
+                              <i className="fas fa-eye"></i>
+                            </span>
+                          </div>
+                        ) : showNumber ? (
+                          <span
+                            onClick={handleCopyNumber}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <i className="fas fa-copy"></i>
+                          </span>
+                        ) : null}
                       </div>
                     </div>
 
@@ -621,12 +766,18 @@ const ViewItem = () => {
                             fontWeight: "bold",
                             opacity: "80%",
                           }}
-                          onClick={() => (window.location.href = `/category-item/${item.Category.id}`)}
+                          onClick={() =>
+                            (window.location.href = `/category-item/${item.Category.id}`)
+                          }
                         >
                           {item.Category.name}
                         </p>
                         {item.Tags.map((tag, idx) => (
-                          <p className="tag" key={idx} style={{ fontWeight: "normal" }}>
+                          <p
+                            className="tag"
+                            key={idx}
+                            style={{ fontWeight: "normal" }}
+                          >
                             {tag.name}
                           </p>
                         ))}
@@ -635,32 +786,64 @@ const ViewItem = () => {
                     <div className="row d-flex flex-column w-100 p-3">
                       <h5>Details</h5>
                       <div className="border-start border-3 border-secondary p-3 bg-body">
-                        <p id="desc" dangerouslySetInnerHTML={{ __html: item.description }}></p>
+                        <p
+                          id="desc"
+                          dangerouslySetInnerHTML={{ __html: item.description }}
+                        ></p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="d-flex flex-column w-100 gap-3">
-                <div className="d-flex gap-2 bg-body p-3">
-                  <div className="rounded w-50 d-flex flex-column align-items-center justify-content-center">
-                    {bids ? (
-                      <div className="d-flex flex-column mb-2 align-items-center">
-                        <h2 className="fw-bolder">{bids.User?.username || bids.username}</h2>
-                        <h4 className="text-secondary py-2 px-3 my-1 mx-0">{bids.BidAmount} JD</h4>
+                <div className="d-flex flex-column justify-content-center gap-2 bg-body p-3 col-auto">
+                  <div className="row rounded d-flex flex-column align-items-center justify-content-center">
+                    {lastBid ? (
+                      <div className="d-flex flex-column mb-2 align-items-center justify-content-center">
+                        <h2 className="fw-bolder text-truncate">
+                          {lastBid.User.username}👑
+                        </h2>
+                        <h4 className="text-secondary py-2 px-3 my-1 mx-0">
+                          {lastBid.bidAmount} JD
+                        </h4>
                       </div>
                     ) : (
-                      <h4 className=" text-black-50 ">No bids yet</h4>
+                      <div className="d-flex flex-column mb-2 align-items-center justify-content-center">
+                        <h2 className="fw-bolder text-truncate">
+                          Initial price
+                        </h2>
+                        <h4 className="text-secondary py-2 px-3 my-1 mx-0">
+                          {lastBid.bidAmount} JD
+                        </h4>
+                      </div>
                     )}
                   </div>
-                  <div
-                    style={{
-                      borderLeft: "2px solid var(--primary-green)",
-                      margin: "25px 0",
-                    }}
-                  ></div>
-                  <div className="rounded p-3 w-75">
-                    <h4 className="mb-4">Make a bid</h4>
+                  <div className="d-flex flex-row justify-content-between align-items-center gap-3 rounded p-3 gap-2 w-100">
+                    <div>
+                      {item.Auction.startTime && (
+                        <div className="d-flex flex-row align-items-center gap-2">
+                          <div className="d-flex flex-column gap-2">
+                            {new Date(item.Auction.startTime).toLocaleString()}
+                          </div>
+                          {new Date(item.Auction.startTime) < new Date() ? (
+                            <i className="fas fa-circle fa-beat text-secondary"></i>
+                          ) : null}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="text-secondary">-</div>
+                    <div>
+                      {item.Auction.finishTime && (
+                        <div className="d-flex flex-column gap-2">
+                          {new Date(item.Auction.finishTime).toLocaleString()}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="d-flex flex-column gap-3 rounded p-3 gap-2 w-100">
+                    <h4 className="">Make a bid</h4>
                     <input
                       className="form-control border-2 rounded-3"
                       onChange={(e) => {
@@ -668,47 +851,53 @@ const ViewItem = () => {
                       }}
                       ref={bidInputRef}
                       type="number"
-                      min={parseInt(highestBid) + parseInt(minimumBid)}
+                      min={parseInt(lastBid.bidAmount) + parseInt(minimumBid)}
                       placeholder="Enter bid amount"
                     ></input>
-                    <div className="d-flex justify-content-between ">
-                      <div className="d-flex justify-content-start ">
-                        <small style={{ opacity: "80%" }}>minimum increasing: {item.Auction.min_bid}</small>
-                      </div>
-                      <div className="d-flex pt-3 justify-content-end gap-2">
+                    <div className="d-flex flex-wrap gap-2 justify-content-between">
+                      <small style={{ opacity: "80%" }}>
+                        Minimum increment: {item.Auction.min_bid}
+                      </small>
+                      <div className="d-flex justify-content-end gap-2">
                         <button
                           onClick={() => {
-                            bidInputRef.current.value = highestBid + 5;
+                            bidInputRef.current.value = lastBid.bidAmount + minimumBid;
                             setBidAmount(bidInputRef.current.value);
                           }}
-                          className="btn btn-secondary bg-white text-secondary"
-                          style={{ padding: ".3px 3.5px", fontWeight: "600" }}
+                          className="btn btn-secondary bg-white text-secondary px-2"
+                          style={{ fontWeight: "600" }}
                         >
-                          {highestBid + 5} JD
+                          <span>+ {minimumBid} JD</span>
                         </button>
                         <button
                           onClick={() => {
-                            bidInputRef.current.value = highestBid + 10;
+                            bidInputRef.current.value =
+														lastBid.bidAmount + minimumBid + 5;
                             setBidAmount(bidInputRef.current.value);
                           }}
-                          className="btn btn-secondary bg-white text-secondary"
-                          style={{ padding: "1px 3.5px", fontWeight: "600" }}
+                          className="btn btn-secondary bg-white text-secondary px-2"
+                          style={{ fontWeight: "600" }}
                         >
-                          {highestBid + 10} JD
+                          <span>+ {minimumBid + 5} JD</span>
                         </button>
                         <button
                           onClick={() => {
-                            bidInputRef.current.value = highestBid + 15;
+                            bidInputRef.current.value =
+														lastBid.bidAmount + minimumBid + 10;
                             setBidAmount(bidInputRef.current.value);
                           }}
-                          className="btn btn-secondary bg-white text-secondary"
-                          style={{ padding: "1px 3.5px", fontWeight: "600" }}
+                          className="btn btn-secondary bg-white text-secondary px-2"
+                          style={{ fontWeight: "600" }}
                         >
-                          {highestBid + 20} JD
+                          <span>+ {minimumBid + 10} JD</span>
                         </button>
                       </div>
                     </div>
-                    <button className="btn btn-secondary text-white p-1 px-3 mt-3" onClick={handleBid}>
+                    <button
+                      className="btn btn-secondary text-white p-1 px-3 mt-3"
+                      onClick={handleBidModalShow}
+											disabled={item.Auction.finishTime < new Date() || item.Auction.startTime > new Date() || (user && user.id === item.userId)}
+                    >
                       Confirm
                     </button>
                   </div>
@@ -716,48 +905,89 @@ const ViewItem = () => {
                 <div className="d-flex flex-column col-lg-6 col-sm-12 p-4 mb-5 bg-body rounded w-100">
                   <h4 className="mb-3">Comments</h4>
                   <div ref={activityTabRef} className="activity-tab">
-                    {messages.length != 0 ? (
-                      messages.map((message, index) => (
-                        <div key={index} className="activity">
-                          <div className="d-flex gap-5">
-                            <span
-                              style={{
-                                color: "var(--primary-green)",
-                                cursor: "pointer",
-                                fontSize: "19px",
-                                margin: "0",
-                              }}
-                              onClick={() => (window.location.href = `/profile/${message.id}`)}
-                            >
-                              {/* {message.username} */}
-                              {user && message.username === user.username ? "You" : message.username}
-                            </span>
-                            <p
-                              style={{
-                                color: "rgba(0,0,0,.4)",
-                                fontSize: "12px",
-                                marginLeft: "auto",
-                                marginBottom: "0",
-                                alignSelf: "center",
-                              }}
-                            >
-                              {getTimeAgo(message.timestamp)}
-                            </p>
-                          </div>
+                    {comments.length != 0 ? (
+                      comments.map((comment, index) => (
+                        <div key={index} className="">
+                          {comment.type === "comment" ? (
+                            <div className="activity">
+                              <div className="d-flex gap-5">
+                                <span
+                                  style={{
+                                    color: "var(--primary-green)",
+                                    cursor: "pointer",
+                                    fontSize: "19px",
+                                    margin: "0",
+                                  }}
+                                  className="text-truncate"
+                                  onClick={() =>
+                                    (window.location.href = `/profile/${comment.User.id}`)
+                                  }
+                                >
+                                  {user &&
+                                  comment.User.username === user.username
+                                    ? "You"
+                                    : comment.User.username}
+                                </span>
+                                <p
+                                  style={{
+                                    color: "rgba(0,0,0,.4)",
+                                    fontSize: "12px",
+                                    marginLeft: "auto",
+                                    marginBottom: "0",
+                                    alignSelf: "center",
+                                  }}
+                                >
+                                  {getTimeAgo(comment.timestamp)}
+                                </p>
+                              </div>
 
-                          <div
-                            style={{
-                              fontSize: "14px",
-                              margin: "8px 0",
-                            }}
-                          >
-                            {message.text}
-                          </div>
+                              <div
+                                className="p-2"
+                                style={{
+                                  fontSize: "14px",
+                                }}
+                              >
+                                {comment.text}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="activity bid">
+                              <div className="d-flex flex-row text-center text-primary align-items-center justify-content-center">
+                                <span className="pe-2">
+                                  <img
+                                    src="https://res.cloudinary.com/djwhrh0w7/image/upload/v1715590016/c_fill,w_16,h_16/logo_english_black_mobile_j6ywrs.png"
+                                    alt="logo"
+                                    height="16px"
+                                  />
+                                </span>
+                                <a
+                                  href={`/profile/${comment.User.id}`}
+                                  className="link text-secondary text-truncate"
+                                >
+                                  {user &&
+                                  comment.User.username === user.username
+                                    ? "You"
+                                    : comment.User.username}
+                                </a>
+                                <span>
+                                  &nbsp; made a bid,{" "}
+                                  <strong>{comment.bidAmount}</strong> JD
+                                </span>
+                              </div>
+                              <span
+                                style={{
+                                  color: "rgba(0,0,0,.4)",
+                                  fontSize: "12px",
+                                }}
+                              ></span>
+                            </div>
+                          )}
                         </div>
                       ))
                     ) : (
                       <h6 className=" align-self-center m-auto text-black-50 ">
-                        It looks like you're the first here, feel free to say hi in the comments or make a bid
+                        It looks like you're the first here, feel free to say hi
+                        in the comments or make a bid
                       </h6>
                     )}
                   </div>
@@ -776,7 +1006,11 @@ const ViewItem = () => {
                       className="form-control border-2 rounded-3 "
                       style={{ outline: "none", display: "inline" }}
                     />
-                    <button className="btn btn-secondary" style={{ padding: "3px", color: "white" }} onClick={handleMessage}>
+                    <button
+                      className="btn btn-secondary"
+                      style={{ padding: "3px" }}
+                      onClick={handleMessage}
+                    >
                       <FontAwesomeIcon
                         icon="fa-solid fa-arrow-up"
                         style={{
@@ -817,7 +1051,10 @@ const ViewItem = () => {
               <p>
                 Are you sure you want to Hide this item?
                 <br />
-                <span>you can show it again later, other users will not be able to see this item!</span>
+                <span>
+                  you can show it again later, other users will not be able to
+                  see this item!
+                </span>
               </p>
             </Modal.Body>
             <Modal.Footer>
@@ -867,7 +1104,9 @@ const ViewItem = () => {
                       name="start-time"
                       value={
                         calendarState.selection.startDate
-                          ? `${String(calendarState.selection.startDate.getHours()).padStart(2, "0")}:${String(
+                          ? `${String(
+                              calendarState.selection.startDate.getHours()
+                            ).padStart(2, "0")}:${String(
                               calendarState.selection.startDate.getMinutes()
                             ).padStart(2, "0")}`
                           : ""
@@ -892,7 +1131,9 @@ const ViewItem = () => {
                       name="end-time"
                       value={
                         calendarState.selection.endDate
-                          ? `${String(calendarState.selection.endDate.getHours()).padStart(2, "0")}:${String(
+                          ? `${String(
+                              calendarState.selection.endDate.getHours()
+                            ).padStart(2, "0")}:${String(
                               calendarState.selection.endDate.getMinutes()
                             ).padStart(2, "0")}`
                           : ""
@@ -902,7 +1143,9 @@ const ViewItem = () => {
                     />
                   </div>
                 </div>
-                <small className="text-muted row ms-1">At least 1 hour, not more that 7 days</small>
+                <small className="text-muted row ms-1">
+                  At least 1 hour, not more that 7 days
+                </small>
               </div>
             </Modal.Body>
             <Modal.Footer>
@@ -925,6 +1168,29 @@ const ViewItem = () => {
               </button>
             </Modal.Footer> */}
           </Modal>
+          <Modal show={bidModal} onHide={handleBidModalClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirm Bid</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="d-flex flex-column gap-1">
+                <span>
+                  You are about to bid <strong>{bidAmount} JD</strong>
+                </span>
+                <span>
+                  &nbsp;+ <strong>{bidAmount - lastBid.bidAmount} JD</strong> to the highest
+                  bid
+                </span>
+                <span>Are you sure you want to proceed?</span>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btn-secondary text-white" onClick={handleBid}>
+                Make bid
+              </button>
+            </Modal.Footer>
+          </Modal>
+
           <Modal show={editModal} onHide={handleEditModalClose} size="xl">
             <Modal.Header closeButton>
               <Modal.Title>Edit</Modal.Title>
@@ -973,7 +1239,10 @@ const ViewItem = () => {
                   Edit
                 </button>
               </div>
-              <button className="btn btn-primary" onClick={handleEditModalClose}>
+              <button
+                className="btn btn-primary"
+                onClick={handleEditModalClose}
+              >
                 Cancel
               </button>
             </Modal.Footer>

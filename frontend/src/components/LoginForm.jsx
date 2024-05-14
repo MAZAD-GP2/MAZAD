@@ -89,7 +89,7 @@ const LoginForm = ({ next = null }) => {
 
         <div className="d-flex flex-row align-items-center justify-content-start gap-3">
           <button
-            className="col-auto px-4 btn btn-secondary btn-block confirm-button"
+            className="col-auto px-4 btn btn-secondary btn-block confirm-button text-white"
             disabled={isLoggingIn} // Disable button while logging in
           >
             {isLoggingIn ? <Spinner animation="border" size="sm" /> : "Submit"}

@@ -3,8 +3,8 @@ import "/src/assets/css/auth.css";
 import { useSnackbar } from "notistack";
 import { Spinner } from "react-bootstrap";
 import * as api from "../../api/index";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -29,9 +29,12 @@ function ResetPassword() {
     setIsResetting(true); // Set reset password status to true when reset password button is clicked
     const regex = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/;
     if (!regex.test(password)) {
-      enqueueSnackbar("Password must contain at least 8 characters, including letters and numbers", {
-        variant: "error",
-      });
+      enqueueSnackbar(
+        "Password must contain at least 8 characters, including letters and numbers",
+        {
+          variant: "error",
+        }
+      );
       setIsResetting(false); // Set reset password status back to false
       return;
     }
@@ -61,11 +64,36 @@ function ResetPassword() {
   };
 
   return (
-    <div className="position-absolute d-flex justify-content-center align-items-center w-100 h-100" id="main-container">
+    <div
+      className="position-absolute d-flex flex-column justify-content-center align-items-center w-100 h-100 gap-3"
+      id="main-container"
+    >
+      <div id="mobile-logo">
+        <a
+          className="col-sm-12 col-md-3 col-lg-4 text-center text-primary link"
+          href="/home"
+        >
+          <img
+            src="/src/assets/images/full_logo_white.png"
+            alt="logo"
+            width={"100%"}
+            className="px-3"
+          />
+        </a>
+      </div>
       <div className="card px-1 py-4 w-50" id="form-container">
         <div className="d-flex flex-row align-items-center justify-content-center">
-          <a className="col-sm-12 col-md-3 col-lg-4 text-center link text-primary " id="logo-container" href="/home">
-            <h1 id="logo">MAZAD</h1>
+          <a
+            className="col-sm-12 col-md-3 col-lg-4 text-center link text-primary "
+            id="logo-container"
+            href="/home"
+          >
+            <img
+              src="/src/assets/images/logo_english_black.png"
+              alt="logo"
+              width={"100%"}
+              className="px-3"
+            />
           </a>
 
           <div id="seperator" style={{ height: 251.52 }}></div>
@@ -93,7 +121,14 @@ function ResetPassword() {
                       style={{ right: "10px", border: "0" }}
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />
+                      <FontAwesomeIcon
+                        style={{ opacity: "0.7" }}
+                        icon={
+                          showPassword
+                            ? "fa-regular fa-eye"
+                            : "fa-regular fa-eye-slash"
+                        }
+                      />
                     </button>
                   </div>
                 </div>
@@ -116,9 +151,18 @@ function ResetPassword() {
                       type="button"
                       className="btn btn-toggle-password position-absolute"
                       style={{ right: "10px", border: "0" }}
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                     >
-                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showConfirmPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />
+                      <FontAwesomeIcon
+                        style={{ opacity: "0.7" }}
+                        icon={
+                          showConfirmPassword
+                            ? "fa-regular fa-eye"
+                            : "fa-regular fa-eye-slash"
+                        }
+                      />
                     </button>
                   </div>
                 </div>
@@ -128,7 +172,11 @@ function ResetPassword() {
                   className="col-auto px-4 btn btn-secondary btn-block confirm-button"
                   disabled={isResetting} // Disable button while resetting password
                 >
-                  {isResetting ? <Spinner animation="border" size="sm" /> : "Reset Password"}
+                  {isResetting ? (
+                    <Spinner animation="border" size="sm" />
+                  ) : (
+                    "Reset Password"
+                  )}
                 </button>
                 <a href="/login" className="terms col-6">
                   Back log in

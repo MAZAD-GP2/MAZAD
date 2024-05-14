@@ -700,7 +700,7 @@ module.exports.reenlistItem = async (req, res) => {
     if (item.Auction.status == "admin_hidden" && user.isAdmin !== true) {
       return res
         .status(401)
-        .send("This item was hidden by and admin, please contact our support to resolve this issue.");
+        .send("This item was hidden by and admin, please contact our support mazad.gp2@gmail.com to resolve this issue.");
     }
 
     await item.Auction.update(
@@ -808,7 +808,13 @@ module.exports.updateItem = async (req, res) => {
     }
     tags = tags.split(",").filter((tag) => tag.trim() !== "");
     price = parseFloat(price);
-
+    if (item.Auction.endTime < new Date()) {
+      return res.status(400).send("This auction is finished, you cannot edit it anymore");
+    }
+    if (item.Auction.startTime < new Date()) {
+      return res.status(400).send("This auction has already started, you cannot edit it anymore");
+    }
+    
     if (!name || !description || !startDate || !endDate || !tags || !price) {
       return res.status(400).send({ message: "All fields are required" });
     }
@@ -953,6 +959,55 @@ module.exports.updateItem = async (req, res) => {
   } catch (err) {
     await t.rollback();
     return res.status(500).send({ message: err.message });
+  }
+};
+
+module.exports.toggleShowNumber = async (req, res) => {
+  try {
+    const itemId = req.params.id;
+
+    const requestUser = req.currentUser;
+    if (!requestUser) {
+      return res.status(401).send("Unauthorized");
+    }
+    const user = await User.findByPk(requestUser.id);
+    if (!user) {
+      return res.status(401).send("Unauthorized");
+    }
+    const item = await Item.findOne({
+      where: {
+        id: itemId,
+      },
+      include: [
+        {
+          model: Auction,
+          where: {
+            itemId: itemId,
+          },
+        },
+      ],
+    });
+    if (!item) {
+      return res.status(404).send("Item not found");
+    }
+    let isShowNumber = item.Auction.showNumber;
+    if (item.Auction.endTime < new Date()) {
+      return res
+        .status(400)
+        .send("This auction is finished, you cannot edit it anymore");
+    }
+    await item.Auction.update(
+      { showNumber: sequelize.literal("NOT showNumber") },
+      {
+        where: {
+          itemId: itemId,
+        },
+      }
+    );
+
+    return res.send({ showNumber: !isShowNumber });
+  } catch (err) {
+    return res.status(500).send(err);
   }
 };
 

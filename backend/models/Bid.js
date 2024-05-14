@@ -9,15 +9,15 @@ const Bid = sequelize.define("Bid", {
     allowNull: false,
     primaryKey: true,
   },
-  BidAmount: {
+  bidAmount: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  UserId: {
+  userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  AuctionId: {
+  auctionId: {
     type: DataTypes.INTEGER,
     allowNull: false,
   }

@@ -5,7 +5,7 @@ import * as api from "../../api/index";
 import { Spinner } from "react-bootstrap";
 import "bootstrap";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function Register() {
   const [username, setUsername] = useState({ value: "", isValid: true });
@@ -168,13 +168,38 @@ function Register() {
 
   return (
     <div
-      className="position-absolute d-flex flex-row justify-content-center align-items-center w-100 h-100"
+      className="position-absolute d-flex flex-column justify-content-center align-items-center w-100 h-100 gap-3"
       id="main-container"
     >
-      <div className="card px-1 py-4 col-lg-7 col-md-8 col-sm-12" id="form-container">
+      <div id="mobile-logo">
+        <a
+          className="col-sm-12 col-md-3 col-lg-4 text-center text-primary link"
+          href="/home"
+        >
+          <img
+            src="/src/assets/images/full_logo_white.png"
+            alt="logo"
+            width={"100%"}
+            className="px-3"
+          />
+        </a>
+      </div>
+      <div
+        className="card px-1 py-4 col-lg-7 col-md-8 col-sm-12"
+        id="form-container"
+      >
         <div className="d-flex flex-row align-items-center justify-content-center w-100">
-          <a className="col-sm-12 col-md-3 col-lg-4 text-center link text-primary" id="logo-container" href="/home">
-            <h1 id="logo">MAZAD</h1>
+          <a
+            className="col-sm-12 col-md-3 col-lg-4 text-center link text-primary"
+            id="logo-container"
+            href="/home"
+          >
+            <img
+              src="/src/assets/images/logo_english_black.png"
+              alt="logo"
+              width={"100%"}
+              className="px-3"
+            />
           </a>
 
           <div id="seperator" style={{ height: 420.16 }}></div>
@@ -184,9 +209,15 @@ function Register() {
             <div className="col-sm-12 col-md-12 col-lg-9 d-flex flex-column gap-3">
               <div className="row">
                 <div className="col-sm-12 form-group">
-                  <OverlayTrigger trigger="focus" placement="top" overlay={popoverUsername}>
+                  <OverlayTrigger
+                    trigger="focus"
+                    placement="top"
+                    overlay={popoverUsername}
+                  >
                     <input
-                      className={`form-control ${!username.isValid ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        !username.isValid ? "is-invalid" : ""
+                      }`}
                       type="text"
                       placeholder="Username"
                       id="name"
@@ -203,9 +234,15 @@ function Register() {
               </div>
               <div className="row">
                 <div className="col-sm-12 form-group">
-                  <OverlayTrigger trigger="focus" placement="top" overlay={popoverEmail}>
+                  <OverlayTrigger
+                    trigger="focus"
+                    placement="top"
+                    overlay={popoverEmail}
+                  >
                     <input
-                      className={`form-control ${!email.isValid ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        !email.isValid ? "is-invalid" : ""
+                      }`}
                       type="text"
                       placeholder="Email"
                       id="email"
@@ -221,9 +258,15 @@ function Register() {
               </div>
               <div className="row">
                 <div className="col-sm-12 form-group">
-                  <OverlayTrigger trigger="focus" placement="top" overlay={popoverPhoneNumber}>
+                  <OverlayTrigger
+                    trigger="focus"
+                    placement="top"
+                    overlay={popoverPhoneNumber}
+                  >
                     <input
-                      className={`form-control ${!phoneNumber.isValid ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        !phoneNumber.isValid ? "is-invalid" : ""
+                      }`}
                       type="text"
                       placeholder="Phone Number"
                       id="phone-number"
@@ -240,9 +283,16 @@ function Register() {
               <div className="row">
                 <div className="col-sm-12 form-group">
                   <div className="position-relative d-flex">
-                    <OverlayTrigger className="overlay" trigger="focus" placement="top" overlay={popoverPassword}>
+                    <OverlayTrigger
+                      className="overlay"
+                      trigger="focus"
+                      placement="top"
+                      overlay={popoverPassword}
+                    >
                       <input
-                        className={`form-control ${!password.isValid ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          !password.isValid ? "is-invalid" : ""
+                        }`}
                         type={showPassword ? "text" : "password"}
                         placeholder="Password"
                         id="password"
@@ -260,7 +310,14 @@ function Register() {
                       style={{ right: "10px", border: "0" }}
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />
+                      <FontAwesomeIcon
+                        style={{ opacity: "0.7" }}
+                        icon={
+                          showPassword
+                            ? "fa-regular fa-eye"
+                            : "fa-regular fa-eye-slash"
+                        }
+                      />
                     </button>
                   </div>
                 </div>
@@ -269,7 +326,9 @@ function Register() {
                 <div className="col-sm-12 form-group">
                   <div className="position-relative d-flex">
                     <input
-                      className={`form-control ${!confirmPassword.isValid ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        !confirmPassword.isValid ? "is-invalid" : ""
+                      }`}
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm Password"
                       id="confirm-password"
@@ -284,22 +343,38 @@ function Register() {
                       type="button"
                       className="btn btn-toggle-password position-absolute"
                       style={{ right: "10px", border: "0" }}
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                     >
-                    <FontAwesomeIcon style={{opacity:"0.7"}} icon={showConfirmPassword ? "fa-regular fa-eye" : "fa-regular fa-eye-slash"} />
+                      <FontAwesomeIcon
+                        style={{ opacity: "0.7" }}
+                        icon={
+                          showConfirmPassword
+                            ? "fa-regular fa-eye"
+                            : "fa-regular fa-eye-slash"
+                        }
+                      />
                     </button>
-
                   </div>
                 </div>
               </div>
               <button
-                className="btn btn-secondary btn-block confirm-button"
+                className="btn btn-secondary btn-block confirm-button text-white"
                 disabled={isRegistering} // Disable button while registering
               >
-                {isRegistering ? <Spinner animation="border" size="sm" /> : "Create account"}
+                {isRegistering ? (
+                  <Spinner animation="border" size="sm" />
+                ) : (
+                  "Create account"
+                )}
               </button>
               <div className=" d-flex flex-column text-center px-5 mt-3 mb-3">
-                <a href="/login" style={{ cursor: "pointer" }} className="terms">
+                <a
+                  href="/login"
+                  style={{ cursor: "pointer" }}
+                  className="terms"
+                >
                   Already have an account
                 </a>
               </div>

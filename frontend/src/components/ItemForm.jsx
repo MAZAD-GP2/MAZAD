@@ -50,7 +50,9 @@ const ItemForm = ({
   setCategories,
   setIsFetching,
   isEdit,
+  minStartDate = new Date(),
 }) => {
+  const [liveTime, setLiveTime] = useState(new Date().toLocaleTimeString());
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -66,6 +68,18 @@ const ItemForm = ({
     };
 
     fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const jordanTime = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Amman",
+        dateStyle: "short",
+        timeStyle: "long",
+      });
+      setLiveTime(jordanTime);
+    }, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleCategorySelect = (category) => {
@@ -418,11 +432,12 @@ const ItemForm = ({
               onChange={handleDateChange}
               moveRangeOnFirstSelection={false}
               ranges={[calendarState.selection]}
-              minDate={new Date()}
+              minDate={minStartDate}
               color="#50B584"
               rangeColors={["#50B584"]}
             />
           </div>
+
           <div
             className="col-lg-auto col-sm-12 d-flex flex-row justify-content-between gap-3"
             style={{ minWidth: "365px" }}
@@ -481,6 +496,7 @@ const ItemForm = ({
               />
             </div>
           </div>
+          <small className="text-muted row ms-1">*Later than: {liveTime}</small>
           <small className="text-muted row ms-1">
             At least 1 hour, not more that 7 days
           </small>

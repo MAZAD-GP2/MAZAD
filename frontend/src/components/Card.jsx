@@ -45,7 +45,49 @@ const Card = ({ item, removeItemFromFavorites }) => {
     }
   };
 
-  const formatDateTime = (dateTime) => {
+  const formatDateStartTime = (dateTime, finishTime) => {
+    const options = {
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
+    const currentDate = new Date();
+    const formattedDate = new Date(dateTime).toLocaleDateString(
+      undefined,
+      options
+    );
+
+    if (
+      new Date(dateTime) < currentDate &&
+      new Date(finishTime) > currentDate
+    ) {
+      return (
+        <div className="d-flex flex-row align-items-center gap-1">
+          <span>Live</span>
+          <span>
+            {/* <i className="fas fa-circle fa-xs text-success fa-beat"></i> */}
+            <FontAwesomeIcon
+              className="text-secondary"
+              icon="fa-solid fa-circle"
+              beat
+              size="xs"
+            />
+          </span>
+        </div>
+      );
+    } else if (new Date(finishTime) < currentDate) {
+      return (
+        <div className="d-flex flex-row align-items-center gap-1">
+          <s>{formattedDate}</s>
+        </div>
+      );
+    } else {
+      return <small className="text-muted">{formattedDate}</small>;
+    }
+  };
+
+  const formatDateFinishTime = (dateTime) => {
     const options = {
       month: "numeric",
       day: "numeric",
@@ -61,23 +103,13 @@ const Card = ({ item, removeItemFromFavorites }) => {
     if (new Date(dateTime) < currentDate) {
       return (
         <div className="d-flex flex-row align-items-center gap-1">
-          <span>Live</span>
-          <span>
-            {/* <i className="fas fa-circle fa-xs text-success fa-beat"></i> */}
-            <FontAwesomeIcon
-              className="text-secondary"
-              icon="fa-solid fa-circle"
-              beat
-              size="xs"
-            />
-          </span>
+          <s>{formattedDate}</s>
         </div>
       );
     }
 
     return <small className="text-muted">{formattedDate}</small>;
   };
-
 
   const categoryHref = (id) => {
     window.location.href = `/category-item/${id}`;
@@ -124,11 +156,11 @@ const Card = ({ item, removeItemFromFavorites }) => {
           </div>
           <div className="date d-flex justify-content-evenly align-items-center w-100 border border-secondary rounded-5">
             <small className="text-muted text-center">
-              {formatDateTime(item.Auction.startTime)}
+              {formatDateStartTime(item.Auction.startTime, item.Auction.finishTime)}
             </small>
             <div> - </div>
             <small className="text-muted text-center">
-              {formatDateTime(item.Auction.finishTime)}
+              {formatDateFinishTime(item.Auction.finishTime)}
             </small>
             {/* <small className="text-muted"> */}
             {/* <span>Currently at: </span> */}

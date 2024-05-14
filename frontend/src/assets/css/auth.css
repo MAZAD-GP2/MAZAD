@@ -9,7 +9,11 @@
 }
 
 .information {
-  background-image: linear-gradient(to left, var(--primary-green),  var(--primary-black));
+  background-image: linear-gradient(
+    to left,
+    var(--primary-green),
+    var(--primary-black)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -36,6 +40,9 @@
   background-color: gray;
 }
 
+#mobile-logo {
+  display: none;
+}
 /* hide the logo for phones */
 @media (max-width: 1020px) {
   #form-container {
@@ -51,5 +58,8 @@
   #seperator {
     margin: 0 !important;
     display: none;
+  }
+  #mobile-logo {
+    display: block;
   }
 }

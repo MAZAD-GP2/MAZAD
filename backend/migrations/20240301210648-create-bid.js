@@ -9,7 +9,7 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
       },
-      BidAmount: {
+      bidAmount: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },

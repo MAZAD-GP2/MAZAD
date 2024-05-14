@@ -40,7 +40,7 @@ module.exports.getBidsByUser = async (req, res) => {
 module.exports.getBidsByAuction = async (req, res) => {
   try {
     const { id } = req.params;
-    const limit = parseInt(req.query.limit) || 10;
+    // const limit = parseInt(req.query.limit) || 10;
 
     if (!id) {
       return res.status(400).send("Auction ID must be provided");
@@ -53,8 +53,8 @@ module.exports.getBidsByAuction = async (req, res) => {
 
     const bids = await Bid.findAll({
       where: { AuctionId: id },
-      include: [{ model: Auction }],
-      limit: limit,
+      include: [{ model: User }],
+      // limit: limit,
       order: [["createdAt", "DESC"]],
     });
 
@@ -66,6 +66,8 @@ module.exports.getBidsByAuction = async (req, res) => {
 };
 
 module.exports.addBid = async (req, res) => {
+  const transaction = await sequelize.transaction();
+
   try {
     const userId = req.currentUser.id;
 
@@ -74,13 +76,12 @@ module.exports.addBid = async (req, res) => {
     }
 
     const bidAmount = parseInt(req.body.bidAmount);
-    const auctionId = req.body.auctionId;
+    const auctionId = parseInt(req.body.auctionId);
 
     if (!auctionId) {
       return res.status(400).send("Auction ID must be provided");
     }
 
-    const transaction = await sequelize.transaction();
     const auction = await Auction.findByPk(auctionId);
 
     if (!auction) {
@@ -96,6 +97,10 @@ module.exports.addBid = async (req, res) => {
       return res.status(400).send("Auction has ended");
     }
 
+    if (auction.UserId === userId) {
+      return res.status(400).send("bruh, you cannot bid on your own auction");
+    }
+
     if (bidAmount <= auction.highestBid) {
       return res
         .status(400)
@@ -104,21 +109,21 @@ module.exports.addBid = async (req, res) => {
 
     auction.highestBid = bidAmount;
     let data = {
-      BidAmount: bidAmount,
-      UserId: userId,
-      AuctionId: auctionId,
+      bidAmount: bidAmount,
+      userId: userId,
+      auctionId: auctionId,
     };
-    const name = req.currentUser.username;
+    const User = req.currentUser;
 
-    pusher.trigger(`auction_${auctionId}`, `add_bid`,{ ...data, name });
     
-    auction.save();
+    auction.save({ transaction: transaction });
     const bid = await Bid.create(data, { transaction: transaction });
-
+    
     await transaction.commit();
-    return res.send({ ...bid.dataValues, name });
+    pusher.trigger(`auction_${auctionId}`, `add_bid`,{ ...data, User });
+    return res.send({ ...bid.dataValues, User });
   } catch (err) {
-    await t.rollback();
+    await transaction.rollback();
     console.error("Error adding bid:", err);
     res.status(500).json({ message: "Internal server error" });
   }
@@ -127,7 +132,19 @@ module.exports.addBid = async (req, res) => {
 module.exports.removeBid = async (req, res) => {
   try {
     const bidId = req.params.id;
-    await Bid.destroy({ where: { id: bidId } });
+    const transaction = await sequelize.transaction();
+    const bid = await Bid.findByPk(bidId, { include: Auction });
+    const last_two_bids = await Bid.findAll({
+      where: { AuctionId: bid.AuctionId },
+      order: [["createdAt", "DESC"]],
+      limit: 2,
+    });
+    if (bid.Auction.highestBid === bid.bidAmount) {
+      bid.Auction.highestBid = last_two_bids[1]?.bidAmount || 0;
+      await bid.Auction.save({ transaction: transaction });
+    }
+    await Bid.destroy({ where: { id: bidId } }, { transaction: transaction });
+    await transaction.commit();
     return res.send("Bid deleted successfully");
   } catch (err) {
     console.error("Error adding bid:", err);

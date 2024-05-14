@@ -54,6 +54,7 @@ export const reenlistItem = (data) =>
       "Content-Type": "application/json",
     },
   });
+export const toggleShowNumber = (id) => API.post(`/item/toggle-number/${id}`, );
 
 //interest
 export const updateInterest = (id) => API.post(`/interest/add/${id}`);
@@ -78,4 +79,4 @@ export const removeBid = (id) => API.delete(`/bid/auction/${id}`);
 export const decodeToken = () => API.post(`/decode-token`);
 export const search = (data) => API.get(`/search?search=${data}`);
 
-export const sendMessage = (data) => API.post(`/comment/add`, data);
+export const addComment = (data) => API.post(`/comment/add`, data);
