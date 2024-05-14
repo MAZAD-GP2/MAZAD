@@ -28,7 +28,7 @@ const ViewItem = () => {
   const [comments, setComments] = useState([]);
   const [bidModal, setBidModal] = useState(false);
   const [bidAmount, setBidAmount] = useState(0);
-  
+
   const [minimumBid, setMinimumBid] = useState(0);
 
   const [isInterest, setIsInterest] = useState(false);
@@ -62,37 +62,37 @@ const ViewItem = () => {
 
   const [lastBid, setLastBid] = useState([]);
   const [currentDescriptionLength, SetCurrentDescriptionLength] = useState(1);
-	
+
   const quillRef = useRef();
   const bidInputRef = useRef(null);
 
   const handleBidModalShow = () => {
-		if (!user) {
-			setLoginModal(true);
-			return;
-		}
-		if (user.id === item.userId) {
-			enqueueSnackbar("You cannot bid on your own item", { variant: "error" });
-			return;
-		}
-		if (item.Auction.finishTime < new Date()) {
-			enqueueSnackbar("Auction has ended", { variant: "error" });
-			return;
-		}
-		if (item.Auction.startTime > new Date()) {
-			enqueueSnackbar("Auction has not started yet", { variant: "error" });
-			return;
-		}
-		
-		if (bidAmount && bidAmount <= lastBid.bidAmount) {
-			enqueueSnackbar("Bid amount must be greater than the highest bid", {
-				variant: "error",
-			});
-			return;
-		}
+    if (!user) {
+      setLoginModal(true);
+      return;
+    }
+    if (user.id === item.userId) {
+      enqueueSnackbar("You cannot bid on your own item", { variant: "error" });
+      return;
+    }
+    if (item.Auction.finishTime < new Date()) {
+      enqueueSnackbar("Auction has ended", { variant: "error" });
+      return;
+    }
+    if (item.Auction.startTime > new Date()) {
+      enqueueSnackbar("Auction has not started yet", { variant: "error" });
+      return;
+    }
 
-		setBidModal(true);
-	}
+    if (bidAmount && bidAmount <= lastBid.bidAmount) {
+      enqueueSnackbar("Bid amount must be greater than the highest bid", {
+        variant: "error",
+      });
+      return;
+    }
+
+    setBidModal(true);
+  };
 
   const handleBidModalClose = () => setBidModal(false);
   const handleLoginModalShow = () => setLoginModal(true);
@@ -202,9 +202,9 @@ const ViewItem = () => {
             if (user && data.User.id === user.id) {
               return;
             }
-						
+
             const bid = {
-							User: data.User,
+              User: data.User,
               bidAmount: data.bidAmount,
               text: `made a bid, ${data.bidAmount} JD`,
               timestamp: new Date().getTime(),
@@ -212,25 +212,28 @@ const ViewItem = () => {
             };
             console.log(bid);
             setLastBid(bid);
-            setComments((prevMessages) => [bid, ...prevMessages]);
-						if (bidModal && data.bidAmount <= lastBid.bidAmount) {
-								enqueueSnackbar("A new bid has been made, try again!", { variant: "error" });
-								setBidModal(false);
-						}
+            setComments((prevComments) => [bid, ...prevComments]);
+            if (bidModal && data.bidAmount <= lastBid.bidAmount) {
+              enqueueSnackbar("A new bid has been made, try again!", {
+                variant: "error",
+              });
+              setBidModal(false);
+            }
           });
           channel.bind("add_comment", function (data) {
             // alert(JSON.stringify(data));
             if (user && data.User.id === user.id) {
               return;
             }
-            const message = {
+            const comment = {
               username: data.User.username,
               text: data.content,
               timestamp: new Date().getTime(),
               type: "comment",
+							User: data.User,
             };
 
-            setComments((prevMessages) => [message, ...prevMessages]);
+            setComments((prevComments) => [comment, ...prevComments]);
           });
           setMinimumBid(itemData.data.item.Auction.min_bid);
         }
@@ -558,9 +561,9 @@ const ViewItem = () => {
     };
     try {
       setLastBid(bidObject);
-			setComments((prevMessages) => [bidObject, ...prevMessages]);
+      setComments((prevMessages) => [bidObject, ...prevMessages]);
       res = await api.addBid({
-				bidAmount: bidAmount,
+        bidAmount: bidAmount,
         auctionId: item.Auction.id,
       });
       bidObject.id = res.data.id;
@@ -601,7 +604,7 @@ const ViewItem = () => {
   };
 
   const handleToggleShowNumber = async () => {
-    setShowNumber(res.data.showNumber);
+    setShowNumber(!showNumber);
     let res;
     try {
       res = await api.toggleShowNumber(item.id);
@@ -724,8 +727,7 @@ const ViewItem = () => {
                         <span id="phone">
                           {showNumber
                             ? item.User.phoneNumber
-                            : item.User.phoneNumber.slice(0, 3) +
-                              "*******"}
+                            : item.User.phoneNumber.slice(0, 3) + "*******"}
                         </span>
                         {user && item.userId === user.id ? (
                           <div>
@@ -841,67 +843,73 @@ const ViewItem = () => {
                       )}
                     </div>
                   </div>
-
-                  <div className="d-flex flex-column gap-3 rounded p-3 gap-2 w-100">
-                    <h4 className="">Make a bid</h4>
-                    <input
-                      className="form-control border-2 rounded-3"
-                      onChange={(e) => {
-                        setBidAmount(e.target.value);
-                      }}
-                      ref={bidInputRef}
-                      type="number"
-                      min={parseInt(lastBid.bidAmount) + parseInt(minimumBid)}
-                      placeholder="Enter bid amount"
-                    ></input>
-                    <div className="d-flex flex-wrap gap-2 justify-content-between">
-                      <small style={{ opacity: "80%" }}>
-                        Minimum increment: {item.Auction.min_bid}
-                      </small>
-                      <div className="d-flex justify-content-end gap-2">
-                        <button
-                          onClick={() => {
-                            bidInputRef.current.value = lastBid.bidAmount + minimumBid;
-                            setBidAmount(bidInputRef.current.value);
-                          }}
-                          className="btn btn-secondary bg-white text-secondary px-2"
-                          style={{ fontWeight: "600" }}
-                        >
-                          <span>+ {minimumBid} JD</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            bidInputRef.current.value =
-														lastBid.bidAmount + minimumBid + 5;
-                            setBidAmount(bidInputRef.current.value);
-                          }}
-                          className="btn btn-secondary bg-white text-secondary px-2"
-                          style={{ fontWeight: "600" }}
-                        >
-                          <span>+ {minimumBid + 5} JD</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            bidInputRef.current.value =
-														lastBid.bidAmount + minimumBid + 10;
-                            setBidAmount(bidInputRef.current.value);
-                          }}
-                          className="btn btn-secondary bg-white text-secondary px-2"
-                          style={{ fontWeight: "600" }}
-                        >
-                          <span>+ {minimumBid + 10} JD</span>
-                        </button>
+                  {user && user.id !== item.userId && (
+                    <div className="d-flex flex-column gap-3 rounded p-3 gap-2 w-100">
+                      <h4 className="">Make a bid</h4>
+                      <input
+                        className="form-control border-2 rounded-3"
+                        onChange={(e) => {
+                          setBidAmount(e.target.value);
+                        }}
+                        ref={bidInputRef}
+                        type="number"
+                        min={parseInt(lastBid.bidAmount) + parseInt(minimumBid)}
+                        placeholder="Enter bid amount"
+                      ></input>
+                      <div className="d-flex flex-wrap gap-2 justify-content-between">
+                        <small style={{ opacity: "80%" }}>
+                          Minimum increment: {item.Auction.min_bid}
+                        </small>
+                        <div className="d-flex justify-content-end gap-2">
+                          <button
+                            onClick={() => {
+                              bidInputRef.current.value =
+                                lastBid.bidAmount + minimumBid;
+                              setBidAmount(bidInputRef.current.value);
+                            }}
+                            className="btn btn-secondary bg-white text-secondary px-2"
+                            style={{ fontWeight: "600" }}
+                          >
+                            <span>+ {minimumBid} JD</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              bidInputRef.current.value =
+                                lastBid.bidAmount + minimumBid + 5;
+                              setBidAmount(bidInputRef.current.value);
+                            }}
+                            className="btn btn-secondary bg-white text-secondary px-2"
+                            style={{ fontWeight: "600" }}
+                          >
+                            <span>+ {minimumBid + 5} JD</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              bidInputRef.current.value =
+                                lastBid.bidAmount + minimumBid + 10;
+                              setBidAmount(bidInputRef.current.value);
+                            }}
+                            className="btn btn-secondary bg-white text-secondary px-2"
+                            style={{ fontWeight: "600" }}
+                          >
+                            <span>+ {minimumBid + 10} JD</span>
+                          </button>
+                        </div>
                       </div>
+                      <button
+                        className="btn btn-secondary text-white p-1 px-3 mt-3"
+                        onClick={handleBidModalShow}
+                        disabled={
+                          item.Auction.finishTime < new Date() ||
+                          item.Auction.startTime > new Date()
+                        }
+                      >
+                        Confirm
+                      </button>
                     </div>
-                    <button
-                      className="btn btn-secondary text-white p-1 px-3 mt-3"
-                      onClick={handleBidModalShow}
-											disabled={item.Auction.finishTime < new Date() || item.Auction.startTime > new Date() || (user && user.id === item.userId)}
-                    >
-                      Confirm
-                    </button>
-                  </div>
+                  )}
                 </div>
+
                 <div className="d-flex flex-column col-lg-6 col-sm-12 p-4 mb-5 bg-body rounded w-100">
                   <h4 className="mb-3">Comments</h4>
                   <div ref={activityTabRef} className="activity-tab">
@@ -993,7 +1001,7 @@ const ViewItem = () => {
                   </div>
 
                   <div className="chat-box">
-                    <input
+                    <textarea
                       type="text"
                       ref={inputRef}
                       placeholder="Enter a message"
@@ -1005,20 +1013,19 @@ const ViewItem = () => {
                       }}
                       className="form-control border-2 rounded-3 "
                       style={{ outline: "none", display: "inline" }}
-                    />
+											></textarea>
                     <button
                       className="btn btn-secondary"
                       style={{ padding: "3px" }}
                       onClick={handleMessage}
                     >
-                      <FontAwesomeIcon
-                        icon="fa-solid fa-arrow-up"
+                      <i
+                        className="fa-solid fa-arrow-up text-white px-3"
                         style={{
                           alignSelf: "center",
                           fontSize: "22px",
-                          padding: "2px 5px",
                         }}
-                      />
+                      ></i>
                     </button>
                   </div>
                 </div>
@@ -1178,14 +1185,17 @@ const ViewItem = () => {
                   You are about to bid <strong>{bidAmount} JD</strong>
                 </span>
                 <span>
-                  &nbsp;+ <strong>{bidAmount - lastBid.bidAmount} JD</strong> to the highest
-                  bid
+                  &nbsp;+ <strong>{bidAmount - lastBid.bidAmount} JD</strong> to
+                  the highest bid
                 </span>
                 <span>Are you sure you want to proceed?</span>
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <button className="btn btn-secondary text-white" onClick={handleBid}>
+              <button
+                className="btn btn-secondary text-white"
+                onClick={handleBid}
+              >
                 Make bid
               </button>
             </Modal.Footer>

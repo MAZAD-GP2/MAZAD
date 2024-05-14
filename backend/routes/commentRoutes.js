@@ -24,6 +24,8 @@ module.exports.addComment = async (req, res) => {
     const name = req.currentUser.username;
     const { itemId, content, auctionId } = req.body;
     const comment = await Comment.create({ content, userId, itemId });
+    const user  = req.currentUser;
+    comment.dataValues.User = user;
     pusher.trigger(`auction_${auctionId}`, `add_comment`,{ ...comment.dataValues, name });
     res.send({ ...comment.dataValues, name });
   } catch (err) {

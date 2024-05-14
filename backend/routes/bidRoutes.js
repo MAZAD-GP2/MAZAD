@@ -70,9 +70,17 @@ module.exports.addBid = async (req, res) => {
 
   try {
     const userId = req.currentUser.id;
+    const currentDate = new Date();
+    if (new Date(auction.startDate) > currentDate) {
+      return res.status(400).send("Auction has not started yet");
+    }
+
+    if (new Date(auction.endDate) < currentDate) {
+      return res.status(400).send("Auction has ended");
+    }
 
     if (!req.body.bidAmount || isNaN(parseInt(req.body.bidAmount))) {
-      return res.status(400).send("Valid bid amount must be provided");
+      return res.status(400).send("bid amount must be provided");
     }
 
     const bidAmount = parseInt(req.body.bidAmount);
@@ -88,15 +96,6 @@ module.exports.addBid = async (req, res) => {
       return res.status(404).send("Auction not found");
     }
 
-    const currentDate = new Date();
-    if (new Date(auction.startDate) > currentDate) {
-      return res.status(400).send("Auction has not started yet");
-    }
-
-    if (new Date(auction.endDate) < currentDate) {
-      return res.status(400).send("Auction has ended");
-    }
-
     if (auction.UserId === userId) {
       return res.status(400).send("bruh, you cannot bid on your own auction");
     }
@@ -108,19 +107,18 @@ module.exports.addBid = async (req, res) => {
     }
 
     auction.highestBid = bidAmount;
+    const User = req.currentUser;
     let data = {
       bidAmount: bidAmount,
-      userId: userId,
+      User: user,
       auctionId: auctionId,
     };
-    const User = req.currentUser;
 
-    
     auction.save({ transaction: transaction });
     const bid = await Bid.create(data, { transaction: transaction });
-    
+
     await transaction.commit();
-    pusher.trigger(`auction_${auctionId}`, `add_bid`,{ ...data, User });
+    pusher.trigger(`auction_${auctionId}`, `add_bid`, { ...data, User });
     return res.send({ ...bid.dataValues, User });
   } catch (err) {
     await transaction.rollback();
