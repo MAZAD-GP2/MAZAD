@@ -4,6 +4,11 @@ import Navbar from "./Navbar";
 import MobileNavbar from "./MobileNavbar";
 
 const NotFound = () => {
+
+  const goBack = () => {
+    window.history.back();
+  };
+
   return (
     <>
       <Navbar />
@@ -14,7 +19,7 @@ const NotFound = () => {
             <div>
               <h4 style={{ fontWeight: "bold" }}>Page not found</h4>
               <p>Sorry, but we can't find the page you're looking for...</p>
-              <a href="/home" className="btn btn-secondary text-white">Go back to home</a>
+              <button onClick={goBack} className="btn btn-secondary text-white mt-4">Go back</button>
             </div>
           </div>
         </div>

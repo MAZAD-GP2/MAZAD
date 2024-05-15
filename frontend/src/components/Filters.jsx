@@ -146,7 +146,7 @@ const Filters = ({ setItems, user }) => {
   };
 
   return (
-    <div className="card w-100 d-flex flex-column flex-wrap align-items-center justify-content-center p-2">
+    <div className="card w-100 d-flex flex-column flex-wrap align-items-center justify-content-center p-2 border-0">
       <h3 className="pt-3">Filters</h3>
       <div className="w-100 d-flex flex-column flex-wrap align-items-start justify-content-start p-2 gap-3">
         <div className="w-100 section" id="status-filter">

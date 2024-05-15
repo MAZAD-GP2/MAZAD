@@ -14,7 +14,7 @@ const AddItem = loadable(() => import("./pages/AddItem.jsx"));
 const CategoryItems = loadable(() => import("./pages/CategoryItems.jsx"));
 const ViewItem = loadable(() => import("./pages/ViewItem.jsx"));
 const Profile = loadable(() => import("./pages/Profile.jsx"));
-const EditProfile = loadable(() => import("./pages/EditProfile.jsx"));
+// const EditProfile = loadable(() => import("./pages/EditProfile.jsx"));
 const LandingPage = loadable(() => import("./pages/LandingPage.jsx"));
 const SearchResult = loadable(() => import("./pages/SearchResult.jsx"));
 const Favorites = loadable(() => import("./pages/Favorites.jsx"));
@@ -55,8 +55,8 @@ function App() {
         {!isLoggedIn && (
           <Route exact path="/profile/:id" Navigate={<Login />} />
         )}
-        {isLoggedIn && <Route path="/edit-profile" element={<EditProfile />} />}
-        {!isLoggedIn && <Route path="/edit-profile" Navigate={<Login />} />}
+        {/* {isLoggedIn && <Route path="/edit-profile" element={<EditProfile />} />} */}
+        {/* {!isLoggedIn && <Route path="/edit-profile" Navigate={<Login />} />} */}
         {isLoggedIn && <Route path="/login" Navigate={<Home />} />}
         {!isLoggedIn && <Route exact path="/login" element={<Login />} />}
         {isLoggedIn && <Route path="/forgot-password" Navigate={<Home />} />}

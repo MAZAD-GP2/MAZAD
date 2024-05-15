@@ -69,7 +69,7 @@ const Home = () => {
               </div>
             ))
           ) : (
-            <h1>No items found</h1>
+            <h1 className="m-auto">No items found</h1>
           )}
         </div>
       </div>

@@ -63,6 +63,7 @@ export const removeInterest = (id) => API.delete(`/interest/remove/${id}`);
 //auction
 export const getAuctionById = (id) => API.get(`/auction/${id}`);
 export const getAuctionByUser = (id) => API.get(`/auction/user/${id}`);
+export const getAuctionCountByUser = (id) => API.get(`/bid/auction/${id}/count`);
 export const getAuctionByItem = (id) => API.get(`/auction/item/${id}`);
 export const addAuction = (data) => API.post("/auction/create", data);
 export const updateAuction = (data) => API.put("/auction/update", data);
@@ -71,6 +72,7 @@ export const removeAuction = (id) => API.delete(`/auction/delete/${id}`);
 //bid
 export const getBidById = (id) => API.get(`/bid/${id}`);
 export const getBidsByUser = (id) => API.get(`/bid/user/${id}`);
+export const getBidCountByUser = (id) => API.get(`/bid/user/${id}/count`);
 export const getBidsByAuction = (id, limit) =>
   API.get(`/bid/auction/${id}`, { params: { limit } });
 export const addBid = (data) => API.post("/bid/create", data);

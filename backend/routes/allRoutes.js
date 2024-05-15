@@ -103,6 +103,7 @@ router
 // Auction
 router.route("/auction/:id").get(auctionRoutes.getAuctionById);
 router.route("/auction/user/:id").get(auctionRoutes.getAuctionsByUser);
+router.route("/auction/user/:id/count").get(auctionRoutes.getAuctionCountByUser);
 router.route("/auction/item/:id").get(auctionRoutes.getAuctionsByItem);
 router
   .route("/auction/create")
@@ -118,6 +119,7 @@ router
 router.route("/bid/:id").get(bidRoutes.getBidById);
 router.route("/bid/auction/:id").get(bidRoutes.getBidsByAuction);
 router.route("/bid/user/:id").get(bidRoutes.getBidsByUser);
+router.route('/bid/user/:id/count').get(bidRoutes.getBidsCountByUser);
 router.route("/bid/create").post(verifyToken(true), bidRoutes.addBid);
 router.route("/bid/delete/:id").delete(verifyToken(true), bidRoutes.removeBid);
 
