@@ -7,7 +7,6 @@ import "./assets/css/bootstrap_override.scss";
 import "./assets/css/global.css";
 import { BrowserRouter } from "react-router-dom";
 import { SnackbarProvider, useSnackbar } from "notistack";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 function SnackbarCloseButton({ snackbarKey }) {
@@ -18,7 +17,7 @@ function SnackbarCloseButton({ snackbarKey }) {
       onClick={() => closeSnackbar(snackbarKey)}
       style={{ border: "none", background: "none" }}
     >
-      <FontAwesomeIcon icon={faTimes} />
+      <i className={faTimes} ></i>
     </button>
   );
 }

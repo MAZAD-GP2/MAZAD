@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "../assets/css/card.css";
 import sanitizeHtml from "sanitize-html";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as api from "../api/index";
 import { Modal } from "react-bootstrap";
 import LoginForm from "./LoginForm";
@@ -67,12 +66,7 @@ const Card = ({ item, removeItemFromFavorites }) => {
           <span>Live</span>
           <span>
             {/* <i className="fas fa-circle fa-xs text-success fa-beat"></i> */}
-            <FontAwesomeIcon
-              className="text-secondary"
-              icon="fa-solid fa-circle"
-              beat
-              size="xs"
-            />
+            <i className="text-secondary fa-solid fa-circle fa-beat fa-xs"></i>
           </span>
         </div>
       );
@@ -156,7 +150,10 @@ const Card = ({ item, removeItemFromFavorites }) => {
           </div>
           <div className="date d-flex justify-content-evenly align-items-center w-100 border border-secondary rounded-5">
             <small className="text-muted text-center">
-              {formatDateStartTime(item.Auction.startTime, item.Auction.finishTime)}
+              {formatDateStartTime(
+                item.Auction.startTime,
+                item.Auction.finishTime
+              )}
             </small>
             <div> - </div>
             <small className="text-muted text-center">
@@ -180,10 +177,13 @@ const Card = ({ item, removeItemFromFavorites }) => {
               onClick={() => handleChangeInterest(item.id)}
               title={!user ? "Login to like" : "I am interested in this"}
             >
-              <FontAwesomeIcon
-                className={isInterest ? "text-danger liked" : "text-danger"}
-                icon={isInterest ? "fa-solid fa-heart" : "fa-regular fa-heart"}
-              />
+              <i
+                className={
+                  isInterest
+                    ? "fa-solid fa-heart text-danger liked"
+                    : "fa-regular fa-heart text-danger"
+                }
+              ></i>
               <small className="text-muted">{interestsCount}</small>
             </div>
           </div>

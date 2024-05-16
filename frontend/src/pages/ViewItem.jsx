@@ -10,8 +10,6 @@ import { Modal } from "react-bootstrap";
 import { useSnackbar } from "notistack";
 
 import PageTitle from "../components/PageTitle";
-import NotFound from "../components/NotFound";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pusher from "../api/pusher";
 import LoginForm from "../components/LoginForm";
 import { DateRange } from "react-date-range";
@@ -50,6 +48,7 @@ const ViewItem = () => {
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [price, setPrice] = useState(0);
   const [minBid, setMinBid] = useState(1);
+  const [status, setStatus] = useState("new");
 
   const [tags, setTags] = useState([]);
   const [name, setName] = useState("");
@@ -150,14 +149,33 @@ const ViewItem = () => {
         const AuctionBids = await api.getBidsByAuction(
           itemData.data.item.Auction.id
         );
+        let startDate = new Date(itemData.data.item.startTime);
+        let finishDate = new Date(itemData.data.item.finishDate);
+        let now = new Date();
+        if (finishDate < now) {
+          setStatus("over");
+        }
+        if (startDate < now) {
+          setStatus("live");
+        } else {
+          setStatus("new");
+        }
+
         // merge comments and bids, based on createdAt
-        const allActivities = [
-          ...itemData.data.item.Comments,
-          ...AuctionBids.data,
-        ];
-        allActivities.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
+        let allActivities = [];
+        if (itemData.data.item.Comments && AuctionBids.data) {
+          allActivities = [...itemData.data.item.Comments, ...AuctionBids.data];
+        } else if (itemData.data.item.Comments) {
+          allActivities = itemData.data.item.Comments;
+        } else if (AuctionBids.data) {
+          allActivities = AuctionBids.data;
+        }
+
+        if (allActivities.length > 0) {
+          allActivities.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+        }
 
         if (Object.keys(itemData.data).length) {
           setItem(itemData.data.item);
@@ -176,7 +194,7 @@ const ViewItem = () => {
               return {
                 User: activity.User,
                 bidAmount: activity.bidAmount,
-                timestamp: new Date(activity.createdAt).getTime(),
+                timestamp: new Date(activity.createdAt).getTime() || 0,
                 type: "bid",
               };
             }
@@ -187,15 +205,26 @@ const ViewItem = () => {
             `auction_${itemData.data.item.Auction.id}`
           );
           setShowNumber(itemData.data.item.Auction.showNumber);
-          let bidObject = {
-            createdAt: itemData.data.item.Auction.Bids[0].createdAt,
-            id: itemData.data.item.Auction.Bids[0].id,
-            itemId: itemData.data.item.Auction.Bids[0].itemId,
-            User: itemData.data.item.Auction.Bids[0].User,
-            bidAmount: itemData.data.item.Auction.Bids[0].bidAmount,
-            userId: itemData.data.item.Auction.Bids[0].userId,
-          };
-          setLastBid(bidObject);
+          if (itemData.data.item.Auction.Bids.length > 0) {
+            let bidObject = {
+              createdAt: itemData.data.item.Auction.Bids[0]?.createdAt,
+              id: itemData.data.item.Auction.Bids[0].id,
+              itemId: itemData.data.item.Auction.Bids[0].itemId,
+              User: itemData.data.item.Auction.Bids[0].User,
+              bidAmount: itemData.data.item.Auction.Bids[0].bidAmount,
+              userId: itemData.data.item.Auction.Bids[0].userId,
+            };
+            setLastBid(bidObject);
+          } else {
+            setLastBid({
+              createdAt: null,
+              id: null,
+              itemId: null,
+              User: { username: "Initial price" },
+              bidAmount: itemData.data.item.Auction.min_bid,
+              userId: null,
+            });
+          }
 
           channel.bind("add_bid", function (data) {
             // alert(JSON.stringify(data));
@@ -230,7 +259,7 @@ const ViewItem = () => {
               text: data.content,
               timestamp: new Date().getTime(),
               type: "comment",
-							User: data.User,
+              User: data.User,
             };
 
             setComments((prevComments) => [comment, ...prevComments]);
@@ -415,7 +444,7 @@ const ViewItem = () => {
         visibility === true ? `/item/${response.data.id}` : `/profile`;
     } catch (error) {
       // Handle errors
-      enqueueSnackbar(error.response.data.message, {
+      enqueueSnackbar(error.response.data, {
         variant: "error",
       });
       // reenable the button
@@ -570,7 +599,7 @@ const ViewItem = () => {
       setLastBid(bidObject);
     } catch (error) {
       enqueueSnackbar({
-        message: "Error adding bid",
+        message: error.response?.data || "Error adding bid",
         variant: "error",
       });
       setLastBid(prevLast);
@@ -601,6 +630,67 @@ const ViewItem = () => {
     } else {
       return "Just now";
     }
+  };
+
+  const formatDateStartTime = (dateTime, finishTime) => {
+    const options = {
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
+    const currentDate = new Date();
+    const formattedDate = new Date(dateTime).toLocaleDateString(
+      undefined,
+      options
+    );
+
+    if (
+      new Date(dateTime) < currentDate &&
+      new Date(finishTime) > currentDate
+    ) {
+      return (
+        <div className="d-flex flex-row align-items-center gap-1">
+          <span>{formattedDate}</span>
+          <span>
+            {/* <i className="fas fa-circle fa-xs text-success fa-beat"></i> */}
+            <i className="text-secondary fa-solid fa-circle fa-beat fa-xs"></i>
+          </span>
+        </div>
+      );
+    } else if (new Date(finishTime) < currentDate) {
+      return (
+        <div className="d-flex flex-row align-items-center gap-1">
+          <s>{formattedDate}</s>
+        </div>
+      );
+    } else {
+      return <small className="text-muted">{formattedDate}</small>;
+    }
+  };
+
+  const formatDateFinishTime = (dateTime) => {
+    const options = {
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
+    const currentDate = new Date();
+    const formattedDate = new Date(dateTime).toLocaleDateString(
+      undefined,
+      options
+    );
+
+    if (new Date(dateTime) < currentDate) {
+      return (
+        <div className="d-flex flex-row align-items-center gap-1">
+          <s>{formattedDate}</s>
+        </div>
+      );
+    }
+
+    return <small className="text-muted">{formattedDate}</small>;
   };
 
   const handleToggleShowNumber = async () => {
@@ -696,12 +786,9 @@ const ViewItem = () => {
                           <small className="text-muted">{interestsCount}</small>
                           <span className="text-danger">
                             {isInterest ? (
-                              <FontAwesomeIcon
-                                icon="fa-solid fa-heart"
-                                className="liked"
-                              />
+                              <i className="fa-solid fa-heart liked"></i>
                             ) : (
-                              <FontAwesomeIcon icon="fa-regular fa-heart" />
+                              <i className="fa-regular fa-heart"></i>
                             )}
                           </span>
                         </div>
@@ -825,11 +912,11 @@ const ViewItem = () => {
                       {item.Auction.startTime && (
                         <div className="d-flex flex-row align-items-center gap-2">
                           <div className="d-flex flex-column gap-2">
-                            {new Date(item.Auction.startTime).toLocaleString()}
+                            {formatDateStartTime(
+                              item.Auction.startTime,
+                              item.Auction.finishTime
+                            )}
                           </div>
-                          {new Date(item.Auction.startTime) < new Date() ? (
-                            <i className="fas fa-circle fa-beat text-secondary"></i>
-                          ) : null}
                         </div>
                       )}
                     </div>
@@ -838,12 +925,12 @@ const ViewItem = () => {
                     <div>
                       {item.Auction.finishTime && (
                         <div className="d-flex flex-column gap-2">
-                          {new Date(item.Auction.finishTime).toLocaleString()}
+                          {formatDateFinishTime(item.Auction.finishTime)}
                         </div>
                       )}
                     </div>
                   </div>
-                  {user && user.id !== item.userId && (
+                  {user && user.id !== item.userId && status == "live" && (
                     <div className="d-flex flex-column gap-3 rounded p-3 gap-2 w-100">
                       <h4 className="">Make a bid</h4>
                       <input
@@ -1004,7 +1091,7 @@ const ViewItem = () => {
                     <textarea
                       type="text"
                       ref={inputRef}
-                      placeholder="Enter a message"
+                      placeholder="Send a comment"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && e.target.value) {
                           handleMessage();
@@ -1013,7 +1100,7 @@ const ViewItem = () => {
                       }}
                       className="form-control border-2 rounded-3 "
                       style={{ outline: "none", display: "inline" }}
-											></textarea>
+                    ></textarea>
                     <button
                       className="btn btn-secondary"
                       style={{ padding: "3px" }}

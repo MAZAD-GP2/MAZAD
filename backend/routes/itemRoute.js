@@ -743,7 +743,7 @@ module.exports.updateItem = async (req, res) => {
       return res.status(401).send("Unauthorized");
     }
     let item = null;
-    if (user.isAdmin !== true) {
+    if (user.isAdmin == true) {
       item = await Item.findOne({
         where: {
           id: itemId,
@@ -808,7 +808,7 @@ module.exports.updateItem = async (req, res) => {
     }
     tags = tags.split(",").filter((tag) => tag.trim() !== "");
     price = parseFloat(price);
-    if (item.Auction.endTime < new Date()) {
+    if (item.Auction.finishTime < new Date()) {
       return res.status(400).send("This auction is finished, you cannot edit it anymore");
     }
     if (item.Auction.startTime < new Date()) {

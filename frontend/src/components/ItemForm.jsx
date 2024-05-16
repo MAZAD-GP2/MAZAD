@@ -598,14 +598,17 @@ const ItemForm = ({
       <div id="phone-show">
         <div className="title d-flex flex-row justify-content-start align-items-center gap-3">
           <h4>Phone Number</h4>
-          <OverlayTrigger
-            className="overlay"
-            trigger="hover"
-            placement="right"
-            overlay={popoverPhone}
-          >
-            <FontAwesomeIcon icon="fa-question-circle"  size="sm" />
-          </OverlayTrigger>
+          <div style={{ cursor: "pointer" }}>
+            <OverlayTrigger
+              className="overlay"
+              trigger="click"
+              placement="right"
+              style={{ cursor: "pointer" }}
+              overlay={popoverPhone}
+            >
+              <FontAwesomeIcon icon="fa-question-circle" size="sm" />
+            </OverlayTrigger>
+          </div>
         </div>
         <div className="d-flex flex-row justify-content-start align-items-center gap-3 p-3 border rounded">
           <input
@@ -627,14 +630,17 @@ const ItemForm = ({
           <div className="title w-auto mt-2">
             <h4>Description</h4>
           </div>
-          <OverlayTrigger
-            className="overlay"
-            trigger="hover"
-            placement="right"
-            overlay={popoverDescription}
-          >
-            <FontAwesomeIcon icon="fa-question-circle"  size="sm" />
-          </OverlayTrigger>
+          <div style={{ cursor: "pointer" }}>
+            <OverlayTrigger
+              className="overlay"
+              trigger="click"
+              placement="right"
+              style={{ cursor: "pointer" }}
+              overlay={popoverDescription}
+            >
+              <FontAwesomeIcon icon="fa-question-circle" size="sm" />
+            </OverlayTrigger>
+          </div>
         </div>
         <div className="h-100 mb-1">
           <div style={{ width: "100%", minHeight: "100px" }}>
@@ -657,14 +663,17 @@ const ItemForm = ({
       <div id="visibility">
         <div className="title d-flex flex-row justify-content-start align-items-center gap-3">
           <h4>Visibility</h4>
-          <OverlayTrigger
-            className="overlay"
-            trigger="hover"
-            placement="right"
-            overlay={popoverVisibility}
-          >
-            <FontAwesomeIcon icon="fa-question-circle"  size="sm" />
-          </OverlayTrigger>
+          <div style={{ cursor: "pointer" }}>
+            <OverlayTrigger
+              className="overlay"
+              trigger="click"
+              placement="right"
+              style={{ cursor: "pointer" }}
+              overlay={popoverVisibility}
+            >
+              <FontAwesomeIcon icon="fa-question-circle" size="sm" />
+            </OverlayTrigger>
+          </div>
         </div>
         <div className="d-flex flex-row justify-content-start align-items-center gap-3 p-3 border rounded">
           <input

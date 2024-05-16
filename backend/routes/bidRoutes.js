@@ -71,11 +71,19 @@ module.exports.addBid = async (req, res) => {
   try {
     const userId = req.currentUser.id;
     const currentDate = new Date();
-    if (new Date(auction.startDate) > currentDate) {
+    const bidAmount = parseInt(req.body.bidAmount);
+    const auctionId = parseInt(req.body.auctionId);
+    const auction = await Auction.findByPk(auctionId);
+
+    if (!auction) {
+      return res.status(404).send("Auction not found");
+    }
+
+    if (new Date(auction.startTime) > currentDate) {
       return res.status(400).send("Auction has not started yet");
     }
 
-    if (new Date(auction.endDate) < currentDate) {
+    if (new Date(auction.endTime) < currentDate) {
       return res.status(400).send("Auction has ended");
     }
 
@@ -83,18 +91,10 @@ module.exports.addBid = async (req, res) => {
       return res.status(400).send("bid amount must be provided");
     }
 
-    const bidAmount = parseInt(req.body.bidAmount);
-    const auctionId = parseInt(req.body.auctionId);
-
     if (!auctionId) {
       return res.status(400).send("Auction ID must be provided");
     }
 
-    const auction = await Auction.findByPk(auctionId);
-
-    if (!auction) {
-      return res.status(404).send("Auction not found");
-    }
 
     if (auction.UserId === userId) {
       return res.status(400).send("bruh, you cannot bid on your own auction");
@@ -107,23 +107,24 @@ module.exports.addBid = async (req, res) => {
     }
 
     auction.highestBid = bidAmount;
-    const User = req.currentUser;
+    const user = req.currentUser;
     let data = {
       bidAmount: bidAmount,
       User: user,
       auctionId: auctionId,
+      userId: userId,
     };
 
     auction.save({ transaction: transaction });
     const bid = await Bid.create(data, { transaction: transaction });
 
     await transaction.commit();
-    pusher.trigger(`auction_${auctionId}`, `add_bid`, { ...data, User });
-    return res.send({ ...bid.dataValues, User });
+    pusher.trigger(`auction_${auctionId}`, `add_bid`, { ...data, user });
+    return res.send({ ...bid.dataValues, user });
   } catch (err) {
     await transaction.rollback();
     console.error("Error adding bid:", err);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json("Internal server error");
   }
 };
 

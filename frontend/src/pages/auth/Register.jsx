@@ -98,7 +98,7 @@ function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!username.value[0].match(/[a-z]i/)) {
+    if (!username.value[0].match(/[a-z]/)) {
       enqueueSnackbar("Username must start with letter", { variant: "error" });
       return;
     }

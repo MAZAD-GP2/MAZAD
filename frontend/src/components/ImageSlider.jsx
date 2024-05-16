@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../assets/css/imageSlider.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 const ImageSlider = ({ images }) => {
   const imageChangeInterval = 6000;
@@ -23,7 +21,7 @@ const ImageSlider = ({ images }) => {
     }, imageChangeInterval);
     return () => clearInterval(interval);
   }, []);
-  
+
   return (
     <div className="image-slider-container w-100  h-100">
       <div className="main-image d-flex flex-row justify-content-center align-items-center w-100 h-100">
@@ -37,10 +35,10 @@ const ImageSlider = ({ images }) => {
       {images.length > 1 && (
         <>
           <button onClick={showPrevImage} className="img-slider-btn left">
-            <FontAwesomeIcon icon={faChevronLeft} />
+            <i className="fas fa-chevron-left"></i>
           </button>
           <button onClick={showNextImage} className="img-slider-btn right">
-            <FontAwesomeIcon icon={faChevronRight} />
+            <i className="fas fa-chevron-right"></i>
           </button>
         </>
       )}
