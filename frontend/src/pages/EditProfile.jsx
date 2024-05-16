@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Spinner } from "react-bootstrap";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import Navbar from "../components/Navbar";
-import MobileNavbar from "../components/MobileNavbar";
 import { useLocation } from "react-router-dom";
 
 import { useSnackbar } from "notistack";
@@ -257,19 +255,18 @@ const EditProfile = () => {
       });
   };
 
-  const handleCancel = async (event) => {
-    event.preventDefault();
-    enqueueSnackbar("Discarded Changes", {
-      variant: "error",
-    });
-    setTimeout(() => {
-      window.location.href = "/profile";
-    }, 1000);
-  };
+  // const handleCancel = async (event) => {
+  //   event.preventDefault();
+  //   enqueueSnackbar("Discarded Changes", {
+  //     variant: "error",
+  //   });
+  //   setTimeout(() => {
+  //     window.location.href = "/profile";
+  //   }, 1000);
+  // };
 
   return (
     <>
-      <Navbar />
       {user && (
         <>
           <div
@@ -286,18 +283,11 @@ const EditProfile = () => {
              */}
             <div className="row">
               <div className="col-md-6">
-                <h2 className="py-2" style={{ marginBottom: "0px" }}>
-                  Edit Profile
-                </h2>
                 <form
-                  className="user-history"
+                  className="user-history d-flex w-100 align-content-center flex-column"
                   style={{
-                    width: "100%",
-                    alignContent: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                    marginBottom: "5px",
                     marginTop: "5px",
+                    margin: "5px 0",
                   }}
                 >
                   <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
@@ -307,17 +297,33 @@ const EditProfile = () => {
                         style={{ width: "80%", position: "relative" }}
                       >
                         <span className="profile-pic-hover">
-                          <img
-                            src={
-                              selectedProfilePicture
-                                ? URL.createObjectURL(selectedProfilePicture)
-                                : user.profilePicture
-                                ? user.profilePicture
-                                : "https://media.istockphoto.com/id/1288129985/vector/missing-image-of-a-person-placeholder.jpg?s=612x612&w=0&k=20&c=9kE777krx5mrFHsxx02v60ideRWvIgI1RWzR1X4MG2Y="
-                            }
-                            className="profile-pic"
+                          <div
+                            style={{
+                              border: "2px dashed gray",
+                              cursor: "pointer",
+                            }}
+                            className=" d-flex rounded-2 align-items-center justify-content-center p-4 user-select-none gap-2"
                             onClick={handleProfilePic}
-                          />
+                          >
+                            {selectedProfilePicture ? (
+                              <img
+                                src={URL.createObjectURL(
+                                  selectedProfilePicture
+                                )}
+                                style={{
+                                  maxWidth: "100%",
+                                  maxHeight: "100%",
+                                  width: "auto",
+                                  height: "auto",
+                                }}
+                              />
+                            ) : (
+                              <>
+                                <FontAwesomeIcon icon="fa-regular fa-image" />{" "}
+                                Upload Profile Picture
+                              </>
+                            )}
+                          </div>
                           <input
                             ref={fileInputRef}
                             type="file"
@@ -330,7 +336,7 @@ const EditProfile = () => {
                       </div>
                     </div>
 
-                    <div className="col-sm-12 row justify-content-center mb-3">
+                    <div className="col-sm-12 row justify-content-center mb-3 mt-5">
                       <div className="form-group" style={{ width: "80%" }}>
                         <OverlayTrigger
                           trigger="focus"
@@ -407,12 +413,11 @@ const EditProfile = () => {
                     </div>
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       <button
-                        className="btn btn-secondary text-white btn-block confirm-button"
+                        className="btn btn-secondary text-white confirm-button"
                         disabled={isEditing}
                         onClick={handleEdit}
                         style={{
                           marginBottom: "10px",
-                          width: "60%",
                           alignSelf: "center",
                         }}
                       >
@@ -422,21 +427,11 @@ const EditProfile = () => {
                           "Save Changes"
                         )}
                       </button>
-                      <button
-                        className="btn btn-danger btn-block confirm-button"
-                        onClick={handleCancel}
-                        style={{ width: "60%", alignSelf: "center" }}
-                      >
-                        Cancel
-                      </button>
                     </div>
                   </div>
                 </form>
               </div>
               <div className="col-md-6">
-                <h2 className="py-2" style={{ marginBottom: "0px" }}>
-                  Change Password
-                </h2>
                 <form
                   className="user-history"
                   style={{
@@ -532,14 +527,13 @@ const EditProfile = () => {
                         </button>
                       </div>
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div className="d-flex flex-column ">
                       <button
-                        className="btn btn-secondary text-white btn-block confirm-button"
+                        className="btn btn-secondary text-white confirm-button"
                         disabled={isChangingPassword}
                         onClick={handleChangePassword}
                         style={{
                           marginBottom: "10px",
-                          width: "60%",
                           alignSelf: "center",
                         }}
                       >
@@ -549,13 +543,6 @@ const EditProfile = () => {
                           "Save Password"
                         )}
                       </button>
-                      <button
-                        className="btn btn-danger btn-block confirm-button"
-                        onClick={handleCancel}
-                        style={{ width: "60%", alignSelf: "center" }}
-                      >
-                        Cancel
-                      </button>
                     </div>
                   </div>
                 </form>
@@ -564,7 +551,6 @@ const EditProfile = () => {
           </div>
         </>
       )}
-      <MobileNavbar />
     </>
   );
 };

@@ -37,6 +37,24 @@ module.exports.getAuctionsByUser = async (req, res) => {
   }
 };
 
+module.exports.getAuctionCountByUser = async (req, res) => {
+  try {
+    let { id } = req.params;
+    if (!id)
+      return res.status(400).send("User ID must be provided");
+
+    const user = User.findByPk(id);
+    if (!user) return res.status(404).send("User not found");
+
+    const auctionCount = await Auction.count({ where: { UserId: id } });
+
+    return res.send({count: auctionCount});
+  } catch (err) {
+    console.error("Error retrieving auctton count for user:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports.getAuctionsByItem = async (req, res) => {
   try {
     let { id } = req.params;

@@ -713,7 +713,7 @@ const ViewItem = () => {
           <div className="container-fluid p-3" id="view-item">
             {user && (user.id === item.userId || user.isAdmin) && (
               <div className="row-lg d-flex flex-row w-auto flex-wrap justify-content-start align-items-center mx-lg-3 mx-md-1 mx-sm-1">
-                <div className="col-auto h-100 w-100 d-flex flex-row flex-wrap align-items-center justify-content-start gap-lg-3 gap-md-2 gap-1 bg-white py-2 px-3 border rounded">
+                <div className="col-auto h-100 w-100 d-flex flex-row flex-wrap align-items-center justify-content-start gap-lg-3 gap-md-2 gap-1 bg-white py-2 px-3 border-0 border rounded">
                   {user.isAdmin === true ? (
                     <span className="col-auto d-lg-block d-md-block d-none">
                       Admin controls
@@ -885,7 +885,7 @@ const ViewItem = () => {
                 </div>
               </div>
               <div className="d-flex flex-column w-100 gap-3">
-                <div className="d-flex flex-column justify-content-center gap-2 bg-body p-3 col-auto">
+                <div className="d-flex flex-column justify-content-center gap-2 bg-body p-3 col-auto rounded-2">
                   <div className="row rounded d-flex flex-column align-items-center justify-content-center">
                     {lastBid ? (
                       <div className="d-flex flex-column mb-2 align-items-center justify-content-center">
@@ -907,7 +907,7 @@ const ViewItem = () => {
                       </div>
                     )}
                   </div>
-                  <div className="d-flex flex-row justify-content-between align-items-center gap-3 rounded p-3 gap-2 w-100">
+                  <div className="d-flex flex-row justify-content-center gap-4 rounded p-3 w-100">
                     <div>
                       {item.Auction.startTime && (
                         <div className="d-flex flex-row align-items-center gap-2">
@@ -920,8 +920,7 @@ const ViewItem = () => {
                         </div>
                       )}
                     </div>
-
-                    <div className="text-secondary">-</div>
+                    <div>-</div>
                     <div>
                       {item.Auction.finishTime && (
                         <div className="d-flex flex-column gap-2">
@@ -984,7 +983,7 @@ const ViewItem = () => {
                         </div>
                       </div>
                       <button
-                        className="btn btn-secondary text-white p-1 px-3 mt-3"
+                        className="btn btn-secondary text-white p-1 px-3 mt-3 w-25 m-auto"
                         onClick={handleBidModalShow}
                         disabled={
                           item.Auction.finishTime < new Date() ||

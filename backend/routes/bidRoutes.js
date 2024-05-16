@@ -37,6 +37,23 @@ module.exports.getBidsByUser = async (req, res) => {
   }
 };
 
+module.exports.getBidsCountByUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).send("User ID must be provided");
+
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).send("User not found");
+
+    const bidsCount = await Bid.count({ where: { UserId: id } });
+
+    return res.send({ count: bidsCount });
+  } catch (err) {
+    console.error("Error retrieving bids count for user:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports.getBidsByAuction = async (req, res) => {
   try {
     const { id } = req.params;
