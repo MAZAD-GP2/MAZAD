@@ -10,7 +10,7 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
       },
-      UserId: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -20,7 +20,7 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      ChatRoomId: {
+      chatRoomId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {

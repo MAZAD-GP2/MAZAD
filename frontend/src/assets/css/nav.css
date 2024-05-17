@@ -1,8 +1,3 @@
-.navbar-logo {
-  font-size: 2rem;
-  font-family: "pacifico";
-}
-
 @media (max-width: 903px) {
   #logo {
     font-size: 1rem;
@@ -23,7 +18,7 @@
 .active-nav-link {
   color: var(--primary-green) !important;
 }
-.active-nav-link>a{
+.active-nav-link > a {
   color: var(--primary-green) !important;
 }
 
@@ -58,9 +53,9 @@
 }
 
 .dropdown-menu {
-  background-color: var(--primary-black);
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
+  background-color: var(--primary-black) !important;
+  border-top-left-radius: 0px !important;
+  border-top-right-radius: 0px !important;
 }
 .dropdown-menu > a:hover {
   background-color: var(--primary-black);
@@ -68,7 +63,6 @@
 .dropdown-menu:hover {
   display: block;
 }
-
 
 .input-container {
   width: 45%;
@@ -90,7 +84,6 @@
   margin-right: 1%;
 }
 
-
 .add-item {
   background-color: transparent;
   border: none;
@@ -107,7 +100,7 @@
   color: var(--secondary-green);
   padding: 5px 5px;
   border-radius: 6px;
-  transition: .25s;
+  transition: 0.25s;
   cursor: pointer;
   font-size: 25px;
 }
@@ -116,7 +109,6 @@
   color: var(--primary-black);
   background-color: var(--primary-green);
 }
-
 
 .lgn-sign-up {
   color: var(--primary-green);
@@ -127,4 +119,3 @@
 .lgn-sign-up:hover {
   background-color: var(--primary-green);
 }
-

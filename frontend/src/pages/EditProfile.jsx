@@ -269,10 +269,7 @@ const EditProfile = () => {
     <>
       {user && (
         <>
-          <div
-            className="user-history-container"
-            style={{ marginTop: "0px", paddingTop: "5px" }}
-          >
+          <div className="user-history-container">
             {/* <button
               className="btn border-secondary text-secondary btn-block confirm-button"
               onClick={() => window.location.href = "/profile"}
@@ -283,18 +280,12 @@ const EditProfile = () => {
              */}
             <div className="row">
               <div className="col-md-6">
-                <form
-                  className="user-history d-flex w-100 align-content-center flex-column"
-                  style={{
-                    marginTop: "5px",
-                    margin: "5px 0",
-                  }}
-                >
-                  <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
+                <form className="user-history d-flex w-100 align-content-center flex-column mt-2">
+                  <div className="col-sm-12 col-md-12 col-lg-9 w-auto">
                     <div className="col-sm-12 row justify-content-center mb-3">
                       <div
                         className="form-group"
-                        style={{ width: "80%", position: "relative" }}
+                        style={{ position: "relative" }}
                       >
                         <span className="profile-pic-hover">
                           <div
@@ -319,7 +310,7 @@ const EditProfile = () => {
                               />
                             ) : (
                               <>
-                                <FontAwesomeIcon icon="fa-regular fa-image" />{" "}
+                                <i className="fa-regular fa-image"></i>
                                 Upload Profile Picture
                               </>
                             )}
@@ -337,7 +328,7 @@ const EditProfile = () => {
                     </div>
 
                     <div className="col-sm-12 row justify-content-center mb-3 mt-5">
-                      <div className="form-group" style={{ width: "80%" }}>
+                      <div className="form-group">
                         <OverlayTrigger
                           trigger="focus"
                           placement="top"
@@ -362,7 +353,7 @@ const EditProfile = () => {
                       </div>
                     </div>
                     <div className="col-sm-12 row justify-content-center mb-3">
-                      <div className="form-group" style={{ width: "80%" }}>
+                      <div className="form-group">
                         <OverlayTrigger
                           trigger="focus"
                           placement="top"
@@ -387,7 +378,7 @@ const EditProfile = () => {
                       </div>
                     </div>
                     <div className="col-sm-12 row justify-content-center mb-3">
-                      <div className="form-group" style={{ width: "80%" }}>
+                      <div className="form-group">
                         <OverlayTrigger
                           trigger="focus"
                           placement="top"
@@ -443,11 +434,11 @@ const EditProfile = () => {
                     marginTop: "5px",
                   }}
                 >
-                  <div className="col-sm-12 col-md-12 col-lg-9 mx-auto">
+                  <div className="col-sm-12 col-md-12 col-lg-9 w-auto">
                     <div className="col-sm-12 row justify-content-center mb-3">
                       <div
                         className="form-group position-relative d-flex"
-                        style={{ width: "80%" }}
+                       
                       >
                         <OverlayTrigger
                           className="overlay"
@@ -491,7 +482,7 @@ const EditProfile = () => {
                     <div className="col-sm-12 row justify-content-center mb-3">
                       <div
                         className="form-group position-relative d-flex"
-                        style={{ width: "80%" }}
+                       
                       >
                         <input
                           className={`form-control ${

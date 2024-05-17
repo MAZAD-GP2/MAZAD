@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import ImageSlider from "../components/ImageSlider";
 import * as api from "../api/index";
 import "../assets/css/viewItem.css";
@@ -722,14 +724,15 @@ const ViewItem = () => {
                   {user.id === item.userId && !user.isAdmin === true ? (
                     <span className="col-auto">controls</span>
                   ) : null}
-
-                  <button
-                    type="button"
-                    className="col-auto btn btn-sm btn-warning px-3"
-                    onClick={handleEditModalShow}
-                  >
-                    Edit
-                  </button>
+                  {status !== "new" && (
+                    <button
+                      type="button"
+                      className="col-auto btn btn-sm btn-warning px-3"
+                      onClick={handleEditModalShow}
+                    >
+                      Edit
+                    </button>
+                  )}
                   {user.isAdmin === true ? (
                     <>
                       {!item.isHidden ? (
@@ -785,11 +788,16 @@ const ViewItem = () => {
                         >
                           <small className="text-muted">{interestsCount}</small>
                           <span className="text-danger">
-                            {isInterest ? (
-                              <i className="fa-solid fa-heart liked"></i>
-                            ) : (
-                              <i className="fa-regular fa-heart"></i>
-                            )}
+                            <FontAwesomeIcon
+                              className={
+                                isInterest ? "text-danger liked" : "text-danger"
+                              }
+                              icon={
+                                isInterest
+                                  ? "fa-solid fa-heart"
+                                  : "fa-regular fa-heart"
+                              }
+                            />
                           </span>
                         </div>
                       </h2>

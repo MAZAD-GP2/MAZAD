@@ -1,6 +1,8 @@
 .item-card {
-  width: 20rem;
-  max-width: 20rem;
+  width: 100%;
+  max-width: calc(20% - 1rem);
+  
+  min-width: 18.5rem;
   border: 1px solid rgba(0, 0, 0, 0.12);
   transition: 0.25s;
   /* height: 100%; */
@@ -12,8 +14,9 @@
 
 .image {
   border-radius: 2%;
-  width: 18.5rem;
-  margin: 10px;
+  width: 100%;
+  /* margin: 0px; */
+  /* margin: 10px; */
   object-fit: cover;
   height: 15rem;
   cursor: pointer;
@@ -97,8 +100,6 @@
     max-width: 45%;
   }
   .image {
-    max-width: 94%;
-    width: 94%;
     height: 15rem;
   }
 }
@@ -109,7 +110,6 @@
     max-width: none;
   }
   .image {
-    /* width: 94%; */
     height: 15rem;
   }
 }
@@ -120,8 +120,6 @@
     max-width: 45%;
   }
   .image {
-    max-width: 94%;
-    width: 94%;
     height: 15rem;
   }
 }
@@ -132,7 +130,6 @@
     max-width: none;
   }
   .image {
-    /* width: 94%; */
     height: 15rem;
   }
-}
+} 

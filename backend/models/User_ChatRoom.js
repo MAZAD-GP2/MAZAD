@@ -14,7 +14,7 @@ const User_ChatRoom = sequelize.define("User_ChatRoom", {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  chat_roomId: {
+  chatRoomId: {
     type: Sequelize.INTEGER,
     allowNull: false,
   },

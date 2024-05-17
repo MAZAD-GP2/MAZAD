@@ -4,9 +4,13 @@ const bcrypt = require("bcrypt");
 const generateJWT = require("../utils/generateJWT");
 require("dotenv").config();
 const { Op } = require("sequelize");
+const Sequelize = require("sequelize").Sequelize;
+const sequelize = require("../config/database");
 const { v4: uuidv4 } = require("uuid");
 const nodemailer = require("nodemailer");
 const cloudinary = require("../config/cloudinaryConfig");
+const Bid = require("../models/Bid");
+const Auction = require("../models/Auction");
 
 module.exports.getAllUsers = async (req, res) => {
   try {
@@ -236,7 +240,7 @@ module.exports.updateUser = async (req, res) => {
       username,
       email,
       phoneNumber,
-      profilePicture
+      profilePicture,
     });
 
     const token = await generateJWT({
@@ -245,7 +249,7 @@ module.exports.updateUser = async (req, res) => {
       email: user.email,
       isAdmin: user.isAdmin,
       phoneNumber: user.phoneNumber,
-      profilePicture: user.profilePicture
+      profilePicture: user.profilePicture,
     });
 
     const userData = {
@@ -266,7 +270,7 @@ module.exports.updateUser = async (req, res) => {
 
 module.exports.passwordUpdate = async (req, res) => {
   try {
-    const { password} = req.body;
+    const { password } = req.body;
 
     const userId = req.currentUser.id;
 
@@ -314,5 +318,35 @@ module.exports.deleteUser = async (req, res) => {
     return res.send("successfully");
   } catch (err) {
     return res.send(err);
+  }
+};
+
+module.exports.getUserStats = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const bidCount = await Bid.count({
+      where: {
+        userId,
+      },
+    });
+
+    const AuctionsWonCount = await Bid.count({
+      where: {
+        userId,
+        bidAmount: Sequelize.col('Auction.highestBid'), // Comparing bid amount with highest bid amount
+      },
+      include: [{
+        model: Auction,
+        required: true, // This ensures that only bids with corresponding auctions are included
+        where: {
+          finishTime: { [Sequelize.Op.lt]: Sequelize.literal('NOW()') } // Only include auctions with finishTime in the past
+        },
+      }],
+      distinct: true, // Ensure that only distinct auction IDs are counted
+    });
+    
+    return res.json({ bidCount, AuctionsWonCount });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
   }
 };

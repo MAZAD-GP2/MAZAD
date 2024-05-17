@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import * as api from "./api/index";
 import loadable from "@loadable/component";
+import { Chat } from "./pages/Chat.jsx";
 
 const Home = loadable(() => import("./pages/Home.jsx"));
 const Register = loadable(() => import("./pages/auth/Register.jsx"));
@@ -71,6 +72,9 @@ function App() {
         {!isLoggedIn && <Route exact path="/add-item" element={<Login />} />}
         {isLoggedIn && <Route path="/favorites" element={<Favorites />} />}
         {!isLoggedIn && <Route exact path="/favorites" element={<Login />} />}
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/chat/:userId" element={<Chat />} />
+        {/* {!isLoggedIn && <Route exact path="/chat" element={<Login />} />} */}
         <Route exact path="/search" element={<SearchResult />} />
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
         <Route exact path="/item/:id" element={<ViewItem />} />

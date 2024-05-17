@@ -7,9 +7,8 @@ import { useLocation } from "react-router-dom";
 import * as api from "../api/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MobileSearchBar from "./MobileSearchBar";
-import logo from "../assets/images/Mazad Logo English With Z.png";
 
-const Navbar = () => {
+const Navbar = (showMobileNavbar=true) => {
   const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [show, setShow] = useState(false);
@@ -54,11 +53,13 @@ const Navbar = () => {
 
   return (
     <>
-      <MobileSearchBar
-        search={search}
-        setSearch={setSearch}
-        SubmitSearch={SubmitSearch}
-      />
+      {showMobileNavbar && (
+        <MobileSearchBar
+          search={search}
+          setSearch={setSearch}
+          SubmitSearch={SubmitSearch}
+        />
+      )}
       <div id="desktopNavbar" className="d-lg-block d-none">
         <div className="d-flex flex-row w-100 gap-5 bg-primary">
           <div className="d-flex flex-column w-100 gap-1">
@@ -68,7 +69,11 @@ const Navbar = () => {
                 href="/home"
                 style={{ cursor: "pointer" }}
               >
-                <img src="https://res.cloudinary.com/djwhrh0w7/image/upload/v1715589905/Mazad_Logo_English_With_Z_qorc8g.png" alt="logo" height="50px" />
+                <img
+                  src="https://res.cloudinary.com/djwhrh0w7/image/upload/v1715589905/Mazad_Logo_English_With_Z_qorc8g.png"
+                  alt="logo"
+                  height="50px"
+                />
               </a>
               <div id="search-create-nav-container" className="col">
                 <div
@@ -122,20 +127,20 @@ const Navbar = () => {
                   ) : (
                     <div id="lgn-sign-up-container w-100">
                       <div className="d-flex flex-row justify-content-between gap-3">
-                          <a
-                            type="submit"
-                            className="btn btn-secondary col-auto px-3 rounded-5 align-content-center lgn-sign-up"
-                            href="/login"
-                          >
-                            Log In
-                          </a>
-                          <a
-                            className="btn btn-secondary col-auto px-3 rounded-5 align-content-center lgn-sign-up"
-                            href="/register"
-                            role="button"
-                          >
-                            Sign Up
-                          </a>
+                        <a
+                          type="submit"
+                          className="btn btn-secondary col-auto px-3 rounded-5 align-content-center lgn-sign-up"
+                          href="/login"
+                        >
+                          Log In
+                        </a>
+                        <a
+                          className="btn btn-secondary col-auto px-3 rounded-5 align-content-center lgn-sign-up"
+                          href="/register"
+                          role="button"
+                        >
+                          Sign Up
+                        </a>
                       </div>
                     </div>
                   )}
@@ -151,9 +156,14 @@ const Navbar = () => {
                   }
                   href="/home"
                 >
-                  <span className={"link d-inline-block w-auto" +  (location.pathname === "/home" ? " active-nav-link" : "")}
+                  <span
+                    className={
+                      "link d-inline-block w-auto" +
+                      (location.pathname === "/home" ? " active-nav-link" : "")
+                    }
                   >
-                    Home</span>
+                    Home
+                  </span>
                 </a>
                 <Nav>
                   <NavDropdown
@@ -189,7 +199,15 @@ const Navbar = () => {
                   }
                   href="/livemazads"
                 >
-                  <span className={"link d-inline-block w-auto" +  (location.pathname === "/livemazads" ? " active-nav-link" : "")} id="liveMazad">
+                  <span
+                    className={
+                      "link d-inline-block w-auto" +
+                      (location.pathname === "/livemazads"
+                        ? " active-nav-link"
+                        : "")
+                    }
+                    id="liveMazad"
+                  >
                     Live Mazads
                   </span>
                 </a>
@@ -200,7 +218,14 @@ const Navbar = () => {
                   }
                   href="/popular"
                 >
-                  <span className={"link d-inline-block w-auto" +  (location.pathname === "/popular" ? " active-nav-link" : "")}>
+                  <span
+                    className={
+                      "link d-inline-block w-auto" +
+                      (location.pathname === "/popular"
+                        ? " active-nav-link"
+                        : "")
+                    }
+                  >
                     Popular Items
                   </span>
                 </a>
@@ -212,7 +237,14 @@ const Navbar = () => {
                     }
                     href="/favorites"
                   >
-                    <span className={"link d-inline-block w-auto" +  (location.pathname === "/favorites" ? " active-nav-link" : "")}>
+                    <span
+                      className={
+                        "link d-inline-block w-auto" +
+                        (location.pathname === "/favorites"
+                          ? " active-nav-link"
+                          : "")
+                      }
+                    >
                       Favorites
                     </span>
                   </a>

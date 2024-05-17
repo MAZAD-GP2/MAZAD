@@ -3,7 +3,7 @@ import "../assets/css/profile.css";
 import Card from "../components/Card";
 import * as api from "../api/index";
 
-const RecentItems = ({ isCurrentUser }) => {
+const RecentItems = ({ isCurrentUser, setAuctionCount }) => {
   const [items, setItems] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [page, setPage] = useState(1);
@@ -16,6 +16,7 @@ const RecentItems = ({ isCurrentUser }) => {
         const response = await api.getAllItemsByUserId(page, limit);
         setItems(response.data.items);
         setTotalPages(Math.ceil(response.data.count / limit));
+        setAuctionCount(response.data.count);
       } catch (err) {
         console.error(err);
       } finally {
@@ -33,9 +34,9 @@ const RecentItems = ({ isCurrentUser }) => {
     <>
       {isCurrentUser ? (
         <>
-          <h3>Recent Items</h3>
+          <h5>Recent Items</h5>
           <div
-            className="user-history d-flex flex-wrap"
+            className="user-history d-flex flex-wrap justify-content-center gap-3"
             style={{ justifyContent: "space-evenly", marginBottom: "10px" }}
           >
             {isFetching ? (

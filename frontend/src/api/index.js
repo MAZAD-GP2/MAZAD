@@ -33,6 +33,7 @@ export const getAllItemsByCategory = (id) => API.get(`/item/category/${id}`);
 export const getAllItemsByFavorites = () => API.get(`/item/favorites`);
 export const getItemById = (id) => API.get(`/item/${id}`);
 export const getAllItemsByUserId = (page, limit) => API.get(`/item/user?page=${page}&limit=${limit}`);
+export const getUserStats = (id) => API.get(`/user/stats/${id}`);
 export const addItem = (data) =>
   API.post("/item/create", data, {
     headers: {
@@ -82,3 +83,7 @@ export const decodeToken = () => API.post(`/decode-token`);
 export const search = (data) => API.get(`/search?search=${data}`);
 
 export const addComment = (data) => API.post(`/comment/add`, data);
+
+export const getChatRooms = (id) => API.get(`/chat/getRooms/${id}`);
+export const getRoomByUser = (id) => API.get(`/chat/getRoomByUser/${id}`);
+export const getMessagesInRoom = (id) => API.get(`/chat/getMessagesInRoom/${id}`);

@@ -13,12 +13,16 @@ import EditProfile from "./EditProfile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Profile = () => {
+  const sessionUser = JSON.parse(sessionStorage.getItem("user"));
+
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
   const [user, setUser] = useState(null);
   const [auctionCount, setAuctionCount] = useState(0);
   const [bidCount, setBidCount] = useState(0);
+  const [auctionWon, setAuctionWon] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const [showEditSection, setShowEditSection] = useState(false);
   const userData = sessionStorage.getItem("user");
@@ -34,9 +38,14 @@ const Profile = () => {
       enqueueSnackbar(err.response.data.message, { variant: "error" });
     }
   };
-
   useEffect(() => {
     const fetchUser = async () => {
+      if (sessionUser.id == id) {
+        setIsCurrentUser(false);
+      } else {
+        setIsCurrentUser(false);
+      }
+
       try {
         if (id) {
           const response = await api.getUserById(id);
@@ -48,28 +57,52 @@ const Profile = () => {
           setLoading(false);
           const parsedUserData = JSON.parse(userData);
           if (parsedUserData && parsedUserData.id == id) {
-            setIsCurrentUser(true);
+            // setIsCurrentUser(true);
           }
         } else {
           if (userData) {
             setUser(JSON.parse(userData));
-            setIsCurrentUser(true);
+            // setIsCurrentUser(true);
           } else {
             console.error("User ID not provided.");
           }
           setLoading(false);
         }
-
       } catch (err) {
         console.error("Error fetching user data:", err);
       }
     };
+
     fetchUser();
+
     // Clean-up function to reset state when component unmounts or id changes
     return () => {
-      setIsCurrentUser(false);
+      // setIsCurrentUser(false);
     };
   }, [id, userData]);
+
+  useEffect(() => {
+    const fetchUserStats = async () => {
+      try {
+        const response = await api.getUserStats(sessionUser.id);
+        setAuctionWon(response.data.AuctionsWonCount);
+        setBidCount(response.data.bidCount);
+      } catch (err) {
+        enqueueSnackbar(err.response.data.message, { variant: "error" });
+      }
+      setStatsLoading(false);
+    };
+
+    const fetchData = async () => {
+      await fetchUserStats();
+    };
+
+    fetchData();
+
+    return () => {
+      setStatsLoading(true);
+    };
+  }, [id]);
 
   if (loading) {
     return (
@@ -86,117 +119,191 @@ const Profile = () => {
       {user ? (
         <>
           <Navbar />
-          <div className="user-cred">
-            <div className="d-flex gap-2">
-              <img
-                className="profile-pic"
-                src={user.profilePicture ? user.profilePicture : missingPfp}
-              />
-              <div className="d-flex flex-column justify-content-center mt-4">
-                <div className="username-admin-tag">
-                  <h2 className="mb-0 fw-bold text-nowrap">{user.username}</h2>
-                  {user.isAdmin && <p className="admin-tag">ADMIN</p>}
+          <div className="p-lg-5 p-2 d-flex flex-column gap-lg-4 gap-2">
+            <div className="card user-card bg-white p-lg-4 p-2 d-flex flex-row flex-wrap gap-4 justify-content-between align-items-center">
+              <div className="d-flex gap-3">
+                <img
+                  className="profile-pic"
+                  src={user.profilePicture ? user.profilePicture : missingPfp}
+                />
+                <div className="d-flex flex-column justify-content-center mt-4">
+                  <div className="username-admin-tag">
+                    <h2 className="mb-0 fw-bold text-nowrap">
+                      {user.username}
+                    </h2>
+                    {user.isAdmin && <p className="admin-tag">ADMIN</p>}
+                  </div>
+                  <p className="profile-info">{user.email}</p>
+                  <p className="profile-info">{user.phoneNumber}</p>
                 </div>
-                <p className="profile-info">{user.email}</p>
-                <p className="profile-info">{user.phoneNumber}</p>
+              </div>
+              <div className="stats-msg">
+                <div className="stats">
+                  <span className="d-flex flex-column align-items-center">
+                    <h4>AUCTIONS HOSTED</h4>
+                    <h5 className="text-secondary">
+                      {statsLoading ? (
+                        <div className=" text-center w-100 mt-5">
+                          <div
+                            className="spinner-border text-primary opacity-25"
+                            role="status"
+                          >
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      ) : (
+                        auctionCount
+                      )}
+                    </h5>
+                  </span>
+                  <span className="d-flex flex-column align-items-center">
+                    <h4>BIDS MADE</h4>
+                    <h5 className="text-secondary">
+                      {statsLoading ? (
+                        <div className=" text-center w-100 mt-5">
+                          <div
+                            className="spinner-border text-primary opacity-25"
+                            role="status"
+                          >
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      ) : (
+                        bidCount
+                      )}
+                    </h5>
+                  </span>
+                  <span className="d-flex flex-column align-items-center">
+                    <h4>AUCTIONS WON</h4>
+                    <h5 className="text-secondary">
+                      {statsLoading ? (
+                        <div className=" text-center w-100 mt-5">
+                          <div
+                            className="spinner-border text-primary opacity-25"
+                            role="status"
+                          >
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      ) : (
+                        auctionWon
+                      )}
+                    </h5>
+                  </span>
+                </div>
+                <div className="d-flex justify-content-end">
+                  {isCurrentUser ? (
+                    <button className="btn btn-danger " onClick={handleSignOut}>
+                      <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                      Log Out
+                    </button>
+                  ) : (
+                    <button className="d-flex align-items-center gap-2 btn btn-secondary text-white msg-btn">
+                      <i className="fa-solid fa-comment-dots"></i>
+                      Message User
+                    </button>
+                  )}
+                  {/* temporary shitty log out button until we make a dropdown from pfp */}
+                </div>
               </div>
             </div>
-            <div className="stats-msg">
-              <div className="stats">
-                <span className="d-flex flex-column align-items-center">
-                  <h4>AUCTIONS HOSTED</h4>
-                  <h5 className="text-secondary">20</h5>
-                </span>
-                <span className="d-flex flex-column align-items-center">
-                  <h4>BIDS MADE</h4>
-                  <h5 className="text-secondary">200</h5>
-                </span>
-                <span className="d-flex flex-column align-items-center">
-                  <h4>AUCTIONS WON</h4>
-                  <h5 className="text-secondary">10</h5>
-                </span>
-              </div>
-              <div className="d-flex justify-content-end">
-                {isCurrentUser ? (
-                  <button className="btn btn-danger " onClick={handleSignOut}>
-                    <FontAwesomeIcon icon="fa-solid fa-arrow-right-from-bracket" />{" "}
-                    Log Out
-                  </button>
-                ) : (
-                  <button className="btn btn-secondary text-white msg-btn">
-                    <FontAwesomeIcon icon="fa-solid fa-comment-dots" /> Message
-                    User
-                  </button>
+            <div className="card user-card d-flex flex-column gap-lg-4 gap-1s p-lg-4 p-2">
+              {isCurrentUser && (
+                <div className="d-flex justify-content-center">
+                  <ul
+                    className="nav nav-pills mb-3 gap-3"
+                    id="pills-tab"
+                    role="tablist"
+                  >
+                    <li className="nav-item" role="presentation">
+                      <button
+                        className={`btn ${
+                          showEditSection ? "btn-primary" : "btn-secondary"
+                        } w-100`}
+                        id="pills-history-tab"
+                        data-bs-toggle="pill"
+                        data-bs-target="#pills-history"
+                        type="button"
+                        role="tab"
+                        aria-controls="pills-history"
+                        aria-selected={showEditSection}
+                        onClick={() => setShowEditSection(false)}
+                      >
+                        History
+                      </button>
+                    </li>
+                    <li className="nav-item" role="presentation">
+                      <button
+                        className={`btn ${
+                          !showEditSection ? "btn-primary" : "btn-secondary"
+                        } w-100`}
+                        id="pills-edit-tab"
+                        data-bs-toggle="pill"
+                        data-bs-target="#pills-edit"
+                        type="button"
+                        role="tab"
+                        aria-controls="pills-edit"
+                        aria-selected={!showEditSection}
+                        onClick={() => setShowEditSection(true)}
+                      >
+                        Edit
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+
+              <div className="tab-content" id="pills-tabContent">
+                <div
+                  className={`tab-pane fade ${
+                    !showEditSection ? "show active" : ""
+                  }`}
+                  id="pills-history"
+                  role="tabpanel"
+                  aria-labelledby="pills-history-tab"
+                >
+                  <div className="card user-card d-flex flex-column gap-lg-4 gap-3 p-lg-4 p-2">
+                    <RecentItems
+                      isCurrentUser={isCurrentUser}
+                      setAuctionCount={setAuctionCount}
+                    />
+                    <h3>Bid History</h3>
+                    <div className="user-history">
+                      <div className="item-container">
+                        <p className="item-name">Item Name</p>
+                        <p className="bid-info">Highest Bid: $100</p>
+                        <p className="duration">Duration: 3 days left</p>
+                      </div>
+                      <div className="item-container">
+                        <p className="item-name">Item Name</p>
+                        <p className="bid-info">Highest Bid: $100</p>
+                        <p className="duration">Duration: 3 days left</p>
+                      </div>
+                      <div className="item-container">
+                        <p className="item-name">Item Name</p>
+                        <p className="bid-info">Highest Bid: $100</p>
+                        <p className="duration">Duration: 3 days left</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {isCurrentUser && (
+                  <div
+                    className={`tab-pane fade ${
+                      showEditSection ? "show active" : ""
+                    }`}
+                    id="pills-edit"
+                    role="tabpanel"
+                    aria-labelledby="pills-edit-tab"
+                  >
+                    <div className="card user-card d-flex flex-column gap-lg-4 gap-3 p-lg-4 p-2">
+                      <EditProfile />
+                    </div>
+                  </div>
                 )}
-                {/* temporary shitty log out button until we make a dropdown from pfp */}
               </div>
             </div>
           </div>
-          {isCurrentUser && (
-            <div className="d-flex justify-content-center my-5">
-              <div
-                style={{
-                  backgroundColor: "#e1e1e1",
-                  padding: "8px 30px",
-                  display: "flex",
-                  borderRadius: "5px",
-                  gap: "5px",
-                }}
-              >
-                <h6
-                  className={`edit-history-toggle ${
-                    showEditSection
-                      ? "text-secondary text-decoration-underline"
-                      : " "
-                  }`}
-                  onClick={() => setShowEditSection(true)}
-                >
-                  EDIT
-                </h6>
-                <span
-                  style={{ border: "1px solid var(--primary-green)" }}
-                ></span>
-                <h6
-                  className={`edit-history-toggle ${
-                    !showEditSection
-                      ? "text-secondary text-decoration-underline"
-                      : " "
-                  }`}
-                  onClick={() => setShowEditSection(false)}
-                >
-                  HISTORY
-                </h6>
-              </div>
-            </div>
-          )}
-
-          {showEditSection ? (
-            <EditProfile />
-          ) : (
-            <div className="d-flex">
-              <div className="user-history-container w-100 ">
-                <RecentItems isCurrentUser={isCurrentUser} />
-                <h3>Bid History</h3>
-                <div className="user-history">
-                  <div className="item-container">
-                    <p className="item-name">Item Name</p>
-                    <p className="bid-info">Highest Bid: $100</p>
-                    <p className="duration">Duration: 3 days left</p>
-                  </div>
-                  <div className="item-container">
-                    <p className="item-name">Item Name</p>
-                    <p className="bid-info">Highest Bid: $100</p>
-                    <p className="duration">Duration: 3 days left</p>
-                  </div>
-                  <div className="item-container">
-                    <p className="item-name">Item Name</p>
-                    <p className="bid-info">Highest Bid: $100</p>
-                    <p className="duration">Duration: 3 days left</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
           <MobileNavbar />
         </>
       ) : (

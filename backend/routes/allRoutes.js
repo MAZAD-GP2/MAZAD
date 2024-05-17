@@ -9,6 +9,7 @@ const interestRoutes = require("./interestRoute");
 const auctionRoutes = require("./auctionRoutes");
 const bidRoutes = require("./bidRoutes");
 const commentRoutes = require("./commentRoutes");
+const chatRoutes = require("./chatRoutes.js");
 const verifyToken = require("../middlewares/verifytoken");
 const checkAdmin = require("../middlewares/checkAdmin");
 const multer = require("multer");
@@ -55,6 +56,10 @@ router
 router
   .route("/user/delete/:id")
   .delete(verifyToken(true), checkAdmin, userRoutes.deleteUser);
+
+router
+  .route("/user/stats/:id")
+  .get(verifyToken(true), userRoutes.getUserStats);
 
 // item
 router.route("/item").get(verifyToken(false), itemRoutes.getAllItems);
@@ -103,7 +108,9 @@ router
 // Auction
 router.route("/auction/:id").get(auctionRoutes.getAuctionById);
 router.route("/auction/user/:id").get(auctionRoutes.getAuctionsByUser);
-router.route("/auction/user/:id/count").get(auctionRoutes.getAuctionCountByUser);
+router
+  .route("/auction/user/:id/count")
+  .get(auctionRoutes.getAuctionCountByUser);
 router.route("/auction/item/:id").get(auctionRoutes.getAuctionsByItem);
 router
   .route("/auction/create")
@@ -119,7 +126,7 @@ router
 router.route("/bid/:id").get(bidRoutes.getBidById);
 router.route("/bid/auction/:id").get(bidRoutes.getBidsByAuction);
 router.route("/bid/user/:id").get(bidRoutes.getBidsByUser);
-router.route('/bid/user/:id/count').get(bidRoutes.getBidsCountByUser);
+router.route("/bid/user/:id/count").get(bidRoutes.getBidsCountByUser);
 router.route("/bid/create").post(verifyToken(true), bidRoutes.addBid);
 router.route("/bid/delete/:id").delete(verifyToken(true), bidRoutes.removeBid);
 
@@ -134,4 +141,7 @@ router.route("/tag/delete/:id").delete(tagRoutes.deleteTag);
 
 router.route("/comment/add").post(verifyToken(true), commentRoutes.addComment);
 
+router.route("/chat/getRooms/:id").get(verifyToken(true), chatRoutes.getChatRooms);
+router.route("/chat/getRoomByUser/:id").get(verifyToken(true), chatRoutes.getRoomByUser);
+router.route("/chat/getMessagesInRoom/:roomId").get(verifyToken(true), chatRoutes.getMessagesInRoom);
 module.exports = router;

@@ -1,0 +1,48 @@
+#main-container {
+  /* navbar + padding */
+  height: calc(100vh - (114px + 32px));
+  overflow: auto;
+}
+
+.room.active {
+  background-color: #f5f5f5;
+}
+
+.room:hover {
+  background-color: #f5f5f5;
+}
+
+.last-message {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.75rem;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.content{
+    color: #4d4d4d;
+    font-weight: 300;
+}
+
+.time{
+    color: #6e6e6e;
+}
+
+@media (max-width: 768px) {
+    #main-container {
+        height: calc(100vh - 60px);
+        border: none;
+    }
+    #chat-box {
+        border: none;
+    }
+    .avatar {
+      width: 30px;
+      height: 30px;
+    }
+}

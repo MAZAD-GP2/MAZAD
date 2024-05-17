@@ -1,11 +1,11 @@
 @import url("https://fonts.googleapis.com/css?family=Amiri");
 @import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
 :root {
-  --primary-black: #110F0F;
+  --primary-black: #110f0f;
   --secondary-black: #1a1a1a;
   --primary-green: #00e175;
   --secondary-green: #00c667;
-  --primary-white: #f0f0f0;
+  --primary-white: #f3f4f6;
   --muted-light: #d3d2dd;
 }
 
@@ -17,6 +17,27 @@ body {
 .link {
   text-decoration: none;
   transition: color 0.3s;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--secondary-green);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-black);
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-black);
 }
 
 /* mobile */

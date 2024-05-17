@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../assets/css/card.css";
 import sanitizeHtml from "sanitize-html";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as api from "../api/index";
 import { Modal } from "react-bootstrap";
 import LoginForm from "./LoginForm";
@@ -111,12 +112,15 @@ const Card = ({ item, removeItemFromFavorites }) => {
 
   return (
     <div className="w-100">
+      <div className="p-2">
+
       <img
         className="image "
         src={item.Images[0].imgURL}
         alt="Card image cap"
         onClick={handleCardClick}
-      />
+        />
+        </div>
       {/* <ImageSlider images={item.Images} /> */}
 
       {/* <div style={{ maxHeight: "300px", cursor: "pointer" }} onClick={handleCardClick}>
@@ -177,13 +181,10 @@ const Card = ({ item, removeItemFromFavorites }) => {
               onClick={() => handleChangeInterest(item.id)}
               title={!user ? "Login to like" : "I am interested in this"}
             >
-              <i
-                className={
-                  isInterest
-                    ? "fa-solid fa-heart text-danger liked"
-                    : "fa-regular fa-heart text-danger"
-                }
-              ></i>
+              <FontAwesomeIcon
+                className={isInterest ? "text-danger liked" : "text-danger"}
+                icon={isInterest ? "fa-solid fa-heart" : "fa-regular fa-heart"}
+              />
               <small className="text-muted">{interestsCount}</small>
             </div>
           </div>
