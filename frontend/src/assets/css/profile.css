@@ -39,7 +39,7 @@
 
 @media (max-width: 720px) {
   /* Styles for screens with max-width 720px */
-  .user-cred {
+  .user-card {
     flex-direction: column; /* Stack elements vertically */
     align-items: center; /* Center elements horizontally */
     padding-left: 20px;
@@ -52,7 +52,7 @@
   .edit-history-toggle {
     font-size: 12px;
   }
-  .user-cred > .admin-tag {
+  .user-card > .admin-tag {
     font-size: 5px;
   }
 

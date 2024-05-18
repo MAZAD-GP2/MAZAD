@@ -88,10 +88,13 @@
   background-color: transparent;
   border: none;
   color: var(--primary-green);
+  transition: 0.25s;
+  text-decoration: none;
 }
 
 .add-item:hover {
   background-color: var(--primary-green);
+  color: black;
 }
 
 .profile-redirect {

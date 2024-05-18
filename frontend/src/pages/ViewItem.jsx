@@ -898,7 +898,7 @@ const ViewItem = () => {
                     {lastBid ? (
                       <div className="d-flex flex-column mb-2 align-items-center justify-content-center">
                         <h2 className="fw-bolder text-truncate">
-                          {lastBid.User.username}👑
+                          {lastBid.User.username} 👑
                         </h2>
                         <h4 className="text-secondary py-2 px-3 my-1 mx-0">
                           {lastBid.bidAmount} JD
