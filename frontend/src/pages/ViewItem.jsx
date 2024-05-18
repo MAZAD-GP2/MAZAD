@@ -151,8 +151,8 @@ const ViewItem = () => {
         const AuctionBids = await api.getBidsByAuction(
           itemData.data.item.Auction.id
         );
-        let startDate = new Date(itemData.data.item.startTime);
-        let finishDate = new Date(itemData.data.item.finishDate);
+        let startDate = new Date(itemData.data.item.Auction.startTime);
+        let finishDate = new Date(itemData.data.item.Auction.finishTime);
         let now = new Date();
         if (finishDate < now) {
           setStatus("over");

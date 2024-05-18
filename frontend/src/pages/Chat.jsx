@@ -6,7 +6,8 @@ import * as api from "../api/index";
 import "../assets/css/chat.css";
 import PageTitle from "../components/PageTitle";
 import { useParams } from "react-router-dom";
-export function Chat() {
+
+function Chat() {
   const { userId } = useParams();
   const [allMessages, setAllMessages] = useState([]);
   const [currentMessages, setCurrentMessages] = useState([]);
@@ -362,3 +363,5 @@ export function Chat() {
     </>
   );
 }
+
+export default Chat;
