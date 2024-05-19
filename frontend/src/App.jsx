@@ -1,8 +1,9 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import * as api from "./api/index";
 import loadable from "@loadable/component";
-import { Chat } from "./pages/Chat.jsx";
+import Chat from "./pages/Chat.jsx";
+import IsUser from "./components/Auth/IsUser.jsx";
 
 const Home = loadable(() => import("./pages/Home.jsx"));
 const Register = loadable(() => import("./pages/auth/Register.jsx"));
@@ -15,11 +16,11 @@ const AddItem = loadable(() => import("./pages/AddItem.jsx"));
 const CategoryItems = loadable(() => import("./pages/CategoryItems.jsx"));
 const ViewItem = loadable(() => import("./pages/ViewItem.jsx"));
 const Profile = loadable(() => import("./pages/Profile.jsx"));
-// const EditProfile = loadable(() => import("./pages/EditProfile.jsx"));
 const LandingPage = loadable(() => import("./pages/LandingPage.jsx"));
 const SearchResult = loadable(() => import("./pages/SearchResult.jsx"));
 const Favorites = loadable(() => import("./pages/Favorites.jsx"));
 const NotFound = loadable(() => import("./components/NotFound.jsx"));
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -48,38 +49,22 @@ function App() {
       <Routes>
         <Route exact path="/" element={<LandingPage />} />
         <Route exact path="/home" element={<Home />} />
-        {isLoggedIn && <Route path="/register" element={<Home />} />}
-        {!isLoggedIn && <Route exact path="/register" element={<Register />} />}
-        {isLoggedIn && <Route path="/profile" element={<Profile />} />}
-        {!isLoggedIn && <Route exact path="/profile" Navigate={<Login />} />}
-        {isLoggedIn && <Route path="/profile/:id" element={<Profile />} />}
-        {!isLoggedIn && (
-          <Route exact path="/profile/:id" Navigate={<Login />} />
-        )}
-        {/* {isLoggedIn && <Route path="/edit-profile" element={<EditProfile />} />} */}
-        {/* {!isLoggedIn && <Route path="/edit-profile" Navigate={<Login />} />} */}
-        {isLoggedIn && <Route path="/login" Navigate={<Home />} />}
-        {!isLoggedIn && <Route exact path="/login" element={<Login />} />}
-        {isLoggedIn && <Route path="/forgot-password" Navigate={<Home />} />}
-        {!isLoggedIn && (
-          <Route exact path="/forgot-password" element={<ForgotPassword />} />
-        )}
-        {isLoggedIn && <Route path="/reset-password" Navigate={<Home />} />}
-        {!isLoggedIn && (
-          <Route exact path="/reset-password" element={<ResetPassword />} />
-        )}
-        {isLoggedIn && <Route path="/add-item" element={<AddItem />} />}
-        {!isLoggedIn && <Route exact path="/add-item" element={<Login />} />}
-        {isLoggedIn && <Route path="/favorites" element={<Favorites />} />}
-        {!isLoggedIn && <Route exact path="/favorites" element={<Login />} />}
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/chat/:roomId" element={<Chat />} />
-        {/* {!isLoggedIn && <Route exact path="/chat" element={<Login />} />} */}
+        <Route exact path="/login" element={<Login />} />
+        <Route exact path="/register" element={<Register />} />
+        <Route exact path="/forgot-password" element={<ForgotPassword />} />
+        <Route exact path="/reset-password" element={<ResetPassword />} />
+        <Route element={<IsUser/>}>
+          <Route element={<Profile />} path="/profile" exact/>
+          <Route element={<Profile />} path="/profile/:id" exact/>
+          <Route element={<AddItem />} path="/add-item" exact/>
+          <Route element={<Favorites />} path="/favorites" exact/>
+          <Route path="/chat" element={<Chat />} exact/>
+          <Route path="/chat/:userId" element={<Chat />} exact/>
+        </Route>
         <Route exact path="/search" element={<SearchResult />} />
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
         <Route exact path="/item/:id" element={<ViewItem />} />
-        {/* <Route exact path="not-found" element={<NotFound/>}/> */}
-        <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

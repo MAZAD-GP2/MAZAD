@@ -151,8 +151,8 @@ const ViewItem = () => {
         const AuctionBids = await api.getBidsByAuction(
           itemData.data.item.Auction.id
         );
-        let startDate = new Date(itemData.data.item.startTime);
-        let finishDate = new Date(itemData.data.item.finishDate);
+        let startDate = new Date(itemData.data.item.Auction.startTime);
+        let finishDate = new Date(itemData.data.item.Auction.finishTime);
         let now = new Date();
         if (finishDate < now) {
           setStatus("over");
@@ -898,7 +898,7 @@ const ViewItem = () => {
                     {lastBid ? (
                       <div className="d-flex flex-column mb-2 align-items-center justify-content-center">
                         <h2 className="fw-bolder text-truncate">
-                          {lastBid.User.username}👑
+                          {lastBid.User.username} 👑
                         </h2>
                         <h4 className="text-secondary py-2 px-3 my-1 mx-0">
                           {lastBid.bidAmount} JD

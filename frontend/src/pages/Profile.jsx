@@ -40,12 +40,14 @@ const Profile = () => {
   };
   useEffect(() => {
     const fetchUser = async () => {
-      if (sessionUser.id == id) {
-        setIsCurrentUser(false);
-      } else {
-        setIsCurrentUser(false);
+      if (id) {
+        if (sessionUser.id == id) {
+          setIsCurrentUser(true);
+        } 
+        else setIsCurrentUser(false);
       }
-
+      else setIsCurrentUser(true);
+      
       try {
         if (id) {
           const response = await api.getUserById(id);
@@ -204,8 +206,7 @@ const Profile = () => {
                 <div className="d-flex justify-content-end">
                   {isCurrentUser ? (
                     <button className="btn btn-danger " onClick={handleSignOut}>
-                      <i className="fa-solid fa-arrow-right-from-bracket"></i>
-                      Log Out
+                      <i className="fa-solid fa-arrow-right-from-bracket"></i> Log Out
                     </button>
                   ) : (
                     <button className="d-flex align-items-center gap-2 btn btn-secondary text-white msg-btn" onClick={handleMessageUser}>
@@ -228,7 +229,7 @@ const Profile = () => {
                     <li className="nav-item" role="presentation">
                       <button
                         className={`btn ${
-                          showEditSection ? "btn-primary" : "btn-secondary"
+                          showEditSection ? "btn-white text-primary border-primary" : "btn-secondary"
                         } w-100`}
                         id="pills-history-tab"
                         data-bs-toggle="pill"
@@ -238,14 +239,13 @@ const Profile = () => {
                         aria-controls="pills-history"
                         aria-selected={showEditSection}
                         onClick={() => setShowEditSection(false)}
-                      >
-                        History
+                      ><i className="fa-solid fa-clock-rotate-left"></i> History
                       </button>
                     </li>
                     <li className="nav-item" role="presentation">
                       <button
                         className={`btn ${
-                          !showEditSection ? "btn-primary" : "btn-secondary"
+                          !showEditSection ? "btn-white text-primary border-primary" : "btn-secondary"
                         } w-100`}
                         id="pills-edit-tab"
                         data-bs-toggle="pill"
@@ -255,8 +255,7 @@ const Profile = () => {
                         aria-controls="pills-edit"
                         aria-selected={!showEditSection}
                         onClick={() => setShowEditSection(true)}
-                      >
-                        Edit
+                      ><i className="fa-solid fa-gear"></i> Edit
                       </button>
                     </li>
                   </ul>
