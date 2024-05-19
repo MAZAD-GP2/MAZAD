@@ -59,7 +59,7 @@ function App() {
           <Route element={<AddItem />} path="/add-item" exact/>
           <Route element={<Favorites />} path="/favorites" exact/>
           <Route path="/chat" element={<Chat />} exact/>
-          <Route path="/chat/:userId" element={<Chat />} exact/>
+          <Route path="/chat/:roomId" element={<Chat />} exact/>
         </Route>
         <Route exact path="/search" element={<SearchResult />} />
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
