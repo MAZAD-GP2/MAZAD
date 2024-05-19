@@ -36,7 +36,6 @@
   border-radius: 20px;
 }
 
-
 @media (max-width: 720px) {
   /* Styles for screens with max-width 720px */
   .user-card {
@@ -212,7 +211,6 @@
   font-style: italic; /* Italic font style for duration */
 }
 
-
 .fade-in {
   opacity: 1;
   transition: opacity 0.5s ease-in-out;
@@ -223,4 +221,25 @@
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
   display: none;
+}
+
+.bid-card {
+  width: 450px;
+}
+
+@media screen and (max-width: 768px) {
+  .bid-card {
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .bid-card img {
+    width: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  #pills-history > .card {
+    border: None;
+  }
 }

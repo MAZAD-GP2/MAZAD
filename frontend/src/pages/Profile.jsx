@@ -25,6 +25,7 @@ const Profile = () => {
   const [statsLoading, setStatsLoading] = useState(true);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const [showEditSection, setShowEditSection] = useState(false);
+  const [bidHistory, setBidHistory] = useState([]);
   const userData = sessionStorage.getItem("user");
 
   const handleSignOut = async (event) => {
@@ -43,11 +44,9 @@ const Profile = () => {
       if (id) {
         if (sessionUser.id == id) {
           setIsCurrentUser(true);
-        } 
-        else setIsCurrentUser(false);
-      }
-      else setIsCurrentUser(true);
-      
+        } else setIsCurrentUser(false);
+      } else setIsCurrentUser(true);
+
       try {
         if (id) {
           const response = await api.getUserById(id);
@@ -86,7 +85,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserStats = async () => {
       try {
-        const response = await api.getUserStats(id);
+        const response = await api.getUserStats(id || sessionUser.id);
         setAuctionWon(response.data.AuctionsWonCount);
         setBidCount(response.data.bidCount);
       } catch (err) {
@@ -106,15 +105,26 @@ const Profile = () => {
     };
   }, [id]);
 
+  useEffect(() => {
+    const fetchBidHistory = async () => {
+      try {
+        const response = await api.getBidHistory(id || sessionUser.id);
+        if (response.data.length) setBidHistory(response.data);
+      } catch (err) {
+        enqueueSnackbar(err.response.data.message, { variant: "error" });
+      }
+    };
+    fetchBidHistory();
+  }, []);
+
   const handleMessageUser = async () => {
     try {
       const response = await api.getRoomByUser(id);
-      window.location.href = `/chat/${response.data.roomId}`;
+      window.location.href = `/chat/${response.data.room.id}`;
     } catch (err) {
       enqueueSnackbar(err.response.data.message, { variant: "error" });
     }
   };
-
 
   if (loading) {
     return (
@@ -126,12 +136,76 @@ const Profile = () => {
     );
   }
 
+  const formatDateStartTime = (dateTime, finishTime) => {
+    const options = {
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
+    const currentDate = new Date();
+    const formattedDate = new Date(dateTime).toLocaleDateString(
+      undefined,
+      options
+    );
+
+    if (
+      new Date(dateTime) < currentDate &&
+      new Date(finishTime) > currentDate
+    ) {
+      return (
+        <div className="d-flex flex-row align-items-center gap-1">
+          <span>Live</span>
+          <span>
+            {/* <i className="fas fa-circle fa-xs text-success fa-beat"></i> */}
+            <i className="text-secondary fa-solid fa-circle fa-beat fa-xs"></i>
+          </span>
+        </div>
+      );
+    } else if (new Date(finishTime) < currentDate) {
+      return (
+        <div className="d-flex flex-row align-items-center gap-1">
+          <s>{formattedDate}</s>
+        </div>
+      );
+    } else {
+      return <small className="text-muted">{formattedDate}</small>;
+    }
+  };
+
+  const formatDateFinishTime = (dateTime) => {
+    const options = {
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
+    const currentDate = new Date();
+    const formattedDate = new Date(dateTime).toLocaleDateString(
+      undefined,
+      options
+    );
+
+    if (new Date(dateTime) < currentDate) {
+      return (
+        <div className="d-flex flex-row align-items-center gap-1">
+          <s>{formattedDate}</s>
+        </div>
+      );
+    }
+
+    return <small className="text-muted">{formattedDate}</small>;
+  };
+
   return (
     <>
       {user ? (
         <>
           <Navbar />
-          <div className="p-lg-5 p-2 d-flex flex-column gap-lg-4 gap-2">
+          <div
+            className="p-lg-5 p-2 d-flex flex-column gap-lg-4 gap-2"
+            style={{ marginBottom: "100px" }}
+          >
             <div className="card user-card bg-white p-lg-4 p-2 d-flex flex-row flex-wrap gap-4 justify-content-between align-items-center">
               <div className="d-flex gap-3">
                 <img
@@ -146,7 +220,7 @@ const Profile = () => {
                     {user.isAdmin && <p className="admin-tag">ADMIN</p>}
                   </div>
                   <p className="profile-info">{user.email}</p>
-                  <p className="profile-info">{user.phoneNumber}</p>
+                  {/* <p className="profile-info">{user.phoneNumber}</p> */}
                 </div>
               </div>
               <div className="stats-msg">
@@ -206,10 +280,14 @@ const Profile = () => {
                 <div className="d-flex justify-content-end">
                   {isCurrentUser ? (
                     <button className="btn btn-danger " onClick={handleSignOut}>
-                      <i className="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+                      <i className="fa-solid fa-arrow-right-from-bracket"></i>{" "}
+                      Log Out
                     </button>
                   ) : (
-                    <button className="d-flex align-items-center gap-2 btn btn-secondary text-white msg-btn" onClick={handleMessageUser}>
+                    <button
+                      className="d-flex align-items-center gap-2 btn btn-secondary text-white msg-btn"
+                      onClick={handleMessageUser}
+                    >
                       <i className="fa-solid fa-comment-dots"></i>
                       Message User
                     </button>
@@ -229,7 +307,9 @@ const Profile = () => {
                     <li className="nav-item" role="presentation">
                       <button
                         className={`btn ${
-                          showEditSection ? "btn-white text-primary border-primary" : "btn-secondary"
+                          showEditSection
+                            ? "btn-white text-primary border-primary"
+                            : "btn-secondary"
                         } w-100`}
                         id="pills-history-tab"
                         data-bs-toggle="pill"
@@ -239,13 +319,17 @@ const Profile = () => {
                         aria-controls="pills-history"
                         aria-selected={showEditSection}
                         onClick={() => setShowEditSection(false)}
-                      ><i className="fa-solid fa-clock-rotate-left"></i> History
+                      >
+                        <i className="fa-solid fa-clock-rotate-left"></i>{" "}
+                        History
                       </button>
                     </li>
                     <li className="nav-item" role="presentation">
                       <button
                         className={`btn ${
-                          !showEditSection ? "btn-white text-primary border-primary" : "btn-secondary"
+                          !showEditSection
+                            ? "btn-white text-primary border-primary"
+                            : "btn-secondary"
                         } w-100`}
                         id="pills-edit-tab"
                         data-bs-toggle="pill"
@@ -255,7 +339,8 @@ const Profile = () => {
                         aria-controls="pills-edit"
                         aria-selected={!showEditSection}
                         onClick={() => setShowEditSection(true)}
-                      ><i className="fa-solid fa-gear"></i> Edit
+                      >
+                        <i className="fa-solid fa-gear"></i> Edit
                       </button>
                     </li>
                   </ul>
@@ -271,28 +356,83 @@ const Profile = () => {
                   role="tabpanel"
                   aria-labelledby="pills-history-tab"
                 >
-                  <div className="card user-card d-flex flex-column gap-lg-4 gap-3 p-lg-4 p-2">
+                  <div className="card d-flex flex-column gap-lg-4 gap-3 p-lg-4 p-2">
                     <RecentItems
                       isCurrentUser={isCurrentUser}
                       setAuctionCount={setAuctionCount}
                     />
                     <h3>Bid History</h3>
-                    <div className="user-history">
-                      <div className="item-container">
-                        <p className="item-name">Item Name</p>
-                        <p className="bid-info">Highest Bid: $100</p>
-                        <p className="duration">Duration: 3 days left</p>
-                      </div>
-                      <div className="item-container">
-                        <p className="item-name">Item Name</p>
-                        <p className="bid-info">Highest Bid: $100</p>
-                        <p className="duration">Duration: 3 days left</p>
-                      </div>
-                      <div className="item-container">
-                        <p className="item-name">Item Name</p>
-                        <p className="bid-info">Highest Bid: $100</p>
-                        <p className="duration">Duration: 3 days left</p>
-                      </div>
+                    <div className="user-history d-flex flex-row flex-wrap gap-3 justify-content-around">
+                      {bidHistory.length ? (
+                        bidHistory.map((bid) => (
+                          <div
+                            className="bid-card d-flex flex-row gap-3 shadow-lg p-3 bg-white rounded-3"
+                            key={bid.id}
+                          >
+                            <img
+                              src={
+                                bid.Auction.Item.Images[0].imgURL ||
+                                "https://via.placeholder.com/150"
+                              }
+                              alt="item"
+                              className="bid-item-img object-fit-cover shadow rounded-3"
+                              width={110}
+                              height={110}
+                            />
+
+                            <div className="d-flex flex-column gap-2">
+                              <div className="d-flex flex-column gap-0 w-100 text-truncate">
+                                <a
+                                  href={`/item/${bid.Auction.Item.id}`}
+                                  className="link"
+                                >
+                                  <h4 className="text-truncate">
+                                    {bid.Auction.Item.name}
+                                  </h4>
+                                </a>
+                                <div className="d-flex flex-row gap-2 align-items-center">
+                                  <small>
+                                    {formatDateStartTime(
+                                      bid.Auction.startTime,
+                                      bid.Auction.finishTime
+                                    )}
+                                  </small>
+                                  <i className="fa fa-arrow-right fa-sm text-secondary"></i>
+                                  <small>
+                                    {formatDateFinishTime(
+                                      bid.Auction.finishTime
+                                    )}
+                                  </small>
+                                </div>
+                              </div>
+                              <div className="col d-flex flex-column">
+                                <p>
+                                  <span>Amount:</span>{" "}
+                                  <b className="text-secondary">
+                                    {bid.bidAmount} JD
+                                  </b>
+                                </p>
+                                <p>
+                                  <span>On: </span>
+                                  <b>
+                                    {new Date(
+                                      bid.createdAt
+                                    ).toLocaleDateString()}
+                                  </b>
+                                  <span> At: </span>
+                                  <b>
+                                    {new Date(
+                                      bid.createdAt
+                                    ).toLocaleTimeString()}
+                                  </b>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p>No bids made yet.</p>
+                      )}
                     </div>
                   </div>
                 </div>

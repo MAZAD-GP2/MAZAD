@@ -17,26 +17,32 @@ const MobileNavbar = () => {
 
   return (
     <>
-      <div id="mobile-navbar" className="d-lg-none d-sm-block z-999">
-        <div className="w-100" id="navbar">
+      <div id="mobile-navbar" className="d-lg-none d-sm-block t-5">
+        <div className="w-100 z-3" id="navbar">
           <div className="d-flex flex-row justify-content-between w-100 h-100 p-3 bg-primary border-top border-secondary border-4">
             <div
-              className={`mobile-nav-item d-flex flex-column justify-content-center align-items-center gap-1 ${
+              className={`mobile-nav-item d-flex flex-column ${
                 location.pathname.includes("/home") ? "active" : ""
               }`}
             >
-              <FontAwesomeIcon icon="home" />
-              <a href="/home" className="small text-center">
+              <a
+                href="/home"
+                className="small text-center d-flex flex-column gap-2"
+              >
+                <i className="fa fa-home"></i>
                 Home
               </a>
             </div>
             <div
-              className={`mobile-nav-item d-flex flex-column justify-content-center align-items-center gap-1 ${
+              className={`mobile-nav-item d-flex flex-column ${
                 location.pathname.includes("/chat") ? "active" : ""
               }`}
             >
-              <FontAwesomeIcon icon="comment" />
-              <a href="/chat" className="small text-center">
+              <a
+                href="/chat"
+                className="small text-center d-flex flex-column gap-2"
+              >
+                <i className="fa fa-comment"></i>
                 Chat
               </a>
             </div>
@@ -56,7 +62,7 @@ const MobileNavbar = () => {
                   location.pathname.includes("/profile") ? "active" : ""
                 }`}
               >
-                <FontAwesomeIcon icon="user" />
+                <i className="fa fa-user"></i>
                 <a href="/Profile" className="small text-center">
                   Profile
                 </a>
@@ -67,7 +73,7 @@ const MobileNavbar = () => {
                   location.pathname.includes("/login") ? "active" : ""
                 }`}
               >
-                <FontAwesomeIcon icon="user" />
+                <i className="fa fa-user"></i>
                 <a href="/login" className="small text-center">
                   Login
                 </a>
@@ -79,7 +85,7 @@ const MobileNavbar = () => {
               }`}
               onClick={toggleOptions}
             >
-              <FontAwesomeIcon icon="ellipsis-h" />
+              <i className="fa fa-ellipsis"></i>
               <div className="small text-center">More</div>
             </div>
           </div>

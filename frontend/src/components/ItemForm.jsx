@@ -11,7 +11,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Editor from "./Editor";
 import "quill/dist/quill.snow.css";
@@ -296,7 +296,8 @@ const ItemForm = ({
     <Popover id="popover-phone">
       <Popover.Header as="h3">Phone Number</Popover.Header>
       <Popover.Body>
-        <p>Your phone number will be visible to bidders during the auction.</p>
+        <p>This will allow users to see you personal phone number during the auction, this may lead to unwanted calls or messages.</p>
+        <small>You can change this setting during the auction.</small>
       </Popover.Body>
     </Popover>
   );
@@ -335,6 +336,7 @@ const ItemForm = ({
           type="text"
           className="form-control w-lg-50 w-md-50 w-sm-100"
           placeholder="Enter Item name"
+          name="item-name"
           aria-label="Auction Title"
           aria-describedby="currency"
           maxLength="255"
@@ -435,17 +437,20 @@ const ItemForm = ({
               minDate={minStartDate}
               color="#50B584"
               rangeColors={["#50B584"]}
+              name="date-range"
             />
           </div>
 
           <div
-            className="col-lg-auto col-sm-12 d-flex flex-row justify-content-between gap-3"
-            style={{ minWidth: "365px" }}
+            className="col-lg-auto col-sm-12 d-flex flex-row justify-content-between gap-lg-3 gap-1"
+            // style={{ minWidth: "365px" }}
           >
             <div className="col-6">
               <label htmlFor="start-time" className="form-label">
                 <b>On: </b>
-                {calendarState.selection.startDate.toDateString()}
+                {calendarState.selection.startDate.toLocaleDateString("en-US", {
+                  weekday: "long",
+                })}
                 <br />
 
                 <b>At:</b>
@@ -472,8 +477,14 @@ const ItemForm = ({
               <label htmlFor="end-time" className="form-label">
                 <b>Until: </b>
                 {calendarState.selection.endDate
-                  ? calendarState.selection.endDate.toDateString()
-                  : calendarState.selection.startDate.toDateString()}{" "}
+                  ? calendarState.selection.endDate.toLocaleDateString(
+                      "en-US",
+                      { weekday: "long" }
+                    )
+                  : calendarState.selection.startDate.toLocaleDateString(
+                      "en-US",
+                      { weekday: "long" }
+                    )}
                 <br />
                 <b>At:</b>
               </label>
@@ -602,11 +613,14 @@ const ItemForm = ({
             <OverlayTrigger
               className="overlay"
               trigger="click"
-              placement="right"
+              placement="bottom"
               style={{ cursor: "pointer" }}
               overlay={popoverPhone}
+              rootClose
             >
-              <FontAwesomeIcon icon="fa-question-circle" size="sm" />
+              <div>
+                <i className="fa fa-question-circle fa-sm"></i>
+              </div>
             </OverlayTrigger>
           </div>
         </div>
@@ -634,11 +648,14 @@ const ItemForm = ({
             <OverlayTrigger
               className="overlay"
               trigger="click"
-              placement="right"
+              placement="bottom"
               style={{ cursor: "pointer" }}
               overlay={popoverDescription}
+              rootClose
             >
-              <FontAwesomeIcon icon="fa-question-circle" size="sm" />
+              <div>
+                <i className="fa fa-question-circle fa-sm"></i>
+              </div>
             </OverlayTrigger>
           </div>
         </div>
@@ -667,11 +684,14 @@ const ItemForm = ({
             <OverlayTrigger
               className="overlay"
               trigger="click"
-              placement="right"
+              placement="bottom"
               style={{ cursor: "pointer" }}
               overlay={popoverVisibility}
+              rootClose
             >
-              <FontAwesomeIcon icon="fa-question-circle" size="sm" />
+              <div>
+                <i className="fa fa-question-circle fa-sm"></i>
+              </div>
             </OverlayTrigger>
           </div>
         </div>

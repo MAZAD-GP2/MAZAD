@@ -9,11 +9,19 @@ const Image = sequelize.define("Image", {
     allowNull: false,
     primaryKey: true,
   },
-imgURL: {
+  imgURL: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
-  }
+    unique: true,
+  },
+  itemId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "Item",
+      key: "id",
+    },
+  },
 });
 
 module.exports = Image;

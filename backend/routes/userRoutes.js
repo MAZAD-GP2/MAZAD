@@ -11,6 +11,8 @@ const nodemailer = require("nodemailer");
 const cloudinary = require("../config/cloudinaryConfig");
 const Bid = require("../models/Bid");
 const Auction = require("../models/Auction");
+const Image = require("../models/Image");
+const Item = require("../models/Item");
 
 module.exports.getAllUsers = async (req, res) => {
   try {
@@ -330,22 +332,64 @@ module.exports.getUserStats = async (req, res) => {
       },
     });
 
-    const AuctionsWonCount = await Bid.count({
+    const AuctionsWonCount = await Bid.findAll({
       where: {
         userId,
-        bidAmount: Sequelize.col('Auction.highestBid'), // Comparing bid amount with highest bid amount
+        bidAmount: Sequelize.col("Auction.highestBid"), // Comparing bid amount with highest bid amount
       },
-      include: [{
-        model: Auction,
-        required: true, // This ensures that only bids with corresponding auctions are included
-        where: {
-          finishTime: { [Sequelize.Op.lt]: Sequelize.literal('NOW()') } // Only include auctions with finishTime in the past
+      attributes: ["auctionId"],
+      include: [
+        {
+          model: Auction,
+          required: true, // This ensures that only bids with corresponding auctions are included
+          where: {
+            finishTime: { [Sequelize.Op.lt]: Sequelize.literal("NOW()") }, // Only include auctions with finishTime in the past
+          },
+          attributes: [],
         },
-      }],
+      ],
       distinct: true, // Ensure that only distinct auction IDs are counted
     });
-    
-    return res.json({ bidCount, AuctionsWonCount });
+
+    // loop over and only get distinct auction ids
+    let auctionIds = AuctionsWonCount.map((auction) => auction.auctionId);
+    auctionIds = [...new Set(auctionIds)];
+
+    return res.json({ bidCount, AuctionsWonCount: auctionIds.length });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports.getBidHistory = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const bids = await Bid.findAll({
+      where: {
+        userId,
+      },
+      include: [
+        {
+          model: Auction,
+          attributes: ["highestBid", "finishTime", "startTime"],
+          include: [
+            {
+              model: Item,
+              attributes: ["name", "description", "id"],
+              include: [
+                {
+                  model: Image,
+                  attributes: ["imgURL"],
+                  count: 1,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.json(bids);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }

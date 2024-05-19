@@ -24,24 +24,21 @@
   height: 40px;
 }
 
-
-
-.sent .content-box{
+.sent .content-box {
   background-color: #8df09f;
   /* box-shadow: 0px 0px 2px 0px rgba(79, 137, 165, 0.40); */
-
 }
 
-.sent .content-box .content{
+.sent .content-box .content {
   color: #000000;
   font-weight: 300;
 }
-.content-box .content{
+.content-box .content {
   color: #4d4d4d;
   font-weight: 300;
 }
 
-.received .content-box{
+.received .content-box {
   background-color: #f5f5f5;
 }
 
@@ -50,25 +47,60 @@
   font-weight: 300;
 } */
 
-.content{
-    color: #4d4d4d;
-    font-weight: 300;
+.content {
+  color: #4d4d4d;
+  font-weight: 300;
 }
 
-.time{
-    color: #6e6e6e;
+.time {
+  color: #6e6e6e;
 }
 
-@media (max-width: 768px) {
-    #main-container {
-        height: calc(100vh - 60px);
-        border: none;
-    }
-    #chat-box {
-        border: none;
-    }
-    .avatar {
-      width: 30px;
-      height: 30px;
-    }
+.header-avatar {
+  width: 45px;
+  height: 45px;
+}
+
+.profile-message-spacer {
+  width: 40px;
+}
+
+#back-button {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  #main-container {
+    height: calc(100vh - 60px);
+    border: none;
+  }
+  #back-button {
+    display: block;
+  }
+}
+
+@media (max-width: 720px) {
+  .room.active {
+    background-color: white;
+  }
+
+  .hide {
+    display: none;
+  }
+  #chat-box {
+    border: none;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .header-avatar {
+    width: 35px;
+    height: 35px;
+  }
+
+  .profile-message-spacer {
+    width: 30px;
+  }
 }

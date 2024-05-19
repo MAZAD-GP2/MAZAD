@@ -81,11 +81,12 @@ const Navbar = (showMobileNavbar = true) => {
                   className="d-flex flex-row gap-3 form-group"
                 >
                   <div className="input-container bg-dark rounded-5 border-0 d-flex">
-                    <i className="fa fa-search text-white" ></i>
+                    <i className="fa fa-search text-white"></i>
                     <input
                       type="search"
                       placeholder="Search Items, tags or categories"
                       aria-label="Search"
+                      name="search"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       onKeyDown={SubmitSearch}
@@ -95,34 +96,37 @@ const Navbar = (showMobileNavbar = true) => {
                   </div>
                   {user ? (
                     <div className="create-item-pfp justify-end">
+                      
                       <a
-                        type="submit"
+                        className="col-auto align-content-center px-2 rounded-5 add-item"
+                        href="/chat"
+                      >
+                        <i className="fa fa-comment"></i> Chats
+                      </a>
+                      <a
                         className="col-auto align-content-center px-2 rounded-5 add-item"
                         href="/add-item"
                       >
                         <i className="fa fa-add"></i> New Mazad
                       </a>
-                      <div className="col-auto d-flex flex-row form-group align-content-end">
-                        {user.profilePicture ? (
-                          <img
-                            onClick={() => (window.location.href = "/profile")}
-                            src={user.profilePicture}
-                            width={"40px"}
-                            height={"40px"}
-                            style={{
-                              borderRadius: "100px",
-                              objectFit: "cover",
-                              cursor: "pointer",
-                            }}
-                          />
-                        ) : (
-                          <FontAwesomeIcon
-                            icon="fa-regular fa-user"
-                            className="profile-redirect"
-                            onClick={() => (window.location.href = "/profile")}
-                          />
-                        )}
-                      </div>
+                      <a
+                        className="col-auto d-flex flex-row form-group align-content-end"
+                        href="/profile"
+                      >
+                        <img
+                          src={
+                            user.profilePicture ||
+                            "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_60,h_60/v1716060482/profile_uakprb.png"
+                          }
+                          width={"40px"}
+                          height={"40px"}
+                          style={{
+                            borderRadius: "100px",
+                            objectFit: "cover",
+                            cursor: "pointer",
+                          }}
+                        />
+                      </a>
                     </div>
                   ) : (
                     <div id="lgn-sign-up-container w-100">

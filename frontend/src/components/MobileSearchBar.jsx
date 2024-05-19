@@ -17,6 +17,7 @@ const MobileSearchBar = ({ search, setSearch, SubmitSearch }) => {
             <input
               type="search"
               placeholder="Search Mazad"
+              name="search"
               aria-label="Search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}

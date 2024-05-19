@@ -60,7 +60,9 @@ router
 router
   .route("/user/stats/:id")
   .get(verifyToken(true), userRoutes.getUserStats);
-
+router
+  .route("/user/getBidHistory/:id")
+  .get(verifyToken(true), userRoutes.getBidHistory);
 // item
 router.route("/item").get(verifyToken(false), itemRoutes.getAllItems);
 router

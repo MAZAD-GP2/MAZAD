@@ -302,15 +302,15 @@ const EditProfile = () => {
                                   selectedProfilePicture
                                 )}
                                 style={{
-                                  maxWidth: "100%",
-                                  maxHeight: "100%",
+                                  maxWidth: "300px",
+                                  maxHeight: "300px",
                                   width: "auto",
                                   height: "auto",
                                 }}
                               />
                             ) : (
                               <>
-                                <i className="fa-regular fa-image"></i>
+                                {/* <i className="fa-regular fa-image"></i> */}
                                 Upload Profile Picture
                               </>
                             )}

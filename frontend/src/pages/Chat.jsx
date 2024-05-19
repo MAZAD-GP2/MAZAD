@@ -43,13 +43,14 @@ export function Chat() {
     };
     fetchUsers();
   }, []);
-  
+
   useEffect(() => {
     var channel = pusher.subscribe(`chat_room_${currentUser.id}`);
     channel.bind("new_message", function (data) {
-      allRooms[data.chatRoomId].messages.unshift(data.dataValues);
+      data = data.dataValues;
+      allRooms[data.chatRoomId].messages.unshift(data);
       setChatRooms((prev) => {
-        const index = prev.findIndex((room) => room.id === data.chatRoomId);
+        const index = prev.findIndex((room) => room.id == data.chatRoomId);
         if (index === -1) {
           let temp = {
             id: data.chatRoomId,
@@ -59,21 +60,19 @@ export function Chat() {
           allRooms[data.chatRoomId] = temp;
           return [temp, ...prev];
         }
-        prev[index].Messages.unshift(data.dataValues);
+        prev[index].Messages.unshift(data);
         const temp = prev[index];
         prev.splice(index, 1);
         prev.unshift(temp);
         return [...prev];
       });
       setCurrentMessages((prev) => {
-        if (prev[0].id === data.dataValues.id) {
+        if (prev[0].id === data.id) {
           return [...prev];
         }
         if (prev[0].chatRoomId === data.chatRoomId) {
-          if (data.dataValues.senderId !== currentUser.id)
-          return [data.dataValues, ...prev];
-        else
-          prev[0].id = data.dataValues.id;
+          if (data.senderId !== currentUser.id) return [data, ...prev];
+          else prev[0].id = data.id;
           return [...prev];
         }
         return [...prev];
@@ -88,6 +87,7 @@ export function Chat() {
     }
     if (allRooms[roomId]) {
       setCurrentMessages(allRooms[roomId].messages);
+      setCurrentRoom(allRooms[roomId]);
       setMessageLoading(false);
       return;
     }
@@ -121,7 +121,7 @@ export function Chat() {
         let reversedMessages = response.data.reverse();
         setCurrentMessages(reversedMessages);
         allRooms[currentRoom.room.id] = {
-          id: currentRoom.room.id,
+          room: currentRoom.room,
           user: currentRoom.user,
           messages: reversedMessages,
         };
@@ -135,8 +135,12 @@ export function Chat() {
   }, [currentRoom]);
 
   const handleChatRoomChange = (room) => {
+    if (room.id == roomId) return;
     setMessageLoading(true);
+    document.getElementById("chat-rooms").classList.add("hide");
+    document.getElementById("chat-box").classList.remove("hide");
     navigate(`/chat/${room.id}`);
+
   };
 
   const handleSendMessage = async () => {
@@ -144,18 +148,18 @@ export function Chat() {
     const newMessage = {
       content: message,
       senderId: currentUser.id,
-      roomId: currentRoom.room.id,
+      roomId: roomId,
       createdAt: "just now",
-      chatRoomId: currentRoom.room.id,
+      chatRoomId: roomId,
     };
     setCurrentMessages([newMessage, ...currentMessages]);
     setMessage("");
     const response = await api.sendMessage({
-      roomId: currentRoom.room.id,
+      roomId: roomId,
       message,
     });
     if (response.data.success) {
-      allRooms[currentRoom.room.id].messages.unshift(response.data.message);
+      allRooms[roomId].messages.unshift(response.data.message);
       // update the currentMessages last message id
       setCurrentMessages((prev) => {
         prev[0].id = response.data.id;
@@ -164,6 +168,12 @@ export function Chat() {
     }
   };
 
+  const handleBackButton = () => {
+    // hides the chat box and shows the chat rooms
+    document.getElementById("chat-rooms").classList.remove("hide");
+    document.getElementById("chat-box").classList.add("hide");
+    navigate("/chat");
+  };
   const formatDate = (date) => {
     let d;
     d = new Date(date);
@@ -183,234 +193,251 @@ export function Chat() {
       <div className="p-lg-3 p-0 bg-white">
         <div
           id="main-container"
-          className="d-flex flex-row align-items-start justify-content-center gap-3 px-lg-5 p-0 w-100"
+          className="d-flex flex-row align-items-start justify-content-center gap-3 px-lg-5 p-0 w-100 gap-3"
         >
-          <div
-            id="chat-rooms"
-            className="d-flex flex-column justify-content-start border rounded shadow py-3 h-100"
-            style={{ width: "600px" }}
-          >
-            <span className="h4 border-bottom border-4 border-secondary mb-4 px-3 text-center">
-              Your contacts
-            </span>
-            <div
-              id="chat-rooms-list"
-              className="d-flex flex-column gap-2 position-relative w-100 overflow-auto"
-            >
-              {roomsLoading ? (
-                <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                  <i className=" h1 fa-solid fa-ghost fa-spin text-secondary"></i>
-                </div>
-              ) : (
-                <>
-                  {chatRooms.length === 0 ? (
-                    <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                      <i className=" h1 fa-solid fa-ghost text-secondary"></i>
-                      No contacts
-                    </div>
-                  ) : (
-                    chatRooms.map((room) => (
-                      <div key={room.id}>
-                        <div
-                          className="room py-3 active"
-                          style={{ cursor: "pointer" }}
-                          onClick={() => handleChatRoomChange(room)}
-                        >
-                          <div className="d-flex flex-row align-items-start gap-2 px-3">
-                            <div>
-                              <img
-                                src={
-                                  room.Users[0].profilePicture ||
-                                  "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_100,h_100/v1716060482/profile_uakprb.png"
-                                }
-                                alt="avatar"
-                                className="rounded-circle border border-2 border-primary object-fit-cover"
-                                style={{ width: "50px", height: "50px" }}
-                              />
-                            </div>
-                            <div className="w-100 d-flex flex-column justify-content-start align-items-start">
-                              <span className="mt-1 text-truncate text-green">
-                                {room.Users[0].username}
-                              </span>
-                              <div className="w-100 d-flex flex-row justify-content-start align-items-center gap-1 text-muted text-sm">
-                                {room.Messages.length > 0 ? (
-                                  room.Messages[0]?.senderId ===
-                                  currentUser.id ? (
-                                    <small>You: </small>
+          <div id="chat-rooms" className="hide" style={{ width: "600px" }}>
+            <div className="d-flex flex-column justify-content-start border rounded shadow py-3 h-100">
+              <span className="h4 border-bottom border-4 border-secondary mb-4 px-3 text-center">
+                Your contacts
+              </span>
+              <div
+                id="chat-rooms-list"
+                className="d-flex flex-column gap-1 position-relative w-100 overflow-auto"
+              >
+                {roomsLoading ? (
+                  <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                    <i className=" h1 fa-solid fa-ghost text-secondary"></i>
+                  </div>
+                ) : (
+                  <>
+                    {chatRooms.length === 0 ? (
+                      <div className="d-flex flex-column align-items-center justify-content-center gap-2">
+                        <i className=" h1 fa-solid fa-ghost text-secondary"></i>
+                        No contacts
+                      </div>
+                    ) : (
+                      chatRooms.map((room) => (
+                        <div key={room.id}>
+                          <div
+                            className={`room py-3${
+                              room.id == roomId ? " active" : ""
+                            }`}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleChatRoomChange(room)}
+                          >
+                            <div className="d-flex flex-row align-items-start gap-2 px-3">
+                              <div>
+                                <img
+                                  src={
+                                    room.Users[0].profilePicture ||
+                                    "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_60,h_60/v1716060482/profile_uakprb.png"
+                                  }
+                                  alt="avatar"
+                                  className="rounded-circle border border-2 border-primary object-fit-cover"
+                                  style={{ width: "50px", height: "50px" }}
+                                />
+                              </div>
+                              <div className="w-100 d-flex flex-column justify-content-start align-items-start">
+                                <span className="mt-1 text-truncate text-green">
+                                  {room.Users[0].username.slice(0, 25)}
+                                  {room.Users[0].username.trim().length >
+                                    25 && <>...</>}
+                                </span>
+                                <div className="w-100 d-flex flex-row justify-content-start align-items-center gap-1 text-muted text-sm">
+                                  {room.Messages.length > 0 ? (
+                                    room.Messages[0]?.senderId ===
+                                    currentUser.id ? (
+                                      <small>You: </small>
+                                    ) : (
+                                      <small>Them:</small>
+                                    )
                                   ) : (
-                                    <small>Them:</small>
-                                  )
-                                ) : (
-                                  <small className="last-message">
-                                    No messages
+                                    <small className="last-message">
+                                      No messages
+                                    </small>
+                                  )}
+                                  <small className="last-message text-truncate text-muted">
+                                    {room.Messages[0]?.content.slice(0, 20)}
+                                    {room.Messages[0]?.content.trim().length >
+                                      15 && <>...</>}
                                   </small>
-                                )}
-                                <small className="last-message text-truncate text-muted">
-                                  {room.Messages[0]?.content.slice(0, 20)}{room.Messages[0]?.content.trim().length>15 && <>...</>}
+                                </div>
+                              </div>
+                              <div className="d-flex flex-column align-items-end justify-content-start gap-1">
+                                <small className="text-muted text-sm text-center">
+                                  {formatDate(room.Messages[0]?.createdAt)}
                                 </small>
                               </div>
                             </div>
                           </div>
+                          <div className="mt-1 border-bottom border-2 border-gray"></div>
                         </div>
-                        <div className="border-bottom border-2 border-gray"></div>
-                      </div>
-                    ))
-                  )}
-                </>
-              )}
+                      ))
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
-          <div
-            id="chat-box"
-            className="w-100 d-flex flex-column justify-content-between border rounded shadow h-100"
-          >
-            <div
-              id="chat-box-header"
-              className="d-flex flex-row align-items-center justify-content-between p-2 border-bottom border-2 border-gray"
-            >
-              {currentRoom.room && (
-                <>
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <img
-                      src={
-                        currentRoom.user?.profilePicture ||
-                        "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_100,h_100/v1716060482/profile_uakprb.png"
-                      }
-                      alt="avatar"
-                      className="rounded-circle border border-2 border-primary object-fit-cover"
-                      style={{ width: "45px", height: "45px" }}
-                    />
-                    <span className="text-green">
-                      {currentRoom.user?.username}
-                    </span>
-                  </div>
-                  <div className="d-flex flex-row align-items-center gap-2">
-                    <i className="fa-solid fa-info-circle"></i>
-                  </div>
-                </>
-              )}
-            </div>
-            <div
-              id="chat-box-messages"
-              className="d-flex flex-column-reverse py-lg-3 p-lg-3 p-1 pt-3 pb-3 h-100 overflow-y-scroll"
-            >
-              {messageLoading ? (
-                <div className="d-flex flex-column align-items-center justify-content-center gap-2 h-100">
-                  <i className=" h1 fa-solid fa-ghost fa-spin text-secondary"></i>
-                </div>
-              ) : (
-                <>
-                  {currentMessages.length === 0 ? (
-                    <div className="d-flex flex-column align-items-center justify-content-center gap-2 h-100">
-                      <i className=" h1 fa-solid fa-ghost text-secondary"></i>
-                      No messages. yet!
-                    </div>
-                  ) : (
-                    currentMessages.map((msg, index) => (
-                      <div
-                        key={msg.id || -1}
-                        className={`message ${
-                          msg.senderId === currentUser.id ? "sent" : "received"
-                        } ${
-                          currentMessages[index + 1]?.senderId !== msg.senderId
-                            ? "mt-4"
-                            : "mt-1"
-                        }`}
-                      >
-                        {msg.senderId === currentUser.id ? (
-                          <div className="d-flex flex-row-reverse align-items-end justify-content-start gap-2 px-lg-3 px-1">
-                            <div className="col-auto">
-                              {currentMessages[index - 1]?.senderId !==
-                              msg.senderId ? (
-                                <img
-                                  src={
-                                    currentUser.profilePicture?.replace(
-                                      "upload/",
-                                      "upload/c_fill,w_100,h_100/"
-                                    ) ||
-                                    "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_100,h_100/v1716060482/profile_uakprb.png"
-                                  }
-                                  alt="avatar"
-                                  className="avatar rounded-circle object-fit-cover"
-                                />
-                              ) : (
-                                <div style={{ width: "40px" }}></div>
-                              )}
-                            </div>
-
-                            <div className="content-box rounded-top-3 rounded-start-3 p-2 w-auto">
-                              <div className="content-box-inner d-flex flex-column w-100 h-100">
-                                <span className="content">{msg.content}</span>
-                                <small
-                                  className="time text-sm text-end"
-                                  style={{ fontSize: "0.7rem" }}
-                                >
-                                  {formatDate(msg.createdAt)}
-                                </small>
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="d-flex flex-row align-items-end justify-content-start gap-2 px-lg-3 px-1">
-                            <div className="col-auto">
-                              {currentMessages[index - 1]?.senderId !==
-                              msg.senderId ? (
-                                <img
-                                  src={
-                                    currentRoom.user?.profilePicture?.replace(
-                                      "upload/",
-                                      "upload/c_fill,w_100,h_100/"
-                                    ) ||
-                                    "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_100,h_100/v1716060482/profile_uakprb.png"
-                                  }
-                                  alt="avatar"
-                                  className="avatar rounded-circle object-fit-cover"
-                                />
-                              ) : (
-                                <div style={{ width: "40px" }}></div>
-                              )}
-                            </div>
-                            <div className="content-box rounded-top-3 rounded-end-3 p-2 bg-light w-auto">
-                              <div className="content-box-inner d-flex flex-column w-100 h-100">
-                                <span className="content">{msg.content}</span>
-                                <small
-                                  className="text-muted text-sm"
-                                  style={{ fontSize: "0.7rem" }}
-                                >
-                                  {formatDate(msg.createdAt)}
-                                </small>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))
-                  )}
-                </>
-              )}
-            </div>
-            <div
-              id="chat-box-input"
-              className="d-flex flex-row align-items-center gap-2 justify-content-between p-2 border-top border-2 border-gray align-self-end w-100"
-            >
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Type a message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && e.target.value.trim()) {
-                    handleSendMessage();
-                  }
-                }}
-              />
-              <button
-                className="btn btn-primary"
-                onClick={() => handleSendMessage()}
+          <div id="chat-box" className="w-100  border rounded shadow h-100">
+            <div className="w-100 d-flex flex-column justify-content-between h-100">
+              <div
+                id="chat-box-header"
+                className="d-flex flex-row align-items-center justify-content-between p-2 border-bottom border-2 border-gray"
               >
-                Send
-              </button>
+                {currentRoom.room && (
+                  <>
+                    <div className="d-flex flex-row align-items-center gap-2">
+                      <button
+                        type="button"
+                        className="btn"
+                        id="back-button"
+                        onClick={handleBackButton}
+                      >
+                        <i className="fa-solid fa-chevron-left"></i>
+                      </button>
+                      <img
+                        src={
+                          currentRoom.user?.profilePicture ||
+                          "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_50,h_50/v1716060482/profile_uakprb.png"
+                        }
+                        alt="avatar"
+                        className="rounded-circle border border-2 border-primary object-fit-cover header-avatar"
+                      />
+                      <span className="text-green">
+                        {currentRoom.user?.username}
+                      </span>
+                    </div>
+                    {/* <div className="d-flex flex-row align-items-center gap-2">
+                    <i className="fa-solid fa-info-circle"></i>
+                  </div> */}
+                  </>
+                )}
+              </div>
+              <div
+                id="chat-box-messages"
+                className="d-flex flex-column-reverse py-lg-3 p-lg-3 p-1 pt-3 pb-3 h-100 overflow-y-scroll"
+              >
+                {messageLoading ? (
+                  <div className="d-flex flex-column align-items-center justify-content-center gap-2 h-100">
+                    <i className=" h1 fa-solid fa-ghost text-secondary"></i>
+                  </div>
+                ) : (
+                  <>
+                    {currentMessages.length === 0 && !roomId ? (
+                      <div className="d-flex flex-column align-items-center justify-content-center gap-2 h-100">
+                        <i className=" h1 fa-solid fa-ghost text-secondary"></i>
+                      </div>
+                    ) : (
+                      currentMessages.map((msg, index) => (
+                        <div
+                          key={msg.id || -1}
+                          className={`message ${
+                            msg.senderId === currentUser.id
+                              ? "sent"
+                              : "received"
+                          } ${
+                            currentMessages[index + 1]?.senderId !==
+                            msg.senderId
+                              ? "mt-4"
+                              : "mt-1"
+                          }`}
+                        >
+                          {msg.senderId === currentUser.id ? (
+                            <div className="d-flex flex-row-reverse align-items-end justify-content-start gap-2 px-lg-3 px-1">
+                              <div className="col-auto">
+                                {currentMessages[index - 1]?.senderId !==
+                                msg.senderId ? (
+                                  <img
+                                    src={
+                                      currentUser.profilePicture?.replace(
+                                        "upload/",
+                                        "upload/c_fill,w_60,h_60/"
+                                      ) ||
+                                      "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_60,h_60/v1716060482/profile_uakprb.png"
+                                    }
+                                    alt="avatar"
+                                    className="avatar rounded-circle object-fit-cover"
+                                  />
+                                ) : (
+                                  <div className="profile-message-spacer"></div>
+                                )}
+                              </div>
+
+                              <div className="content-box rounded-top-3 rounded-start-3 p-2 w-auto">
+                                <div className="content-box-inner d-flex flex-column w-100 h-100">
+                                  <span className="content">{msg.content}</span>
+                                  <small
+                                    className="time text-sm text-end"
+                                    style={{ fontSize: "0.7rem" }}
+                                  >
+                                    {formatDate(msg.createdAt)}
+                                  </small>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="d-flex flex-row align-items-end justify-content-start gap-2 px-lg-3 px-1">
+                              <div className="col-auto">
+                                {currentMessages[index - 1]?.senderId !==
+                                msg.senderId ? (
+                                  <img
+                                    src={
+                                      currentRoom.user?.profilePicture?.replace(
+                                        "upload/",
+                                        "upload/c_fill,w_60,h_60/"
+                                      ) ||
+                                      "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_60,h_60/v1716060482/profile_uakprb.png"
+                                    }
+                                    alt="avatar"
+                                    className="avatar rounded-circle object-fit-cover"
+                                  />
+                                ) : (
+                                  <div className="profile-message-spacer"></div>
+                                )}
+                              </div>
+                              <div className="content-box rounded-top-3 rounded-end-3 p-2 bg-light w-auto">
+                                <div className="content-box-inner d-flex flex-column w-100 h-100">
+                                  <span className="content">{msg.content}</span>
+                                  <small
+                                    className="text-muted text-sm"
+                                    style={{ fontSize: "0.7rem" }}
+                                  >
+                                    {formatDate(msg.createdAt)}
+                                  </small>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </>
+                )}
+              </div>
+              <div
+                id="chat-box-input"
+                className="d-flex flex-row align-items-center gap-2 justify-content-between p-2 border-top border-2 border-gray align-self-end w-100"
+              >
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Type a message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && e.target.value.trim()) {
+                      handleSendMessage();
+                    }
+                  }}
+                />
+                <button
+                  className="btn btn-primary"
+                  onClick={() => handleSendMessage()}
+                >
+                  Send
+                </button>
+              </div>
             </div>
           </div>
         </div>

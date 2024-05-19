@@ -61,7 +61,7 @@ const RecentItems = ({ isCurrentUser, setAuctionCount }) => {
                     >
                       <span>${item.Auction.highestBid}</span>
                     </div>
-                    <Card item={item} key={item.id} className="h1-00" />
+                    <Card item={item} key={item.id} className="item-card h1-00" />
                   </div>
                 ))}
               </>

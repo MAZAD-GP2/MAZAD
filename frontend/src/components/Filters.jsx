@@ -113,7 +113,7 @@ const Filters = ({ setItems, user }) => {
     const filters = {
       status: selectedStatus,
       categories: selectedCategories.length > 0 ? selectedCategories : null,
-      tags: selectedTags.length > 0 ? selectedTags : null,
+      tags: selectedTags.length > 0 ? selectedTags.map((tag) => tag.value) : null,
       minBid: minBid,
       maxPrice: maxPrice,
       popularity: selectedPopularity,
@@ -137,6 +137,7 @@ const Filters = ({ setItems, user }) => {
   const handleReset = async () => {
     setSelectedCategories([]);
     setSelectedTags([]);
+
     setMinBid(0);
     setMaxPrice(0);
     setSelectedStatus("all");
@@ -212,6 +213,10 @@ const Filters = ({ setItems, user }) => {
             closeMenuOnSelect={true}
             components={animatedComponents}
             defaultValue={[]}
+            value={selectedCategories.map((category) => ({
+              value: category,
+              label: categories.find((cat) => cat.id === category).name,
+            }))}
             isMulti
             isLoading={isFetchingCategory}
             placeholder="Select categories"
@@ -253,12 +258,18 @@ const Filters = ({ setItems, user }) => {
             cacheOptions
             defaultOptions
             isMulti
+            value={selectedTags.map((tag) => ({
+              value: tag.value,
+              label: tag.label,
+            }))}
             isLoading={false}
             loadOptions={loadTags}
             components={animatedComponents}
             placeholder="Search..."
             onChange={(selected) => {
-              setSelectedTags(selected.map((tag) => tag.value));
+              setSelectedTags(
+                selected.map((tag) => ({ value: tag.value, label: tag.label }))
+              );
             }}
             theme={(theme) => ({
               ...theme,

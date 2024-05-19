@@ -256,7 +256,7 @@ module.exports.sendMessage = async (req, res) => {
         });
       }
     }
-    res.send({ message: "message sent", id: messageObject.id, success: true });
+    res.send({ message: messageObject, id: messageObject.id, success: true });
   } catch (err) {
     res.status(500).send({ message: "error sending message", error: err, success: false });
   }
