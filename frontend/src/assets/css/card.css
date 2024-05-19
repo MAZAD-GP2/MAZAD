@@ -104,6 +104,12 @@
   }
 }
 
+@media only screen and (max-width: 960px) {
+  .item-card {
+    min-width: 45%;
+  }
+}
+
 @media only screen and (max-width: 880px) {
   .item-card {
     width: 100%;

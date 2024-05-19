@@ -13,6 +13,10 @@ const User_ChatRoom = sequelize.define("User_ChatRoom", {
   userId: {
     type: Sequelize.INTEGER,
     allowNull: false,
+    references: {
+      model: User,
+      key: "id",
+    },
   },
   chatRoomId: {
     type: Sequelize.INTEGER,

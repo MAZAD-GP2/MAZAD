@@ -203,9 +203,7 @@ const ViewItem = () => {
           });
           setComments(comments);
           setIsInterest(itemData.data.item.isInterested || false);
-          var channel = pusher.subscribe(
-            `auction_${itemData.data.item.Auction.id}`
-          );
+
           setShowNumber(itemData.data.item.Auction.showNumber);
           if (itemData.data.item.Auction.Bids.length > 0) {
             let bidObject = {
@@ -227,7 +225,9 @@ const ViewItem = () => {
               userId: null,
             });
           }
-
+          var channel = pusher.subscribe(
+            `auction_${itemData.data.item.Auction.id}`
+          );
           channel.bind("add_bid", function (data) {
             // alert(JSON.stringify(data));
             if (user && data.User.id === user.id) {

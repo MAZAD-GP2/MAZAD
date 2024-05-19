@@ -109,7 +109,7 @@ module.exports = {
     
     await queryInterface.addColumn(
       'Bids',
-      'AuctionId',
+      'auctionId',
       {
         type: Sequelize.INTEGER,
         references: {

@@ -11,14 +11,6 @@ module.exports = {
         key: "id",
       },
     });
-    await queryInterface.addColumn("Messages", "roomId", {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Chat_rooms",
-        key: "id",
-      },
-    });
   },
 
   down: async (queryInterface, Sequelize) => {

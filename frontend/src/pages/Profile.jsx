@@ -84,7 +84,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserStats = async () => {
       try {
-        const response = await api.getUserStats(sessionUser.id);
+        const response = await api.getUserStats(id);
         setAuctionWon(response.data.AuctionsWonCount);
         setBidCount(response.data.bidCount);
       } catch (err) {
@@ -103,6 +103,16 @@ const Profile = () => {
       setStatsLoading(true);
     };
   }, [id]);
+
+  const handleMessageUser = async () => {
+    try {
+      const response = await api.getRoomByUser(id);
+      window.location.href = `/chat/${response.data.roomId}`;
+    } catch (err) {
+      enqueueSnackbar(err.response.data.message, { variant: "error" });
+    }
+  };
+
 
   if (loading) {
     return (
@@ -198,7 +208,7 @@ const Profile = () => {
                       Log Out
                     </button>
                   ) : (
-                    <button className="d-flex align-items-center gap-2 btn btn-secondary text-white msg-btn">
+                    <button className="d-flex align-items-center gap-2 btn btn-secondary text-white msg-btn" onClick={handleMessageUser}>
                       <i className="fa-solid fa-comment-dots"></i>
                       Message User
                     </button>

@@ -8,7 +8,7 @@ import * as api from "../api/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MobileSearchBar from "./MobileSearchBar";
 
-const Navbar = (showMobileNavbar=true) => {
+const Navbar = (showMobileNavbar = true) => {
   const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [show, setShow] = useState(false);
@@ -81,7 +81,7 @@ const Navbar = (showMobileNavbar=true) => {
                   className="d-flex flex-row gap-3 form-group"
                 >
                   <div className="input-container bg-dark rounded-5 border-0 d-flex">
-                    <FontAwesomeIcon icon="fa-search" color="white" />
+                    <i className="fa fa-search text-white" ></i>
                     <input
                       type="search"
                       placeholder="Search Items, tags or categories"
@@ -100,7 +100,7 @@ const Navbar = (showMobileNavbar=true) => {
                         className="btn btn-secondary col-auto align-content-center px-2 rounded-5 add-item"
                         href="/add-item"
                       >
-                        <FontAwesomeIcon icon="fa-add" /> New Mazad
+                        <i className="fa fa-add"></i> New Mazad
                       </a>
                       <div className="col-auto d-flex flex-row form-group align-content-end">
                         {user.profilePicture ? (

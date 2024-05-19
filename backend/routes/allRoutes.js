@@ -144,4 +144,7 @@ router.route("/comment/add").post(verifyToken(true), commentRoutes.addComment);
 router.route("/chat/getRooms/:id").get(verifyToken(true), chatRoutes.getChatRooms);
 router.route("/chat/getRoomByUser/:id").get(verifyToken(true), chatRoutes.getRoomByUser);
 router.route("/chat/getMessagesInRoom/:roomId").get(verifyToken(true), chatRoutes.getMessagesInRoom);
+router.route("/chat/getRoomById/:roomId").get(verifyToken(true), chatRoutes.getRoomById);
+// router.route("/chat/createRoom").post(verifyToken(true), chatRoutes.createRoom);
+router.route("/chat/sendMessage").post(verifyToken(true), chatRoutes.sendMessage);
 module.exports = router;

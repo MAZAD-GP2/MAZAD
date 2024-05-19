@@ -86,4 +86,6 @@ export const addComment = (data) => API.post(`/comment/add`, data);
 
 export const getChatRooms = (id) => API.get(`/chat/getRooms/${id}`);
 export const getRoomByUser = (id) => API.get(`/chat/getRoomByUser/${id}`);
+export const getRoomById = (id) => API.get(`/chat/getRoomById/${id}`);
 export const getMessagesInRoom = (id) => API.get(`/chat/getMessagesInRoom/${id}`);
+export const sendMessage = (data) => API.post(`/chat/sendMessage`, data);

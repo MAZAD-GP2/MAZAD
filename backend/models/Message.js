@@ -9,7 +9,7 @@ const Message = sequelize.define("Message", {
     allowNull: false,
     autoIncrement: true,
   },
-  Content: {
+  content: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -21,7 +21,7 @@ const Message = sequelize.define("Message", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  roomId: {
+  chatRoomId: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },

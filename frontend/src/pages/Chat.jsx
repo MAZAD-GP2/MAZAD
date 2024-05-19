@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Navbar from "../components/Navbar";
 import MobileNavbar from "../components/MobileNavbar";
 
 import * as api from "../api/index";
 import "../assets/css/chat.css";
 import PageTitle from "../components/PageTitle";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import pusher from "../api/pusher";
+
 export function Chat() {
-  const { userId } = useParams();
-  const [allMessages, setAllMessages] = useState([]);
+  const navigate = useNavigate();
+
+  const { roomId } = useParams();
+  const allRooms = useRef({});
   const [currentMessages, setCurrentMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [currentRoom, setCurrentRoom] = useState({});
@@ -19,75 +23,7 @@ export function Chat() {
   const [messageLoading, setMessageLoading] = useState(true);
   const [roomsLoading, setRoomsLoading] = useState(true);
   const currentUser = JSON.parse(sessionStorage.getItem("user"));
-  const tempMessages = [
-    {
-      id: 1,
-      content:
-        "yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo !!!!!!",
-      senderId: 12,
-      isSeen: true,
-      roomId: 5,
-      createdAt: "2021-09-01T00:00:00.000Z",
-    },
-    {
-      id: 13,
-      content:
-        "yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo !!!!!!",
-      senderId: 12,
-      isSeen: true,
-      roomId: 5,
-      createdAt: "2021-09-01T00:00:00.000Z",
-    },
-    {
-      id: 14,
-      content:
-        "yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo yo !!!!!!",
-      senderId: 12,
-      isSeen: true,
-      roomId: 5,
-      createdAt: "2021-09-01T00:00:00.000Z",
-    },
-    {
-      id: 7,
-      content: "my name is Skyler White yo",
-      senderId: 19,
-      isSeen: true,
-      roomId: 5,
-      createdAt: "2021-09-01T00:00:00.000Z",
-    },
-    {
-      id: 8,
-      content: "my husband is Walter White yo",
-      senderId: 19,
-      isSeen: true,
-      roomId: 5,
-      createdAt: "2021-09-01T00:00:00.000Z",
-    },
-    {
-      id: 10,
-      content: "he told me everything!",
-      senderId: 19,
-      isSeen: true,
-      roomId: 5,
-      createdAt: "2021-09-01T00:00:00.000Z",
-    },
-    {
-      id: 11,
-      content: "Jee chill out yo!",
-      senderId: 12,
-      isSeen: true,
-      roomId: 5,
-      createdAt: "2021-09-01T00:00:00.000Z",
-    },
-    {
-      id: 11,
-      content: "sorry 🙄",
-      senderId: 19,
-      isSeen: true,
-      roomId: 5,
-      createdAt: "2021-09-01T00:00:00.000Z",
-    },
-  ];
+
   useEffect(() => {
     setRoomsLoading(true);
     if (!currentUser) {
@@ -107,15 +43,57 @@ export function Chat() {
     };
     fetchUsers();
   }, []);
+  
+  useEffect(() => {
+    var channel = pusher.subscribe(`chat_room_${currentUser.id}`);
+    channel.bind("new_message", function (data) {
+      allRooms[data.chatRoomId].messages.unshift(data.dataValues);
+      setChatRooms((prev) => {
+        const index = prev.findIndex((room) => room.id === data.chatRoomId);
+        if (index === -1) {
+          let temp = {
+            id: data.chatRoomId,
+            user: [data.sender],
+            messages: [data.message],
+          };
+          allRooms[data.chatRoomId] = temp;
+          return [temp, ...prev];
+        }
+        prev[index].Messages.unshift(data.dataValues);
+        const temp = prev[index];
+        prev.splice(index, 1);
+        prev.unshift(temp);
+        return [...prev];
+      });
+      setCurrentMessages((prev) => {
+        if (prev[0].id === data.dataValues.id) {
+          return [...prev];
+        }
+        if (prev[0].chatRoomId === data.chatRoomId) {
+          if (data.dataValues.senderId !== currentUser.id)
+          return [data.dataValues, ...prev];
+        else
+          prev[0].id = data.dataValues.id;
+          return [...prev];
+        }
+        return [...prev];
+      });
+    });
+  }, []);
 
   useEffect(() => {
-    if (!userId) {
+    if (!roomId) {
       setMessageLoading(false);
       return;
     }
-    const fetchMessagesByUser = async () => {
+    if (allRooms[roomId]) {
+      setCurrentMessages(allRooms[roomId].messages);
+      setMessageLoading(false);
+      return;
+    }
+    const fetchRoomByUser = async () => {
       try {
-        const response = await api.getRoomByUser(userId);
+        const response = await api.getRoomById(roomId);
         setCurrentRoom({
           ...response.data,
           user: response.data.user,
@@ -124,18 +102,30 @@ export function Chat() {
         console.error(error);
       }
     };
-    fetchMessagesByUser();
-  }, [userId]);
+    fetchRoomByUser();
+  }, [roomId]);
 
   useEffect(() => {
     if (!currentRoom || !currentRoom.room) {
       setMessageLoading(false);
       return;
     }
+    if (allRooms[currentRoom.room.id]) {
+      setCurrentMessages(allRooms[currentRoom.room.id].messages);
+      setMessageLoading(false);
+      return;
+    }
     const fetchMessages = async () => {
       try {
         const response = await api.getMessagesInRoom(currentRoom.room.id);
-        setCurrentMessages(tempMessages.reverse());
+        let reversedMessages = response.data.reverse();
+        setCurrentMessages(reversedMessages);
+        allRooms[currentRoom.room.id] = {
+          id: currentRoom.room.id,
+          user: currentRoom.user,
+          messages: reversedMessages,
+        };
+
         setMessageLoading(false);
       } catch (error) {
         console.error(error);
@@ -145,13 +135,48 @@ export function Chat() {
   }, [currentRoom]);
 
   const handleChatRoomChange = (room) => {
-    setCurrentRoom({
-      ...room,
-      user: room.Users[0],
-    });
     setMessageLoading(true);
+    navigate(`/chat/${room.id}`);
   };
 
+  const handleSendMessage = async () => {
+    if (!message) return;
+    const newMessage = {
+      content: message,
+      senderId: currentUser.id,
+      roomId: currentRoom.room.id,
+      createdAt: "just now",
+      chatRoomId: currentRoom.room.id,
+    };
+    setCurrentMessages([newMessage, ...currentMessages]);
+    setMessage("");
+    const response = await api.sendMessage({
+      roomId: currentRoom.room.id,
+      message,
+    });
+    if (response.data.success) {
+      allRooms[currentRoom.room.id].messages.unshift(response.data.message);
+      // update the currentMessages last message id
+      setCurrentMessages((prev) => {
+        prev[0].id = response.data.id;
+        return [...prev];
+      });
+    }
+  };
+
+  const formatDate = (date) => {
+    let d;
+    d = new Date(date);
+
+    if (d == "Invalid Date") {
+      return date;
+    }
+    if (d < new Date()) {
+      return d.toLocaleTimeString({}, { hour: "2-digit", minute: "2-digit" });
+    } else {
+      return d.toLocaleDateString();
+    }
+  };
   return (
     <>
       <Navbar showMobileNavbar={false} />
@@ -185,33 +210,35 @@ export function Chat() {
                     </div>
                   ) : (
                     chatRooms.map((room) => (
-                      <>
+                      <div key={room.id}>
                         <div
-                          key={room.id}
                           className="room py-3 active"
                           style={{ cursor: "pointer" }}
                           onClick={() => handleChatRoomChange(room)}
                         >
                           <div className="d-flex flex-row align-items-start gap-2 px-3">
-                            <img
-                              src={room.Users[0].profilePicture}
-                              alt="avatar"
-                              className="rounded-circle border border-2 border-primary object-fit-cover"
-                              style={{ width: "50px", height: "50px" }}
-                            />
+                            <div>
+                              <img
+                                src={
+                                  room.Users[0].profilePicture ||
+                                  "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_100,h_100/v1716060482/profile_uakprb.png"
+                                }
+                                alt="avatar"
+                                className="rounded-circle border border-2 border-primary object-fit-cover"
+                                style={{ width: "50px", height: "50px" }}
+                              />
+                            </div>
                             <div className="w-100 d-flex flex-column justify-content-start align-items-start">
                               <span className="mt-1 text-truncate text-green">
                                 {room.Users[0].username}
                               </span>
                               <div className="w-100 d-flex flex-row justify-content-start align-items-center gap-1 text-muted text-sm">
                                 {room.Messages.length > 0 ? (
-                                  room.Messages[0]?.User.id ===
+                                  room.Messages[0]?.senderId ===
                                   currentUser.id ? (
                                     <small>You: </small>
                                   ) : (
-                                    <small>
-                                      {room.Messages[0]?.User.username}
-                                    </small>
+                                    <small>Them:</small>
                                   )
                                 ) : (
                                   <small className="last-message">
@@ -219,14 +246,14 @@ export function Chat() {
                                   </small>
                                 )}
                                 <small className="last-message text-truncate text-muted">
-                                  {room.Messages[0]?.content}
+                                  {room.Messages[0]?.content.slice(0, 20)}{room.Messages[0]?.content.trim().length>15 && <>...</>}
                                 </small>
                               </div>
                             </div>
                           </div>
                         </div>
                         <div className="border-bottom border-2 border-gray"></div>
-                      </>
+                      </div>
                     ))
                   )}
                 </>
@@ -245,7 +272,10 @@ export function Chat() {
                 <>
                   <div className="d-flex flex-row align-items-center gap-2">
                     <img
-                      src={currentRoom.user?.profilePicture}
+                      src={
+                        currentRoom.user?.profilePicture ||
+                        "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_100,h_100/v1716060482/profile_uakprb.png"
+                      }
                       alt="avatar"
                       className="rounded-circle border border-2 border-primary object-fit-cover"
                       style={{ width: "45px", height: "45px" }}
@@ -262,7 +292,7 @@ export function Chat() {
             </div>
             <div
               id="chat-box-messages"
-              className="d-flex flex-column-reverse gap-3 py-lg-3 p-lg-3 p-1 pt-3 pb-3 h-100 overflow-y-scroll"
+              className="d-flex flex-column-reverse py-lg-3 p-lg-3 p-1 pt-3 pb-3 h-100 overflow-y-scroll"
             >
               {messageLoading ? (
                 <div className="d-flex flex-column align-items-center justify-content-center gap-2 h-100">
@@ -276,57 +306,78 @@ export function Chat() {
                       No messages. yet!
                     </div>
                   ) : (
-                    currentMessages.map((msg) => (
+                    currentMessages.map((msg, index) => (
                       <div
-                        key={msg.id}
+                        key={msg.id || -1}
                         className={`message ${
                           msg.senderId === currentUser.id ? "sent" : "received"
+                        } ${
+                          currentMessages[index + 1]?.senderId !== msg.senderId
+                            ? "mt-4"
+                            : "mt-1"
                         }`}
                       >
                         {msg.senderId === currentUser.id ? (
-                          <div className="d-flex flex-row align-items-start justify-content-end gap-2 px-lg-3 px-1">
-                            <div className="content-box rounded-bottom-3 rounded-start-3 bg-primary">
-                              <div className="p-2 w-auto">
-                                <div className="content-box-inner d-flex flex-column w-100 h-100">
-                                  <span className="content text-white">
-                                    {msg.content}
-                                  </span>
-                                  <small
-                                    className="time text-sm text-end"
-                                    style={{ fontSize: "0.7rem" }}
-                                  >
-                                    {new Date(msg.createdAt).toLocaleString()}
-                                  </small>
-                                </div>
+                          <div className="d-flex flex-row-reverse align-items-end justify-content-start gap-2 px-lg-3 px-1">
+                            <div className="col-auto">
+                              {currentMessages[index - 1]?.senderId !==
+                              msg.senderId ? (
+                                <img
+                                  src={
+                                    currentUser.profilePicture?.replace(
+                                      "upload/",
+                                      "upload/c_fill,w_100,h_100/"
+                                    ) ||
+                                    "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_100,h_100/v1716060482/profile_uakprb.png"
+                                  }
+                                  alt="avatar"
+                                  className="avatar rounded-circle object-fit-cover"
+                                />
+                              ) : (
+                                <div style={{ width: "40px" }}></div>
+                              )}
+                            </div>
+
+                            <div className="content-box rounded-top-3 rounded-start-3 p-2 w-auto">
+                              <div className="content-box-inner d-flex flex-column w-100 h-100">
+                                <span className="content">{msg.content}</span>
+                                <small
+                                  className="time text-sm text-end"
+                                  style={{ fontSize: "0.7rem" }}
+                                >
+                                  {formatDate(msg.createdAt)}
+                                </small>
                               </div>
                             </div>
-                            <img
-                              src={currentUser.profilePicture.replace(
-                                "upload/",
-                                "upload/c_fill,w_100,h_100/"
-                              )}
-                              alt="avatar"
-                              className="avatar col-auto rounded-circle object-fit-cover"
-                            />
                           </div>
                         ) : (
-                          <div className="d-flex flex-row align-items-start justify-content-start gap-2 px-lg-3 px-1">
-                            <img
-                              src={currentRoom.user.profilePicture.replace(
-                                "upload/",
-                                "upload/c_fill,w_100,h_100/"
+                          <div className="d-flex flex-row align-items-end justify-content-start gap-2 px-lg-3 px-1">
+                            <div className="col-auto">
+                              {currentMessages[index - 1]?.senderId !==
+                              msg.senderId ? (
+                                <img
+                                  src={
+                                    currentRoom.user?.profilePicture?.replace(
+                                      "upload/",
+                                      "upload/c_fill,w_100,h_100/"
+                                    ) ||
+                                    "https://res.cloudinary.com/djwhrh0w7/image/upload/c_fill,w_100,h_100/v1716060482/profile_uakprb.png"
+                                  }
+                                  alt="avatar"
+                                  className="avatar rounded-circle object-fit-cover"
+                                />
+                              ) : (
+                                <div style={{ width: "40px" }}></div>
                               )}
-                              alt="avatar"
-                              className="avatar rounded-circle object-fit-cover"
-                            />
-                            <div className="content-box border border-2 border-gray rounded-bottom-3 rounded-end-3 p-2 bg-light w-auto">
+                            </div>
+                            <div className="content-box rounded-top-3 rounded-end-3 p-2 bg-light w-auto">
                               <div className="content-box-inner d-flex flex-column w-100 h-100">
                                 <span className="content">{msg.content}</span>
                                 <small
                                   className="text-muted text-sm"
                                   style={{ fontSize: "0.7rem" }}
                                 >
-                                  {new Date(msg.createdAt).toLocaleString()}
+                                  {formatDate(msg.createdAt)}
                                 </small>
                               </div>
                             </div>
@@ -348,6 +399,11 @@ export function Chat() {
                 placeholder="Type a message"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.target.value.trim()) {
+                    handleSendMessage();
+                  }
+                }}
               />
               <button
                 className="btn btn-primary"

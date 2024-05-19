@@ -73,7 +73,7 @@ function App() {
         {isLoggedIn && <Route path="/favorites" element={<Favorites />} />}
         {!isLoggedIn && <Route exact path="/favorites" element={<Login />} />}
         <Route path="/chat" element={<Chat />} />
-        <Route path="/chat/:userId" element={<Chat />} />
+        <Route path="/chat/:roomId" element={<Chat />} />
         {/* {!isLoggedIn && <Route exact path="/chat" element={<Login />} />} */}
         <Route exact path="/search" element={<SearchResult />} />
         <Route exact path="/category-item/:id" element={<CategoryItems />} />
