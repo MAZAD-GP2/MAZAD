@@ -716,7 +716,7 @@ const ItemForm = ({
             disabled={isAddingItem}
             onClick={handleSubmit}
           >
-            Add Mazad!
+            Add Mazad
             {isAddingItem && (
               <div
                 className="spinner-border spinner-border-sm ms-2"

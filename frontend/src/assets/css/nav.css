@@ -117,8 +117,11 @@
   color: var(--primary-green);
   background-color: transparent;
   border: none;
+  transition: 0.2s;
+  text-decoration: none;
 }
 
 .lgn-sign-up:hover {
   background-color: var(--primary-green);
+  color: black;
 }

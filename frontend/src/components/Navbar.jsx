@@ -132,18 +132,18 @@ const Navbar = (showMobileNavbar = true) => {
                     <div id="lgn-sign-up-container w-100">
                       <div className="d-flex flex-row justify-content-between gap-3">
                         <a
-                          type="submit"
-                          className="btn btn-secondary col-auto px-3 rounded-5 align-content-center lgn-sign-up"
-                          href="/login"
-                        >
-                          Log In
-                        </a>
-                        <a
-                          className="btn btn-secondary col-auto px-3 rounded-5 align-content-center lgn-sign-up"
+                          className="col-auto align-content-center px-3 py-2 rounded-5 lgn-sign-up"
                           href="/register"
                           role="button"
                         >
                           Sign Up
+                        </a>
+                        <a
+                          type="submit"
+                          className="col-auto align-content-center px-2 rounded-5 lgn-sign-up"
+                          href="/login"
+                        >
+                          Log In
                         </a>
                       </div>
                     </div>

@@ -1,78 +1,314 @@
-  .landing-page {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient( rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28) ), url('../images/amman-bg.jpg') no-repeat center center fixed; 
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
 
-
-  .slider-overlay {
-    margin-top: 17%;
-    margin-bottom: 7%;
-    padding-left: 4%;
-    text-align: left;
-    color: white;
-  }
-
-  .slider-overlay h1 {
-    font-size: 5rem;
-    margin-bottom: 1rem;
-    font-family: "pacifico";
-  }
-
-  .slider-overlay p {
-    font-size: 1.3rem;
-  }
-
-
-  .nav {
-    display: flex;
-    justify-content: flex-end;
-    gap: 6%;
-    padding-top: 2%;
-    padding-right: 4%;
-  }
-
-  .home-lgn-nav {
-    color: white;
-    font-weight: 300;
+  .link {
+    font-weight: 500;
+    padding: 9px 20px;
+    transition: .25s;
+    border-radius: 20px;
+    font-size: 16px;
     cursor: pointer;
-    transition: .55s;
-    text-decoration: transparent;
+    color: #004F29 !important;
   }
 
-  .home-lgn-nav:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: var(--primary-green);
+  .link:hover {
+    background-color: var(--primary-green);
+   }
+
+  .lgn-btn {
+    cursor: pointer;
+    color: #004F29;
+    font-weight: 500;
+    font-size: 16px;
+    padding: 9px 20px;
+    text-decoration: none;
   }
 
-
-  .about {
+  .logo-container {
     display: flex;
     flex-direction: column;
-    gap: 80px;
-    background-color: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(2px);
-    color:white;
-    font-weight: 200;
-    padding: 3%;
-    padding-bottom: 5%;
-    padding-top: 4%;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-left: 150px;
   }
 
-  .about h3 {
-    /* color: var(--secondary-light);*/
-    font-weight: 300;
+  .register-btn {
+    background-color: var(--primary-green);
+    cursor: pointer;
+    color: #004F29;
+    font-weight: 500;
+    font-size: 16px;
+    padding: 9px 20px;
+    text-decoration: none;
+    border-radius: 50px;
+  }
+  
+  .lgn-btn:hover {
     text-decoration: underline;
-    text-decoration-color: var(--primary-green);
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
   }
 
-  .about p {
-    font-weight: 200;
+  .nav {
+    /* d-flex justify-content-between px-5 py-3 mb-5 */
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem 3rem;
+  }
+
+  .slogan {
+    font-family: "Poppins", "Rubik";
+    font-weight: 800;
+    /* font-size: 60px; */
+    text-align: center;
+  }
+
+  .lgn-register-tab {
+    display: flex;
+    gap: 120px;
+    align-items: center;
+  }
+
+  .nav-btn {
+    border:none;
+    color: var(--primary-green);
+    font-weight: 600;
+    background-color: transparent;
+    padding: 7px 15px;
+    border-radius: 20px;
+    transition: .20s;
+    font-size: 20px;
+    /*  w-25 mx-auto */
+    width: 25%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .offset-rectangle {
+    position: absolute;
+    top: 20px; /* Adjust the offset as needed */
+    left: 20px; /* Adjust the offset as needed */
+    width: 100%;
+    height: 100%;
+    background-color: var(--primary-green);
+    z-index: -1;
+  }
+
+
+  .main-image {
+    position: relative;
+    display: block;
+    width: 700px;
+    height: 450px;
+    object-fit: cover;
+  }
+
+  .image-container {
+    position: relative;
+    display: inline-block; /* This allows the container to fit the image size */
+    margin-right: 100px;
+    margin-bottom: 50px;
+  }
+  .nav-btn:hover {
+    background-color: var(--primary-green);
+    color: #004F29 !important;
+  }
+
+
+  .category-header {
+    margin-bottom: 100px;
+    width: 50%;
+  }
+
+  .category-item {
+    width: calc(25% - 16px); /* Adjust width as per gap */
+    height: 180px; /* Fixed height for all images */
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+
+  #logo-img {
+    width: 600px;
+    height: 100px;
+    object-fit: contain;
+    align-self: center;
+  }
+  
+  .category-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .about-categories {
+    gap: 300px;
+    display: flex;
+    margin:auto;
+    margin-top: 3rem;
+  }
+
+  .categories-container {
+    margin: 130px 100px;
+  }
+
+  .category-overlay {
+    background-color: rgba(0, 225, 117, .5);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .category-item:hover .category-overlay {
+    opacity: 1;
+  }
+  
+  .category-name {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .view-all {
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    transition: .20s;
+    justify-content: center;
+    border-radius: 0;
+  }
+
+  .view-all:hover {
+    background-color: rgba(0, 225, 117, .8);
+    color: #004F29;
+  }
+
+  @media screen and (max-width: 1366px) {
+    .about-categories {
+      margin-bottom: 0;
+    }
+
+    .nav {
+      margin-bottom: 10px;
+    }
+    .slogan {
+      font-size: 20px;
+    }
+
+    .main-image {
+      width: 450px;
+      height: 300px;
+    }
+    .logo-container {
+      margin-left: 100px;
+      margin-top: 10px;
+    }
+    
+    .logo-container p {
+      align-self: center;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .categories-container {
+      margin: 100px 50px;
+    }
+
+  }
+
+  @media screen and (max-width: 932px) {
+
+    .top-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-container {
+      margin: 20px;
+      gap: 30px;
+      margin-bottom: 100px;
+    }
+    
+    .slogan {
+      font-size: 20px;
+    }
+
+    .nav {
+      gap: 4px;
+      padding: 30px;
+    }
+
+    .image-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 10px;
+      background-color: #00B960;
+      border-radius: 5px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+
+    }
+    
+    .main-image {
+      width: 80%; /* Adjust image width for smaller screens */
+      height: 300px; /* Allow image height to adjust based on width */
+    }
+    
+    .offset-rectangle {
+      display: none;
+    }
+
+
+    #logo-img {
+      margin: 0 auto;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .lgn-register-tab {
+      display: flex;
+      gap: 30px;
+    }
+
+    .register-btn {
+      background-color: transparent;
+    }
+
+    .register-btn:hover {
+      text-decoration: underline;
+    }
+
+    .lgn-register-tab a {
+      padding: 2px;
+      font-size: 13px;
+    }
+
+    h5 {
+      font-size: 15px;
+    }
+
+    h6 {
+      font-size: 12px;
+    }
+
+    .categories-container {
+      margin-top: 50px;
+      margin-left: 20px;
+    }
+    
+    .category-header{
+      width: 100%;
+    }
+    .about-categories {
+      gap: 75px;
+    }
+
+    .nav-btn {
+      font-size: 13px;
+      width: 40%;
+      background-color: var(--primary-green);
+      color: #004F29;
+    }
+  
+    .category-item {
+      width: 100%; /* Adjust width for smaller screens */
+      margin-bottom: 20px; /* Add some margin between category items on smaller screens */
+    }
   }
