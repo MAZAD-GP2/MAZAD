@@ -22,8 +22,7 @@ export const getUserById = (id) => API.get(`/user/${id}`);
 export const userUpdate = (data) => API.put(`/user/update`, data);
 export const passwordUpdate = (data) => API.put(`/user/password-update`, data);
 export const getUserStats = (id) => API.get(`/user/stats/${id}`);
-export const getBidHistory = (id) => API.get(`/user/getBidHistory/${id}`);
-
+export const getBidHistory = (id, page, limit) => API.get(`/user/getBidHistory/${id}?page=${page}&limit=${limit}`);
 //categories
 export const getAllCategories = () => API.get("/category");
 //tags
@@ -35,7 +34,7 @@ export const getAllItems = (query) => API.get(`/item?${query}`);
 export const getAllItemsByCategory = (id) => API.get(`/item/category/${id}`);
 export const getAllItemsByFavorites = () => API.get(`/item/favorites`);
 export const getItemById = (id) => API.get(`/item/${id}`);
-export const getAllItemsByUserId = (page, limit) => API.get(`/item/user?page=${page}&limit=${limit}`);
+export const getAllItemsByUserId = (id, page, limit) => API.get(`/item/user/${id}?page=${page}&limit=${limit}`);
 export const addItem = (data) =>
   API.post("/item/create", data, {
     headers: {

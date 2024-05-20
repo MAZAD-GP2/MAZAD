@@ -486,7 +486,7 @@ module.exports.getAllItems = async (req, res) => {
 
 module.exports.getAllItemsByUserId = async (req, res) => {
   try {
-    const userId = req.currentUser.id;
+    const userId = req.params.id;
     const page = parseInt(req.query.page) || 1; // Parse the page parameter
     const limit = parseInt(req.query.limit) || 10; // Parse the limit parameter
     const offset = (page - 1) * limit; // Calculate the offset
@@ -529,7 +529,7 @@ module.exports.getAllItemsByUserId = async (req, res) => {
         const interest = await Interest.findOne({
           where: {
             itemId: item.id,
-            userId: req.currentUser.id,
+            userId: userId,
           },
         });
         item.dataValues.isInterested = interest ? true : false;

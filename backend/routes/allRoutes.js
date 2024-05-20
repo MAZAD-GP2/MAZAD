@@ -66,7 +66,7 @@ router
 // item
 router.route("/item").get(verifyToken(false), itemRoutes.getAllItems);
 router
-  .route("/item/user")
+  .route("/item/user/:id")
   .get(verifyToken(true), itemRoutes.getAllItemsByUserId);
 router
   .route("/item/favorites")

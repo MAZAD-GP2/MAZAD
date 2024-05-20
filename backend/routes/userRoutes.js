@@ -364,10 +364,12 @@ module.exports.getUserStats = async (req, res) => {
 module.exports.getBidHistory = async (req, res) => {
   try {
     const userId = req.params.id;
-    const bids = await Bid.findAll({
-      where: {
-        userId,
-      },
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const bids =await Bid.findAll({
+      where: { userId },
       include: [
         {
           model: Auction,
@@ -387,9 +389,13 @@ module.exports.getBidHistory = async (req, res) => {
           ],
         },
       ],
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
     });
+    const count = await Bid.count({where: { userId }})
 
-    return res.json(bids);
+    return res.json({ count, bids });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }

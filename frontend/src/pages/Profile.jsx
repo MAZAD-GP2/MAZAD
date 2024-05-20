@@ -26,6 +26,9 @@ const Profile = () => {
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const [showEditSection, setShowEditSection] = useState(false);
   const [bidHistory, setBidHistory] = useState([]);
+  const [bidPage, setBidPage] = useState(1);
+  const [bidTotalPages, setBidTotalPages] = useState(1);
+  const [bidLimit] = useState(4); // Set the limit for bids per page
   const userData = sessionStorage.getItem("user");
 
   const handleSignOut = async (event) => {
@@ -108,14 +111,15 @@ const Profile = () => {
   useEffect(() => {
     const fetchBidHistory = async () => {
       try {
-        const response = await api.getBidHistory(id || sessionUser.id);
-        if (response.data.length) setBidHistory(response.data);
+        const response = await api.getBidHistory(id || sessionUser.id, bidPage, bidLimit);
+        if (response.data.bids.length) setBidHistory(response.data.bids);
+        setBidTotalPages(Math.ceil(response.data.count / bidLimit));
       } catch (err) {
         enqueueSnackbar(err.response.data.message, { variant: "error" });
       }
     };
     fetchBidHistory();
-  }, []);
+  }, [id, bidPage, bidLimit]);
 
   const handleMessageUser = async () => {
     try {
@@ -196,6 +200,9 @@ const Profile = () => {
 
     return <small className="text-muted">{formattedDate}</small>;
   };
+
+  const goToNextBidPage = () => setBidPage(bidPage + 1);
+  const goToPrevBidPage = () => setBidPage(bidPage - 1);
 
   return (
     <>
@@ -306,11 +313,10 @@ const Profile = () => {
                   >
                     <li className="nav-item" role="presentation">
                       <button
-                        className={`btn ${
-                          showEditSection
+                        className={`btn ${showEditSection
                             ? "btn-white text-primary border-primary"
                             : "btn-secondary"
-                        } w-100`}
+                          } w-100`}
                         id="pills-history-tab"
                         data-bs-toggle="pill"
                         data-bs-target="#pills-history"
@@ -326,11 +332,10 @@ const Profile = () => {
                     </li>
                     <li className="nav-item" role="presentation">
                       <button
-                        className={`btn ${
-                          !showEditSection
+                        className={`btn ${!showEditSection
                             ? "btn-white text-primary border-primary"
                             : "btn-secondary"
-                        } w-100`}
+                          } w-100`}
                         id="pills-edit-tab"
                         data-bs-toggle="pill"
                         data-bs-target="#pills-edit"
@@ -349,9 +354,8 @@ const Profile = () => {
 
               <div className="tab-content" id="pills-tabContent">
                 <div
-                  className={`tab-pane fade ${
-                    !showEditSection ? "show active" : ""
-                  }`}
+                  className={`tab-pane fade ${!showEditSection ? "show active" : ""
+                    }`}
                   id="pills-history"
                   role="tabpanel"
                   aria-labelledby="pills-history-tab"
@@ -359,6 +363,8 @@ const Profile = () => {
                   <div className="card d-flex flex-column gap-lg-4 gap-3 p-lg-4 p-2">
                     <RecentItems
                       isCurrentUser={isCurrentUser}
+                      id={id}
+                      sessionUser={sessionUser}
                       setAuctionCount={setAuctionCount}
                     />
                     <h3>Bid History</h3>
@@ -431,16 +437,36 @@ const Profile = () => {
                           </div>
                         ))
                       ) : (
-                        <p>No bids made yet.</p>
+                        <h4>No bids made yet</h4>
                       )}
                     </div>
+                    {bidTotalPages > 0 && (
+                      <div className="text-muted d-flex flex-row justify-content-center">
+                        <button
+                          className="btn btn-secondary w-10 text-white rounded-5"
+                          disabled={bidPage === 1}
+                          onClick={goToPrevBidPage}
+                        >
+                          &lt; Prev
+                        </button>
+                        <span className="m-2">
+                          {bidPage} of {bidTotalPages}
+                        </span>
+                        <button
+                          className="btn btn-secondary w-10 text-white rounded-5"
+                          disabled={bidPage === bidTotalPages}
+                          onClick={goToNextBidPage}
+                        >
+                          Next &gt;
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
                 {isCurrentUser && (
                   <div
-                    className={`tab-pane fade ${
-                      showEditSection ? "show active" : ""
-                    }`}
+                    className={`tab-pane fade ${showEditSection ? "show active" : ""
+                      }`}
                     id="pills-edit"
                     role="tabpanel"
                     aria-labelledby="pills-edit-tab"
