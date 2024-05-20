@@ -1,8 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../assets/css/landing.css";
-import logo from "../assets/images/full_logo_black.png";
-import * as api from "../api/index";
-import hammerImg from "../assets/images/hammer.avif";
 
 const LandingPage = () => {
   const user = sessionStorage.getItem("user");
@@ -85,7 +82,7 @@ const LandingPage = () => {
       </div>
       <div className="d-flex mt-5 mb-5 justify-content-between top-container">
         <div className="logo-container">
-          <img src={logo} alt="" id="logo-img" />
+          <img src="https://res.cloudinary.com/djwhrh0w7/image/upload/v1716233934/full_logo_black_cnesqj.png" alt="" id="logo-img" />
           <h5 className="slogan">
             Jordan's First Specialized Auctioning Platform
           </h5>
@@ -101,7 +98,7 @@ const LandingPage = () => {
           className="image-container"
         >
           <div className="offset-rectangle"></div>
-          <img src={hammerImg} className="main-image"></img>
+          <img src="https://res.cloudinary.com/djwhrh0w7/image/upload/v1716233934/hammer_z7kekv.avif" className="main-image"></img>
         </div>
       </div>
 

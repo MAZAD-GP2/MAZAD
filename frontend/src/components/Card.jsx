@@ -36,8 +36,6 @@ const Card = ({ item, removeItemFromFavorites }) => {
         .catch((error) => {
           setIsInterest(!isInterest);
         });
-
-      setIsInterest(res.data.isInteresting);
     } catch (error) {
       console.error("Error updating interest:", error);
     } finally {

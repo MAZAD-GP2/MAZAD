@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "../assets/css/profile.css";
-import missingPfp from "../assets/images/missing-pfp.jpg";
 import Navbar from "../components/Navbar";
 import { useSnackbar } from "notistack";
 import MobileNavbar from "../components/MobileNavbar";
-
 import * as api from "../api/index";
 import { useParams } from "react-router-dom";
 import RecentItems from "../components/RecentItems";
 import NotFound from "../components/NotFound";
 import EditProfile from "./EditProfile";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Profile = () => {
   const sessionUser = JSON.parse(sessionStorage.getItem("user"));
@@ -30,6 +27,7 @@ const Profile = () => {
   const [bidTotalPages, setBidTotalPages] = useState(1);
   const [bidLimit] = useState(4); // Set the limit for bids per page
   const userData = sessionStorage.getItem("user");
+  const missingPfp = "https://res.cloudinary.com/djwhrh0w7/image/upload/v1716234031/missing-pfp_lpiydc.jpg";
 
   const handleSignOut = async (event) => {
     try {

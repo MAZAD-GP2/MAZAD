@@ -21,7 +21,7 @@
 }
 
 #main-container {
-  background-image: url("/src/assets/images/wavy bg.png");
+  background-image: url("https://res.cloudinary.com/djwhrh0w7/image/upload/v1716233850/wavy_bg_asxikl.png");
   background-size: 150%;
   background-color: black;
   height: 100vh;

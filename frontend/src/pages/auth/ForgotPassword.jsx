@@ -44,7 +44,7 @@ function ForgotPassword() {
           href="/home"
         >
           <img
-            src="/src/assets/images/full_logo_white.png"
+            src="https://res.cloudinary.com/djwhrh0w7/image/upload/v1716234260/full_logo_white_ysnzrq.png"
             alt="logo"
             width={"100%"}
             className="px-3"
@@ -59,7 +59,7 @@ function ForgotPassword() {
             href="/home"
           >
             <img
-              src="/src/assets/images/logo_english_black.png"
+              src="https://res.cloudinary.com/djwhrh0w7/image/upload/v1716234308/logo_inglish_black_tlzeqp.png"
               alt="logo"
               width={"100%"}
               className="px-3"
@@ -73,7 +73,7 @@ function ForgotPassword() {
             <div className="col-sm-12 col-md-12 col-lg-9 d-flex flex-column gap-3">
               <div className="row">
                 <div className="col-sm-12 form-group">
-                  <label for="email" className="form-label">
+                  <label htmlFor="email" className="form-label">
                     Enter your email
                   </label>
                   <input
