@@ -165,9 +165,14 @@ const ViewItem = () => {
     const fetchItem = async () => {
       try {
         const itemData = await api.getItemById(id);
+        if (!itemData.data) {
+          navigate("/not-found", { replace: true });
+        }
         const AuctionBids = await api.getBidsByAuction(
           itemData.data.item.Auction.id
         );
+        
+
 
         let startDate = new Date(itemData.data.item.Auction.startTime);
         let finishDate = new Date(itemData.data.item.Auction.finishTime);
@@ -323,8 +328,7 @@ const ViewItem = () => {
         if (!itemData.data.item) navigate("/not-found", { replace: true }); // response is {"item": null}
         setLoading(false);
       } catch (err) {
-        setError(err.message);
-        setLoading(false);
+        navigate("/not-found", { replace: true });
       }
     };
     fetchItem();

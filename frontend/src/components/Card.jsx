@@ -168,9 +168,35 @@ const Card = ({ item, removeItemFromFavorites }) => {
         </div>
         <div>
           <div className="d-flex flex-row justify-content-between gap-1">
-            <h5 className="card-title text-truncate" onClick={handleCardClick}>
-              {item.name}
-            </h5>
+            {(() => {
+              switch (item.Auction.status) {
+                case "pending":
+                  return (
+                    <>
+                      <s className="h5 card-title text-truncate">{item.name}</s>
+                      <br />
+                      <span className="text-warning">Pending review</span>
+                    </>
+                  );
+                case "killed":
+                  return (
+                    <>
+                      <s className="h5 card-title text-truncate">{item.name}</s>
+                      <br />
+                      <span className="text-danger">Item was not approved</span>
+                    </>
+                  );
+                default:
+                  return (
+                    <h5
+                      className="card-title text-truncate"
+                      onClick={handleCardClick}
+                    >
+                      {item.name}
+                    </h5>
+                  );
+              }
+            })()}
             <div
               className="interest col-auto d-flex flex-column justify-content-center flex-wrap align-items-center"
               onClick={() => handleChangeInterest(item.id)}

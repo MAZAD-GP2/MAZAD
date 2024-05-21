@@ -34,8 +34,8 @@ export const searchTags = (query) => API.get(`/tag/search/${query}`);
 //items
 export const getAllItems = (query) => API.get(`/item?${query}`);
 export const getAllItemsByCategory = (id) => API.get(`/item/category/${id}`);
-export const getAllItemsByFavorites = () => API.get(`/item/favorites`);
 export const getItemById = (id) => API.get(`/item/${id}`);
+export const getAllItemsByFavorites = () => API.get(`/item/favorites`);
 export const getAllItemsByUserId = (id, page, limit) => API.get(`/item/user/${id}?page=${page}&limit=${limit}`);
 export const addItem = (data) =>
   API.post("/item/create", data, {
