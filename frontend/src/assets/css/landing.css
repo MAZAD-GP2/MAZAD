@@ -30,6 +30,13 @@
     margin-left: 150px;
   }
 
+  .logo-container p{
+    text-align: center;
+    width: 65%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .register-btn {
     background-color: var(--primary-green);
     cursor: pointer;
@@ -39,6 +46,10 @@
     padding: 9px 20px;
     text-decoration: none;
     border-radius: 50px;
+  }
+
+  .register-btn:hover {
+    text-decoration: underline;
   }
   
   .lgn-btn:hover {
@@ -200,6 +211,10 @@
       margin-left: 100px;
       margin-top: 10px;
     }
+
+    .logo-container p {
+      width: 75%;
+    }
     
     .logo-container p {
       align-self: center;
@@ -224,6 +239,10 @@
       margin: 20px;
       gap: 30px;
       margin-bottom: 100px;
+    }
+
+    .logo-container p {
+      width: 100%;
     }
     
     .slogan {
@@ -271,9 +290,6 @@
       background-color: transparent;
     }
 
-    .register-btn:hover {
-      text-decoration: underline;
-    }
 
     .lgn-register-tab a {
       padding: 2px;
@@ -310,5 +326,9 @@
     .category-item {
       width: 100%; /* Adjust width for smaller screens */
       margin-bottom: 20px; /* Add some margin between category items on smaller screens */
+    }
+    
+    .category-overlay {
+      user-select: none;
     }
   }
