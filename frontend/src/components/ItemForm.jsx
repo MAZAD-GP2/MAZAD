@@ -705,7 +705,7 @@ const ItemForm = ({
             onChange={(e) => setVisibility(!visibility)}
           />
           <label htmlFor="visibility-checkbox">
-            Add Auction to the public feed.
+            Hide auction from the public feed.
           </label>
         </div>
       </div>

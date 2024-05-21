@@ -156,8 +156,7 @@ const ViewItem = () => {
         let now = new Date();
         if (finishDate < now) {
           setStatus("over");
-        }
-        if (startDate < now) {
+        } else if (startDate < now) {
           setStatus("live");
         } else {
           setStatus("new");
@@ -221,7 +220,7 @@ const ViewItem = () => {
               id: null,
               itemId: null,
               User: { username: "Initial price" },
-              bidAmount: itemData.data.item.Auction.min_bid,
+              bidAmount: itemData.data.item.Auction.highestBid,
               userId: null,
             });
           }
@@ -724,7 +723,7 @@ const ViewItem = () => {
                   {user.id === item.userId && !user.isAdmin === true ? (
                     <span className="col-auto">controls</span>
                   ) : null}
-                  {status !== "new" && (
+                  {status === "new" && (
                     <button
                       type="button"
                       className="col-auto btn btn-sm btn-warning px-3"
