@@ -124,6 +124,12 @@ module.exports.addBid = async (req, res) => {
         .send("Bid amount must be greater than the highest bid");
     }
 
+    if (bidAmount - auction.highestBid < auction.min_bid) {
+      return res
+        .status(400)
+        .send("Bid amount must be at least the minimum bid increment");
+    }
+
     auction.highestBid = bidAmount;
     const user = req.currentUser;
     let data = {

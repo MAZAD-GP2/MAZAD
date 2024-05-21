@@ -6,6 +6,7 @@ import Card from "../components/Card";
 import Filters from "../components/Filters";
 import * as api from "../api/index";
 import "../assets/css/home.css";
+import WonAuction from "../components/WonAuction";
 
 const Home = () => {
   const [items, setItems] = useState([]);
@@ -72,6 +73,7 @@ const Home = () => {
             <h1 className="m-auto">No items found</h1>
           )}
         </div>
+        <WonAuction />
       </div>
       <MobileNavbar />
     </>

@@ -117,6 +117,7 @@ module.exports.createItem = async (req, res) => {
         itemId: item.id,
         showNumber: showNumber,
         min_bid: minBid,
+        status: "pending",
       },
       { transaction: t }
     );
@@ -345,6 +346,9 @@ module.exports.getAllItemsByCategory = async (req, res) => {
         Image,
         {
           model: Auction,
+          where: {
+            status: {[Op.not]: "pending"},
+          }
         },
         {
           model: Interest,
@@ -452,8 +456,9 @@ module.exports.getAllItems = async (req, res) => {
           model: Auction,
           // we'll keep this commented out for now, but in the future, we don't want to show items that have already ended
           where: {
-          itemId: sequelize.col("Item.id"),
-          finishTime: { [Op.gt]: now },
+            itemId: sequelize.col("Item.id"),
+            finishTime: { [Op.gt]: now },
+            status: {[Op.not]: "pending"},
           },
           attributes: ["startTime", "finishTime", "highestBid", "showNumber", "min_bid", "itemId", "status"],
         },
@@ -1031,6 +1036,7 @@ module.exports.searchItem = async (req, res) => {
     const items = await Item.findAll({
       where: {
         isHidden: false,
+        status: {[Op.not]: "pending"},
         [Op.or]: [{ name: { [Op.like]: "%" + search + "%" } }, { "$Tags.name$": { [Op.like]: "%" + search + "%" } }],
       },
       include: [

@@ -1552,7 +1552,7 @@ const ViewItem = () => {
                 auctioneer to arrange the payment and delivery
               </p>
               <div className="d-flex flex-row justify-content-center">
-                <a href={`/payment/${item.id}`} className="btn btn-secondary text-white">
+                <a href={`/payment/${item.Auction.id}`} className="btn btn-secondary text-white">
                   Proceed to payment
                 </a>
               </div>

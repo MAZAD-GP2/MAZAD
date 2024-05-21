@@ -12,7 +12,13 @@ const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
   port: DB_PORT,
   dialect: "mysql",
   dialectOptions: {
-    useUTC: true, // -->Add this line. for reading from database
+    dateStrings: true,
+    typeCast: function (field, next) {
+      if (field.type === "DATETIME") {
+        return field.string();
+      }
+      return next();
+    },
   },
   timezone: "+03:00", // -->Add this line. for writing to database
 });

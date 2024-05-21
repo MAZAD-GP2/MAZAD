@@ -1,0 +1,15 @@
+IPython
+mysql-connector-python
+instructor
+pydatic
+pytz
+google-generativeai
+deep-translator
+opencv-python
+Pillow
+python-dotenv
+pathlib
+typing
+BeautifulSoup4
+deep_translator
+google-api-python-client

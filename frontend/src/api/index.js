@@ -23,6 +23,8 @@ export const userUpdate = (data) => API.put(`/user/update`, data);
 export const passwordUpdate = (data) => API.put(`/user/password-update`, data);
 export const getUserStats = (id) => API.get(`/user/stats/${id}`);
 export const getBidHistory = (id, page, limit) => API.get(`/user/getBidHistory/${id}?page=${page}&limit=${limit}`);
+export const getUnpaidAuctions = () => API.get("/users/getUnpaidAuctions");
+
 //categories
 export const getAllCategories = () => API.get("/category");
 //tags
@@ -70,6 +72,7 @@ export const getAuctionByItem = (id) => API.get(`/auction/item/${id}`);
 export const addAuction = (data) => API.post("/auction/create", data);
 export const updateAuction = (data) => API.put("/auction/update", data);
 export const removeAuction = (id) => API.delete(`/auction/delete/${id}`);
+
 export const toggleShowNumber = (id) => API.post(`/item/toggle-number/${id}`, );
 
 //bid

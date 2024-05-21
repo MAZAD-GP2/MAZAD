@@ -13,6 +13,7 @@ const Bid = require("../models/Bid");
 const Auction = require("../models/Auction");
 const Image = require("../models/Image");
 const Item = require("../models/Item");
+const moment = require("moment-timezone");
 
 module.exports.getAllUsers = async (req, res) => {
   try {
@@ -96,6 +97,9 @@ module.exports.login = async (req, res) => {
       throw new Error("Password is incorrect");
     }
 
+    if (user.isBanned) {
+      throw new Error("This account has been banned");
+    }
     // exclude the hashed password from the user object
     const token = await generateJWT({
       id: user.id,
@@ -396,6 +400,38 @@ module.exports.getBidHistory = async (req, res) => {
     const count = await Bid.count({ where: { userId } });
 
     return res.json({ count, bids });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports.getUnpaidAuctions = async (req, res) => {
+  try {
+    const userId = req.currentUser.id;
+    let now = moment.tz("Asia/Amman").toDate();
+    const bids = await Bid.findAll({
+      where: {
+        userId: userId,
+      },
+      include: [
+        {
+          model: Auction,
+          attributes: ["id", "highestBid", "finishTime", "startTime"],
+          where: {
+            finishTime: { [Op.lt]: now },
+            isPaid: false,
+          },
+          include: [
+            {
+              model: Item,
+              attributes: ["name", "description", "id", "userId"],
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.send(bids);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
