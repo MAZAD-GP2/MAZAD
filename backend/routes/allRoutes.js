@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-const upload = multer({ storage: storage }).array("images");
+const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }).array("images");
 const uploadProfilePicture = multer({ storage: storage }).single(
   "profilePicture"
 );
