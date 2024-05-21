@@ -87,11 +87,10 @@ const LandingPage = () => {
             Jordan's First Specialized Auctioning Platform
           </h5>
           <p>
-            Providing an avenue for trading unique items local to the area and
-            free of shipping charges.
+          Providing an avenue for trading unique items that are local to the area, ensuring a seamless and convenient experience for both buyers and sellers.
           </p>
           <button className="nav-btn" onClick={scrollToCategories}>
-            Our items
+            Our items <i className="fa-solid fa-chevron-down"></i>
           </button>
         </div>
         <div

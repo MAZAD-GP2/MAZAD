@@ -198,7 +198,7 @@ export function Chat() {
           <div id="chat-rooms" className="hide" style={{ width: "600px" }}>
             <div className="d-flex flex-column justify-content-start border rounded shadow py-3 h-100">
               <span className="h4 border-bottom border-4 border-secondary mb-4 px-3 text-center">
-                Your contacts
+                Messages
               </span>
               <div
                 id="chat-rooms-list"
