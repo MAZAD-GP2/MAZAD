@@ -33,6 +33,11 @@ const Auction = sequelize.define("Auction", {
     type: DataTypes.STRING,
     defaultValue: "new",
   },
+  // fofo set this to true, after payment success
+  isPaid: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 module.exports = Auction;

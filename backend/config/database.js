@@ -1,5 +1,5 @@
-const Sequelize = require('sequelize').Sequelize;
-require('dotenv').config();
+const Sequelize = require("sequelize").Sequelize;
+require("dotenv").config();
 
 const DB_NAME = process.env.DB_NAME;
 const DB_USERNAME = process.env.DB_USERNAME;
@@ -10,13 +10,17 @@ const DB_PORT = process.env.DB_PORT;
 const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
   host: DB_HOST,
   port: DB_PORT,
-  dialect: 'mysql',
+  dialect: "mysql",
+  dialectOptions: {
+    useUTC: true, // -->Add this line. for reading from database
+  },
+  timezone: "+03:00", // -->Add this line. for writing to database
 });
 
 sequelize
   .sync()
   .then(() => {
-    console.log('DB sync');
+    console.log("DB sync");
   })
   .catch((err) => {
     console.log(err);

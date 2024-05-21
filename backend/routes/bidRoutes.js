@@ -4,6 +4,7 @@ const Auction = require("../models/Auction");
 const User = require("../models/User");
 const Bid = require("../models/Bid");
 const pusher = require("../config/pusher");
+const moment = require('moment-timezone');
 
 module.exports.getBidById = async (req, res) => {
   try {
@@ -87,7 +88,7 @@ module.exports.addBid = async (req, res) => {
 
   try {
     const userId = req.currentUser.id;
-    const currentDate = new Date();
+    let currentDate = moment.tz("Asia/Amman").toDate();
     const bidAmount = parseInt(req.body.bidAmount);
     const auctionId = parseInt(req.body.auctionId);
     const auction = await Auction.findByPk(auctionId);
@@ -100,7 +101,7 @@ module.exports.addBid = async (req, res) => {
       return res.status(400).send("Auction has not started yet");
     }
 
-    if (new Date(auction.endTime) < currentDate) {
+    if (new Date(auction.finishTime) < currentDate) {
       return res.status(400).send("Auction has ended");
     }
 

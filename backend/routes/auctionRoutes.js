@@ -4,6 +4,7 @@ const User = require("../models/User");
 const Item = require("../models/Item");
 const Auction = require("../models/Auction");
 const Bid = require("../models/Bid");
+const moment = require('moment-timezone');
 
 module.exports.getAuctionById = async (req, res) => {
   try {
@@ -83,7 +84,9 @@ module.exports.addAuction = async (req, res) => {
     const userId = req.currentUser.id;
     const t = await sequelize.transaction();
 
-    if (new Date(startDate) < new Date()) {
+    let now = moment().tz("Asia/Amman").format();
+
+    if (new Date(startDate) < now) {
       return res.status(400).send("Start date must be in the future");
     }
     if (new Date(endDate) < new Date(startDate)) {

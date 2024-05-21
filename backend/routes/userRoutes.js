@@ -151,7 +151,7 @@ module.exports.forgotPassword = async (req, res) => {
         pass: process.env.EMAIL_PASSWORD,
       },
     });
-    let expirationDate = new Date();
+    let expirationDate = moment.tz("Asia/Amman").toDate();
     expirationDate.setDate(expirationDate.getDate() + 7);
     expirationDate = expirationDate.toDateString();
 
@@ -190,7 +190,7 @@ module.exports.resetPassword = async (req, res) => {
     }
     // check if the password is older than 1 week
     const tokenDate = new Date(resetPasswordToken.createdAt);
-    const currentDate = new Date();
+    const currentDate = moment.tz("Asia/Amman").toDate();
     const difference = currentDate - tokenDate;
     const daysDifference = difference / (1000 * 60 * 60 * 24); // to days
     if (daysDifference > 7) {
@@ -368,7 +368,7 @@ module.exports.getBidHistory = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
-    const bids =await Bid.findAll({
+    const bids = await Bid.findAll({
       where: { userId },
       include: [
         {
@@ -391,9 +391,9 @@ module.exports.getBidHistory = async (req, res) => {
       ],
       limit,
       offset,
-      order: [['createdAt', 'DESC']],
+      order: [["createdAt", "DESC"]],
     });
-    const count = await Bid.count({where: { userId }})
+    const count = await Bid.count({ where: { userId } });
 
     return res.json({ count, bids });
   } catch (err) {

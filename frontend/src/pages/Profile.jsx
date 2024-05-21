@@ -145,6 +145,8 @@ const Profile = () => {
       hour: "numeric",
       minute: "numeric",
     };
+    // dateTime = dateTime.replace("Z", "");
+    // finishTime = finishTime.replace("Z", "");
     const currentDate = new Date();
     const formattedDate = new Date(dateTime).toLocaleDateString(
       undefined,
@@ -182,6 +184,7 @@ const Profile = () => {
       hour: "numeric",
       minute: "numeric",
     };
+    // dateTime = dateTime.replace("Z", "");
     const currentDate = new Date();
     const formattedDate = new Date(dateTime).toLocaleDateString(
       undefined,

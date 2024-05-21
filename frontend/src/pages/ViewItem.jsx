@@ -17,6 +17,8 @@ import LoginForm from "../components/LoginForm";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import moment from "moment-timezone";
+import Confetti from "react-confetti";
 
 const ViewItem = () => {
   const { id } = useParams();
@@ -28,6 +30,8 @@ const ViewItem = () => {
   const [comments, setComments] = useState([]);
   const [bidModal, setBidModal] = useState(false);
   const [bidAmount, setBidAmount] = useState(0);
+  const [winnerModal, setWinnerModal] = useState(false);
+  const [ownerModal, setOwnerModal] = useState(false);
 
   const [minimumBid, setMinimumBid] = useState(0);
 
@@ -56,13 +60,17 @@ const ViewItem = () => {
   const [name, setName] = useState("");
   const [visibility, setVisibility] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
-
   const [submitValid, setSubmitValid] = useState(true);
   const [droppedFiles, setDroppedFiles] = useState([]);
   const [showNumber, setShowNumber] = useState(false);
-
   const [lastBid, setLastBid] = useState([]);
   const [currentDescriptionLength, SetCurrentDescriptionLength] = useState(1);
+
+  const [isLastMinute, setIsLastMinute] = useState(false);
+  const [lastMinutes, setLastMinutes] = useState(null);
+  const [isStartingSoon, setIsStartingSoon] = useState(false);
+  const [isExploding, setIsExploding] = React.useState(false);
+  const { width, height } = window.screen;
 
   const quillRef = useRef();
   const bidInputRef = useRef(null);
@@ -76,11 +84,12 @@ const ViewItem = () => {
       enqueueSnackbar("You cannot bid on your own item", { variant: "error" });
       return;
     }
-    if (item.Auction.finishTime < new Date()) {
+    let now = moment().tz("Asia/Amman");
+    if (item.Auction.finishTime < now) {
       enqueueSnackbar("Auction has ended", { variant: "error" });
       return;
     }
-    if (item.Auction.startTime > new Date()) {
+    if (item.Auction.startTime > now) {
       enqueueSnackbar("Auction has not started yet", { variant: "error" });
       return;
     }
@@ -104,6 +113,14 @@ const ViewItem = () => {
   const handleHideModalClose = () => setHideModal(false);
   const handleReenlistModalShow = () => setReenlistModal(true);
   const handleReenlistModalClose = () => setReenlistModal(false);
+  const handleWinnerModalShow = () => {
+    setWinnerModal(true);
+    setIsExploding(true);
+  };
+  const handleWinnerModalClose = () => {
+    setIsExploding(false);
+    setWinnerModal(false);
+  };
 
   const handleEditModalShow = async () => {
     if (user && (user.id === item.userId || user.isAdmin)) {
@@ -151,16 +168,50 @@ const ViewItem = () => {
         const AuctionBids = await api.getBidsByAuction(
           itemData.data.item.Auction.id
         );
+
         let startDate = new Date(itemData.data.item.Auction.startTime);
         let finishDate = new Date(itemData.data.item.Auction.finishTime);
-        let now = new Date();
-        if (finishDate < now) {
+        let now = moment().tz("Asia/Amman");
+        if (finishDate > now) {
           setStatus("over");
         }
-        if (startDate < now) {
+        if (startDate < now && finishDate > now) {
           setStatus("live");
         } else {
           setStatus("new");
+        }
+
+        if (finishDate - now < 60000 && finishDate > now) {
+          setIsLastMinute(true);
+        } else if (finishDate - now < 300000 && finishDate > now) {
+          setLastMinutes("5");
+        } else if (finishDate - now < 240000 && finishDate > now) {
+          setLastMinutes("4");
+        } else if (finishDate - now < 180000 && finishDate > now) {
+          setLastMinutes("3");
+        } else if (finishDate - now < 120000 && finishDate > now) {
+          setLastMinutes("2");
+        } else if (finishDate - now < 60000 && finishDate > now) {
+          setLastMinutes("1");
+        }
+
+        if (startDate - now < 300000 && !(startDate < now)) {
+          setIsStartingSoon(true);
+        }
+        if (finishDate - now < 60000 && finishDate > now) {
+          setLastMinutes("1");
+        }
+
+        if (finishDate < now) {
+          // if auction is over
+          setStatus("over");
+          if (
+            user &&
+            itemData.data.item.Auction.Bids[0]?.User.id === user.id &&
+            !itemData.data.item.Auction.isPaid
+          ) {
+            handleWinnerModalShow();
+          }
         }
 
         // merge comments and bids, based on createdAt
@@ -182,6 +233,7 @@ const ViewItem = () => {
         if (Object.keys(itemData.data).length) {
           setItem(itemData.data.item);
           setInterestsCount(itemData.data.item.interestsCount);
+
           const comments = allActivities.map((activity) => {
             if (activity.bidAmount === undefined) {
               return {
@@ -277,6 +329,107 @@ const ViewItem = () => {
     };
     fetchItem();
   }, [id]);
+  useEffect(() => {
+    let minuetInterval;
+    let secondsInterval;
+
+    const updateAuctionStatus = () => {
+      let now = new Date();
+      let finishDate = new Date(item?.Auction.finishTime);
+      let startDate = new Date(item?.Auction.startTime);
+
+      // STARTING SOON
+      if (startDate - now < 300000 && !(startDate < now)) {
+        setIsStartingSoon(true);
+      }
+      // if two minutes to start, set a timeout to start exactly at the start time
+      if (startDate - now < 120000 && !(startDate < now)) {
+        setTimeout(() => {
+          setStatus("live");
+          setIsStartingSoon(false);
+          setIsLastMinute(false);
+          setLastMinutes(null);
+        }, startDate - now);
+      }
+      // if Mazad started less than a minute ago
+      if (startDate - now < 60000 && !(startDate < now)) {
+        setStatus("live");
+        setIsStartingSoon(false);
+        setIsLastMinute(false);
+        setLastMinutes(null);
+      }
+
+      // if less than 5 minutes to end
+      if (finishDate - now < 300000 && finishDate > now) {
+        setLastMinutes("5");
+      }
+      // if less than 4 minutes to end
+      if (finishDate - now < 240000 && finishDate > now) {
+        setLastMinutes("4");
+      }
+      // if less than 3 minutes to end
+      if (finishDate - now < 180000 && finishDate > now) {
+        setLastMinutes("3");
+      }
+      // if less than 2 minutes to end
+      if (finishDate - now < 120000 && finishDate > now) {
+        startLastMinuteCounter();
+      }
+      // if less than 1 minute to end
+      if (finishDate - now < 60000 && finishDate > now) {
+        setLastMinutes(null);
+        setIsLastMinute(true);
+        startLastMinuteCounter();
+      }
+
+      // if is over
+      if (finishDate < now) {
+        clearInterval(minuetInterval);
+        clearInterval(secondsInterval);
+        setLastMinutes(null);
+        setIsLastMinute(false);
+        setIsStartingSoon(false);
+        setStatus("over");
+        if (user && item.Auction.Bids[0]?.User.id === user.id) {
+          handleWinnerModalShow();
+        }
+      }
+    };
+    let now = moment().tz("Asia/Amman");
+    if (item?.Auction.finishDate < now) {
+      minuetInterval = setInterval(updateAuctionStatus, 30000);
+    }
+
+    const startLastMinuteCounter = () => {
+      clearInterval(minuetInterval);
+
+      secondsInterval = setInterval(() => {
+        let now = moment().tz("Asia/Amman");
+        let finishDate = new Date(item?.Auction.finishTime);
+        let diff = finishDate - now;
+        let minutes = Math.floor(diff / 60000);
+        let seconds = Math.floor((diff % 60000) / 1000);
+        let time = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        setLastMinutes(time);
+        if (diff < 0) {
+          clearInterval(secondsInterval);
+          setLastMinutes(null);
+          setIsLastMinute(false);
+          setIsStartingSoon(false);
+          setStatus("over");
+          // if the current user is the winner or the heighest bidder, show the winner modal
+          if (user && item.Auction.Bids[0]?.User.id === user.id) {
+            handleWinnerModalShow();
+          }
+        }
+      }, 1000);
+    };
+
+    return () => {
+      clearInterval(minuetInterval);
+      clearInterval(secondsInterval);
+    };
+  }, [item]);
 
   if (loading) {
     return (
@@ -442,8 +595,7 @@ const ViewItem = () => {
       enqueueSnackbar("Added item", { variant: "success" });
       setName("");
       setDescription("");
-      window.location.href =
-        visibility === true ? `/item/${response.data.id}` : `/profile`;
+      window.location.reload();
     } catch (error) {
       // Handle errors
       enqueueSnackbar(error.response.data, {
@@ -558,6 +710,7 @@ const ViewItem = () => {
       setLoginModal(true);
       return;
     }
+    bidInputRef.current.value = 0;
     if (!bidAmount) {
       enqueueSnackbar({
         message: "Bid amount cannot be empty",
@@ -590,6 +743,7 @@ const ViewItem = () => {
       User: user,
       type: "bid",
     };
+
     try {
       setLastBid(bidObject);
       setComments((prevMessages) => [bidObject, ...prevMessages]);
@@ -599,7 +753,12 @@ const ViewItem = () => {
       });
       bidObject.id = res.data.id;
       setLastBid(bidObject);
+      enqueueSnackbar({
+        message: "Your bid went through!",
+        variant: "success",
+      });
     } catch (error) {
+      setBidAmount(0);
       enqueueSnackbar({
         message: error.response?.data || "Error adding bid",
         variant: "error",
@@ -642,10 +801,7 @@ const ViewItem = () => {
       minute: "numeric",
     };
     const currentDate = new Date();
-    const formattedDate = new Date(dateTime).toLocaleDateString(
-      undefined,
-      options
-    );
+    const formattedDate = new Date(dateTime).toLocaleDateString({}, options);
 
     if (
       new Date(dateTime) < currentDate &&
@@ -653,7 +809,7 @@ const ViewItem = () => {
     ) {
       return (
         <div className="d-flex flex-row align-items-center gap-1">
-          <span>{formattedDate}</span>
+          <small className="text-muted">{formattedDate}</small>
           <span>
             {/* <i className="fas fa-circle fa-xs text-success fa-beat"></i> */}
             <i className="text-secondary fa-solid fa-circle fa-beat fa-xs"></i>
@@ -724,7 +880,7 @@ const ViewItem = () => {
                   {user.id === item.userId && !user.isAdmin === true ? (
                     <span className="col-auto">controls</span>
                   ) : null}
-                  {status !== "new" && (
+                  {status == "new" && (
                     <button
                       type="button"
                       className="col-auto btn btn-sm btn-warning px-3"
@@ -898,7 +1054,11 @@ const ViewItem = () => {
                     {lastBid ? (
                       <div className="d-flex flex-column mb-2 align-items-center justify-content-center">
                         <h2 className="fw-bolder text-truncate">
-                          {lastBid.User.username} 👑
+                          <i className="fas fa-crown text-warning"></i>
+                           <span className="text-truncate">
+                           {" "+lastBid.User.username+" "} 
+                           </span>
+                          <i className="fas fa-crown text-warning"></i>
                         </h2>
                         <h4 className="text-secondary py-2 px-3 my-1 mx-0">
                           {lastBid.bidAmount} JD
@@ -936,6 +1096,27 @@ const ViewItem = () => {
                         </div>
                       )}
                     </div>
+                  </div>
+                  <div className="d-flex flex-row justify-content-center gap-4 rounded p-3 w-100">
+                    {lastMinutes !== null ? (
+                      <span className="text-muted">
+                        <span className="text-danger">
+                          Ending in {lastMinutes}
+                        </span>
+                      </span>
+                    ) : null}
+                    {isStartingSoon ? <span>Starting soon</span> : null}
+                    {status === "over" &&
+                    user &&
+                    item.Auction.Bids[0]?.User.id === user.id &&
+                    !item.Auction.isPaid ? (
+                      <a
+                        href={`/payment/${item.Auction.id}`}
+                        className="btn btn-secondary text-white p-1 px-3 mt-3 w-25 m-auto"
+                      >
+                        Pay now
+                      </a>
+                    ) : null}
                   </div>
                   {user && user.id !== item.userId && status == "live" && (
                     <div className="d-flex flex-column gap-3 rounded p-3 gap-2 w-100">
@@ -1351,6 +1532,41 @@ const ViewItem = () => {
               </button>
             </Modal.Footer>
           </Modal>
+
+          {isExploding && (
+            <div className="position-absolute top-0 start-0 w-100 h-100">
+              <Confetti width={width} height={height} />
+            </div>
+          )}
+          <Modal show={winnerModal} onHide={handleWinnerModalClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>
+                <i className="fas fa-trophy text-warning"></i> Congratulations!{" "}
+                <i className="fas fa-trophy text-warning"></i>
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <h5>You are the winner of this auction</h5>
+              <p>
+                You are the winner of this auction, please contact the
+                auctioneer to arrange the payment and delivery
+              </p>
+              <div className="d-flex flex-row justify-content-center">
+                <a href={`/payment/${item.id}`} className="btn btn-secondary text-white">
+                  Proceed to payment
+                </a>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button
+                className="btn btn-primary"
+                onClick={handleWinnerModalClose}
+              >
+                Close
+              </button>
+            </Modal.Footer>
+          </Modal>
+
           <MobileNavbar />
         </>
       )}

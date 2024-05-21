@@ -53,6 +53,7 @@ const ItemForm = ({
   minStartDate = new Date(),
 }) => {
   const [liveTime, setLiveTime] = useState(new Date().toLocaleTimeString());
+  const [errorMsg, setErrorMsg] = useState("");
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -125,23 +126,55 @@ const ItemForm = ({
   };
   const handleSubmit = async () => {
     let desc = JSON.stringify(quillRef.current.getContents()["ops"]);
-    if (
-      !name ||
-      name.length < 3 ||
-      !desc.length ||
+    let descText = quillRef.current.getText().trim();
+    if (!name || name.length < 3) {
+      setSubmitValid(false);
+      setErrorMsg("Name must be at least 3 characters");
+    } else if (!descText.length && descText.length < 5) {
+      setSubmitValid(false);
+      setErrorMsg("Description must be at least 5 characters");
+    } else if (
       !calendarState ||
       !calendarState.selection.startDate ||
-      !calendarState.selection.endDate ||
-      !selectedCategory ||
-      !droppedFiles.length ||
-      price < 0 ||
-      !minBid ||
-      minBid < 1
+      !calendarState.selection.endDate
     ) {
       setSubmitValid(false);
+      setErrorMsg("Please select a date range");
+    } else if (!selectedCategory) {
+      setSubmitValid(false);
+      setErrorMsg("Please select a category");
+    } else if (!droppedFiles.length) {
+      setSubmitValid(false);
+      setErrorMsg("Please upload at least one image");
+    } else if (price < 0) {
+      setSubmitValid(false);
+      setErrorMsg("Price must be at least 0");
+    } else if (!minBid || minBid < 1) {
+      setSubmitValid(false);
+      setErrorMsg("Minimum bid must be at least 1");
     } else {
       setSubmitValid(true);
-
+      setErrorMsg("");
+      // let startAsUTC = new Date(
+      //   Date.UTC(
+      //     calendarState.selection.startDate.getFullYear(),
+      //     calendarState.selection.startDate.getMonth(),
+      //     calendarState.selection.startDate.getDate(),
+      //     calendarState.selection.startDate.getHours(),
+      //     calendarState.selection.startDate.getMinutes()
+      //   )
+      // );
+      // let endAsUTC = new Date(
+      //   Date.UTC(
+      //     calendarState.selection.endDate.getFullYear(),
+      //     calendarState.selection.endDate.getMonth(),
+      //     calendarState.selection.endDate.getDate(),
+      //     calendarState.selection.endDate.getHours(),
+      //     calendarState.selection.endDate.getMinutes()
+      //   )
+      // );
+      // fk it for now
+      
       // Create a FormData object
       const formData = new FormData();
       formData.append("name", name);
@@ -296,7 +329,10 @@ const ItemForm = ({
     <Popover id="popover-phone">
       <Popover.Header as="h3">Phone Number</Popover.Header>
       <Popover.Body>
-        <p>This will allow users to see you personal phone number during the auction, this may lead to unwanted calls or messages.</p>
+        <p>
+          This will allow users to see you personal phone number during the
+          auction, this may lead to unwanted calls or messages.
+        </p>
         <small>You can change this setting during the auction.</small>
       </Popover.Body>
     </Popover>
@@ -730,7 +766,7 @@ const ItemForm = ({
       )}
       {!submitValid && (
         <p style={{ color: "red", fontSize: "15px" }}>
-          Fill in all input fields!
+          <b>{errorMsg}</b>
         </p>
       )}
     </div>

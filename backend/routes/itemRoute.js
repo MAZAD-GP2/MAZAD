@@ -13,6 +13,7 @@ const Bid = require("../models/Bid");
 const Comment = require("../models/Comment");
 const Interest = require("../models/Interest");
 const { Op } = require("sequelize");
+const moment = require('moment-timezone');
 
 const QuillDeltaToHtmlConverter = require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 
@@ -34,16 +35,22 @@ module.exports.createItem = async (req, res) => {
     ) {
       return res.status(400).send({ message: "All fields are required" });
     }
+
+
+    let startDateObj = new Date(startDate);
+    let endDateObj = new Date(endDate);
+    let now = moment.tz("Asia/Amman").toDate();
+
     if (name.length > 255) {
       return res.status(400).send("Name is too long");
     }
     if (name.length < 3) {
       return res.status(400).send("Name is too short");
     }
-    if (new Date(startDate) < new Date()) {
+    if (startDateObj < now) {
       return res.status(400).send({ message: "Start date must be in the future" });
     }
-    if (new Date(endDate) < new Date(startDate)) {
+    if (endDateObj < startDateObj) {
       return res.status(400).send({ message: "End date must be after start date" });
     }
     if (tags.length > 3) {
@@ -388,11 +395,13 @@ module.exports.getAllItems = async (req, res) => {
     let orderClause = [];
     whereClause["isHidden"] = false;
     // Apply filters if provided
+    let now = moment.tz("Asia/Amman").toDate();
+
     if (status && status !== "all") {
       if (status === "live") {
-        whereClause["$Auction.startTime$"] = { [Op.lte]: new Date() };
+        whereClause["$Auction.startTime$"] = { [Op.lte]: now };
       } else if (status === "upcoming") {
-        whereClause["$Auction.startTime$"] = { [Op.gt]: new Date() };
+        whereClause["$Auction.startTime$"] = { [Op.gt]: now };
       } else if (status === "hidden") {
         if (user.isAdmin === true) {
           whereClause["isHidden"] = true;
@@ -429,7 +438,7 @@ module.exports.getAllItems = async (req, res) => {
     }
 
     orderClause = [...orderClause, ["id", "DESC"]];
-
+    let nowUTC = moment.utc().toDate();
     let items = await Item.findAll({
       where: whereClause,
       include: [
@@ -442,10 +451,11 @@ module.exports.getAllItems = async (req, res) => {
         {
           model: Auction,
           // we'll keep this commented out for now, but in the future, we don't want to show items that have already ended
-          // where: {
-          // itemId: sequelize.col("Item.id"),
-          // finishTime: { [Op.gte]: new Date() } // Filter by auction finish time
-          // },
+          where: {
+          itemId: sequelize.col("Item.id"),
+          finishTime: { [Op.gt]: now },
+          },
+          attributes: ["startTime", "finishTime", "highestBid", "showNumber", "min_bid", "itemId", "status"],
         },
         {
           model: Interest,
@@ -480,7 +490,7 @@ module.exports.getAllItems = async (req, res) => {
 
     return res.send(items);
   } catch (error) {
-    return res.send(error);
+    return res.status(500).send(error);
   }
 };
 
@@ -647,7 +657,9 @@ module.exports.reenlistItem = async (req, res) => {
 
     startDate = new Date(startDate);
     endDate = new Date(endDate);
-    if (startDate < new Date()) {
+    let now = moment.tz("Asia/Amman").toDate();
+
+    if (startDate < now) {
       return res.status(400).send("Start date must be in the future");
     }
     if (endDate < startDate) {
@@ -808,10 +820,11 @@ module.exports.updateItem = async (req, res) => {
     }
     tags = tags.split(",").filter((tag) => tag.trim() !== "");
     price = parseFloat(price);
-    if (item.Auction.finishTime < new Date()) {
+    let now = moment.tz("Asia/Amman").toDate();
+    if (item.Auction.finishTime < now) {
       return res.status(400).send("This auction is finished, you cannot edit it anymore");
     }
-    if (item.Auction.startTime < new Date()) {
+    if (item.Auction.startTime < now) {
       return res.status(400).send("This auction has already started, you cannot edit it anymore");
     }
     
@@ -824,7 +837,7 @@ module.exports.updateItem = async (req, res) => {
     if (name.length < 3) {
       return res.status(400).send("Name is too short");
     }
-    if (new Date(startDate) < new Date()) {
+    if (new Date(startDate) < now) {
       return res.status(400).send({ message: "Start date must be in the future" });
     }
     if (new Date(endDate) < new Date(startDate)) {
@@ -991,7 +1004,7 @@ module.exports.toggleShowNumber = async (req, res) => {
       return res.status(404).send("Item not found");
     }
     let isShowNumber = item.Auction.showNumber;
-    if (item.Auction.endTime < new Date()) {
+    if (item.Auction.endTime < now) {
       return res
         .status(400)
         .send("This auction is finished, you cannot edit it anymore");

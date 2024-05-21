@@ -111,14 +111,13 @@ const Card = ({ item, removeItemFromFavorites }) => {
   return (
     <div className="w-100">
       <div className="p-2">
-
-      <img
-        className="image "
-        src={item.Images[0].imgURL}
-        alt="Card image cap"
-        onClick={handleCardClick}
+        <img
+          className="image "
+          src={item.Images[0].imgURL.replace("upload/", "upload/w_600/")}
+          alt="Card image cap"
+          onClick={handleCardClick}
         />
-        </div>
+      </div>
       {/* <ImageSlider images={item.Images} /> */}
 
       {/* <div style={{ maxHeight: "300px", cursor: "pointer" }} onClick={handleCardClick}>
@@ -169,11 +168,9 @@ const Card = ({ item, removeItemFromFavorites }) => {
         </div>
         <div>
           <div className="d-flex flex-row justify-content-between gap-1">
-            <div className="col-auto">
-              <h5 className="card-title" onClick={handleCardClick}>
-                {item.name}
-              </h5>
-            </div>
+            <h5 className="card-title text-truncate" onClick={handleCardClick}>
+              {item.name}
+            </h5>
             <div
               className="interest col-auto d-flex flex-column justify-content-center flex-wrap align-items-center"
               onClick={() => handleChangeInterest(item.id)}
