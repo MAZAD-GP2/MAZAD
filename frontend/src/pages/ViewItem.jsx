@@ -273,7 +273,7 @@ const ViewItem = () => {
               id: null,
               itemId: null,
               User: { username: "Initial price" },
-              bidAmount: itemData.data.item.Auction.min_bid,
+              bidAmount: itemData.data.item.Auction.highestBid,
               userId: null,
             });
           }
