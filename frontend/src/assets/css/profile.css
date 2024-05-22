@@ -5,6 +5,12 @@
   gap: 6vh;
 }
 
+
+.user-cred {
+  display: flex;
+  flex-direction: row;
+  flex: wrap;
+}
 .stats {
   display: flex;
   flex-direction: row;
@@ -39,8 +45,8 @@
 @media (max-width: 720px) {
   /* Styles for screens with max-width 720px */
   .user-card {
-    flex-direction: column; /* Stack elements vertically */
-    align-items: center; /* Center elements horizontally */
+    flex-direction: column;
+    align-items: center;
     padding-left: 20px;
     padding-right: 20px;
     margin-left: 0;
@@ -48,6 +54,25 @@
     gap: 1vh;
   }
 
+  .user-cred {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+
+  .user-cred button {
+    font-size: 12px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .stats-header {
+    font-size: 40px;
+  }
+
+  .stats-msg{
+    width: 100%;
+  }
   .edit-history-toggle {
     font-size: 12px;
   }
@@ -232,6 +257,11 @@
     width: 100%;
     padding-left: 20px;
     padding-right: 20px;
+  }
+
+  .profile-pic {
+    height: 65px;
+    width: 65px;
   }
 
   .bid-card img {

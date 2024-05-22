@@ -214,7 +214,7 @@ const Profile = () => {
             className="p-lg-5 p-2 d-flex flex-column gap-lg-4 gap-2"
             style={{ marginBottom: "100px" }}
           >
-            <div className="card user-card bg-white p-lg-4 p-2 d-flex flex-row flex-wrap gap-4 justify-content-between align-items-center">
+            <div className="card user-cred bg-white p-lg-4 p-2 gap-4 justify-content-between align-items-center">
               <div className="d-flex gap-3">
                 <img
                   className="profile-pic"
@@ -234,7 +234,7 @@ const Profile = () => {
               <div className="stats-msg">
                 <div className="stats">
                   <span className="d-flex flex-column align-items-center">
-                    <h4>AUCTIONS HOSTED</h4>
+                    <h4 className="stats-header">AUCTIONS HOSTED</h4>
                     <h5 className="text-secondary">
                       {statsLoading ? (
                         <div className=" text-center w-100 mt-5">
@@ -251,7 +251,7 @@ const Profile = () => {
                     </h5>
                   </span>
                   <span className="d-flex flex-column align-items-center">
-                    <h4>BIDS MADE</h4>
+                    <h4 className="stats-header">BIDS MADE</h4>
                     <h5 className="text-secondary">
                       {statsLoading ? (
                         <div className=" text-center w-100 mt-5">
@@ -268,7 +268,7 @@ const Profile = () => {
                     </h5>
                   </span>
                   <span className="d-flex flex-column align-items-center">
-                    <h4>AUCTIONS WON</h4>
+                    <h4 className="stats-header">AUCTIONS WON</h4>
                     <h5 className="text-secondary">
                       {statsLoading ? (
                         <div className=" text-center w-100 mt-5">
