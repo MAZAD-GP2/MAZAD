@@ -171,8 +171,6 @@ const ViewItem = () => {
         const AuctionBids = await api.getBidsByAuction(
           itemData.data.item.Auction.id
         );
-        
-
 
         let startDate = new Date(itemData.data.item.Auction.startTime);
         let finishDate = new Date(itemData.data.item.Auction.finishTime);
@@ -720,6 +718,7 @@ const ViewItem = () => {
         message: "Bid amount cannot be empty",
         variant: "error",
       });
+      setBidModal(false);
       return;
     }
     if (isNaN(parseFloat(bidAmount))) {
@@ -727,6 +726,7 @@ const ViewItem = () => {
         message: "Bid amount must be a number",
         variant: "error",
       });
+      setBidModal(false);
       return;
     }
     if (parseFloat(bidAmount) <= lastBid.bidAmount) {
@@ -734,6 +734,16 @@ const ViewItem = () => {
         message: "Bid amount must be greater than the highest bid",
         variant: "error",
       });
+      setBidModal(false);
+      return;
+    }
+    //  if the highest bid - the current bid is less than the minimum bid, show an error
+    if (lastBid.bidAmount - bidAmount < minimumBid) {
+      enqueueSnackbar({
+        message: "Minimum increment is " + minimumBid,
+        variant: "error",
+      });
+      setBidModal(false);
       return;
     }
     let res = null;
@@ -1059,9 +1069,9 @@ const ViewItem = () => {
                       <div className="d-flex flex-column mb-2 align-items-center justify-content-center">
                         <h2 className="fw-bolder text-truncate">
                           <i className="fas fa-crown text-warning"></i>
-                           <span className="text-truncate">
-                           {" "+lastBid.User.username+" "} 
-                           </span>
+                          <span className="text-truncate">
+                            {" " + lastBid.User.username + " "}
+                          </span>
                           <i className="fas fa-crown text-warning"></i>
                         </h2>
                         <h4 className="text-secondary py-2 px-3 my-1 mx-0">
@@ -1556,7 +1566,10 @@ const ViewItem = () => {
                 auctioneer to arrange the payment and delivery
               </p>
               <div className="d-flex flex-row justify-content-center">
-                <a href={`/checkout/${item.Auction.id}`} className="btn btn-secondary text-white">
+                <a
+                  href={`/checkout/${item.Auction.id}`}
+                  className="btn btn-secondary text-white"
+                >
                   Proceed to payment
                 </a>
               </div>

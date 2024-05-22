@@ -8,22 +8,17 @@ function MobileNavOptions({ show, toggle }) {
           <div
             className={`mobile-nav-options ${
               show ? "show" : ""
-            } d-flex flex-row h-100 p-3 justify-content-between align-items-center border-top border-secondary border-4 w-100`}
+            } d-flex flex-row h-100 p-3 justify-content-evenly align-items-center border-top border-secondary border-4 w-100`}
           >
             
-            <div className="sub-nav-item">
-              <a href="/categories" className="small text-center">
-                Categories
-              </a>
-            </div>
             <div className="sub-nav-item">
               <a href="/livemazads" className="small text-center">
                 Live Mazads
               </a>
             </div>
             <div className="sub-nav-item">
-              <a href="/popular" className="small text-center">
-                Popular
+              <a href="/#:~:text=Our%20items-,Categories,-Mazad%20offers%20a" className="small text-center">
+                Catagories
               </a>
             </div>
             <div className="sub-nav-item">

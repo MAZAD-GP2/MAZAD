@@ -195,7 +195,7 @@ export function Chat() {
           id="main-container"
           className="d-flex flex-row align-items-start justify-content-center gap-3 px-lg-5 p-0 w-100 gap-3"
         >
-          <div id="chat-rooms" className="hide" style={{ width: "600px" }}>
+          <div id="chat-rooms" className="h-100" style={{ width: "600px" }}>
             <div className="d-flex flex-column justify-content-start border rounded shadow py-3 h-100">
               <span className="h4 border-bottom border-4 border-secondary mb-4 px-3 text-center">
                 Messages
@@ -206,7 +206,7 @@ export function Chat() {
               >
                 {roomsLoading ? (
                   <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                    <i className=" h1 fa-solid fa-ghost text-secondary"></i>
+                    <i className=" h1 fa-solid fa-ghost fa-spin text-secondary"></i>
                   </div>
                 ) : (
                   <>
@@ -279,7 +279,7 @@ export function Chat() {
               </div>
             </div>
           </div>
-          <div id="chat-box" className="w-100  border rounded shadow h-100">
+          <div id="chat-box" className="w-100  border rounded shadow h-100 hide">
             <div className="w-100 d-flex flex-column justify-content-between h-100">
               <div
                 id="chat-box-header"
@@ -287,7 +287,6 @@ export function Chat() {
               >
                 {currentRoom.room && (
                   <>
-                    <div className="d-flex flex-row align-items-center gap-2">
                       <button
                         type="button"
                         className="btn"
@@ -296,6 +295,7 @@ export function Chat() {
                       >
                         <i className="fa-solid fa-chevron-left"></i>
                       </button>
+                    <div className="d-flex flex-row align-items-center gap-2">
                       <img
                         src={
                           currentRoom.user?.profilePicture ||
@@ -320,7 +320,7 @@ export function Chat() {
               >
                 {messageLoading ? (
                   <div className="d-flex flex-column align-items-center justify-content-center gap-2 h-100">
-                    <i className=" h1 fa-solid fa-ghost text-secondary"></i>
+                    <i className=" h1 fa-solid fa-ghost fa-spin text-secondary"></i>
                   </div>
                 ) : (
                   <>
