@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "../assets/css/landing.css";
 
 const LandingPage = () => {
-  const user = sessionStorage.getItem("user");
+  const user = localStorage.getItem("user");
   const [isLoaded, setIsLoaded] = useState(false);
   const AboutRef = useRef(null);
   const categoriesRef = useRef(null);

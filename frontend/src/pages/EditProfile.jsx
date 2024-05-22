@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const EditProfile = () => {
   const [user, setUser] = useState(null);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
-  const userData = sessionStorage.getItem("user");
+  const userData = localStorage.getItem("user");
 
   const [isEditing, setisEditing] = useState(false); // Track editing status
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -95,7 +95,7 @@ const EditProfile = () => {
   }, [userData]);
 
   useEffect(() => {
-    const userData = sessionStorage.getItem("user");
+    const userData = localStorage.getItem("user");
     if (userData) {
       const parsedUserData = JSON.parse(userData);
       setUsername({ value: parsedUserData.username, isValid: true });
@@ -188,7 +188,7 @@ const EditProfile = () => {
     await api
       .userUpdate(formData)
       .then((result) => {
-        sessionStorage.setItem("user", JSON.stringify(result.data));
+        localStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("Changes Saved Successfully", { variant: "success" });
         window.location.href = "/home";
       })
@@ -239,7 +239,7 @@ const EditProfile = () => {
         confirmPassword: confirmPassword.value,
       })
       .then((result) => {
-        sessionStorage.setItem("user", JSON.stringify(result.data));
+        localStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("Password Changed Successfully", {
           variant: "success",
         });

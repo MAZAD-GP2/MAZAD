@@ -22,7 +22,7 @@ export function Chat() {
   const [loading, setLoading] = useState(true);
   const [messageLoading, setMessageLoading] = useState(true);
   const [roomsLoading, setRoomsLoading] = useState(true);
-  const currentUser = JSON.parse(sessionStorage.getItem("user"));
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     setRoomsLoading(true);

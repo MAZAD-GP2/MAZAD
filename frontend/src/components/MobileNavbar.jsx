@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MobileNavOptions from "./MobileNavOptions";
 
 const MobileNavbar = () => {
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [showOptions, setShowOptions] = useState(false);
   const [newMessages, setNewMessages] = useState(true);

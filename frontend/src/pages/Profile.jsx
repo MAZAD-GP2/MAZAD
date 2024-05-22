@@ -10,7 +10,7 @@ import NotFound from "../components/NotFound";
 import EditProfile from "./EditProfile";
 
 const Profile = () => {
-  const sessionUser = JSON.parse(sessionStorage.getItem("user"));
+  const sessionUser = JSON.parse(localStorage.getItem("user"));
 
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
@@ -26,12 +26,12 @@ const Profile = () => {
   const [bidPage, setBidPage] = useState(1);
   const [bidTotalPages, setBidTotalPages] = useState(1);
   const [bidLimit] = useState(4); // Set the limit for bids per page
-  const userData = sessionStorage.getItem("user");
+  const userData = localStorage.getItem("user");
   const missingPfp = "https://res.cloudinary.com/djwhrh0w7/image/upload/v1716234031/missing-pfp_lpiydc.jpg";
 
   const handleSignOut = async (event) => {
     try {
-      sessionStorage.clear();
+      localStorage.clear();
       enqueueSnackbar("Signed out", { variant: "success" });
       setTimeout(() => {
         window.location.href = "/home";

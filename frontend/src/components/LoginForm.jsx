@@ -18,7 +18,7 @@ const LoginForm = ({ next = null }) => {
     await api
       .login({ usernameOrEmail, password })
       .then((result) => {
-        sessionStorage.setItem("user", JSON.stringify(result.data));
+        localStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("Login Successful", { variant: "success" });
         setUsernameOrEmail("");
         setPassword("");

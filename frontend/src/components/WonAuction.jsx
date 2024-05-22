@@ -4,7 +4,7 @@ import { Modal } from "react-bootstrap";
 import moment from "moment-timezone";
 
 const WonAuction = () => {
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [bids, setBids] = useState(null);
   const [winnerModal, setWinnerModal] = useState(false);

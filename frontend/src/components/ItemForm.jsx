@@ -706,7 +706,7 @@ const ItemForm = ({
             />
             <div className="d-flex flex-row justify-content-start">
               <small className="form-text text-muted">
-                limited to ({currentDescriptionLength - 1}/1000)
+                limited to ({currentDescriptionLength - 1}/1000) At least 5 characters
               </small>
             </div>
           </div>

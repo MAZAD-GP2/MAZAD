@@ -152,7 +152,7 @@ function Register() {
         setEmail({ value: "", isValid: true });
         setPassword({ value: "", isValid: true });
         setConfirmPassword({ value: "", isValid: true });
-        sessionStorage.setItem("user", JSON.stringify(result.data));
+        localStorage.setItem("user", JSON.stringify(result.data));
         enqueueSnackbar("User Created Successfully", { variant: "success" });
         setTimeout(() => {
           window.location.href = "/home";

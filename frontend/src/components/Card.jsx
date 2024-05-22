@@ -9,7 +9,7 @@ import ImageSlider from "./ImageSlider";
 import SimpleImageSlider from "react-simple-image-slider";
 
 const Card = ({ item, removeItemFromFavorites }) => {
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const [isInterest, setIsInterest] = useState(item.isInterested || false);
   const [interestsCount, setInterestsCount] = useState(item.interestsCount);
   const [loginModal, setLoginModal] = useState(false);
@@ -240,11 +240,6 @@ const Card = ({ item, removeItemFromFavorites }) => {
           <p>To perform this action you must be logged in</p>
           <LoginForm {...{ next: window.location.href }} />
         </Modal.Body>
-        {/* <Modal.Footer>
-          <button className="btn btn-primary" onClick={handleLoginModalClose}>
-            cancel
-          </button>
-        </Modal.Footer> */}
       </Modal>
     </div>
   );

@@ -5,8 +5,9 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import "../assets/css/nav.css";
 import { useLocation } from "react-router-dom";
 import * as api from "../api/index";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MobileSearchBar from "./MobileSearchBar";
+import { Modal } from "react-bootstrap";
+import LoginForm from "./LoginForm";
 
 const Navbar = (showMobileNavbar = true) => {
   const [categories, setCategories] = useState([]);
@@ -14,8 +15,10 @@ const Navbar = (showMobileNavbar = true) => {
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
   const [isMessages, setIsMessages] = useState("");
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const location = useLocation();
+  const [loginModal, setLoginModal] = useState(false);
+  const handleLoginModalClose = () => setLoginModal(false);
 
   const showDropdown = (e) => {
     setShow(!show);
@@ -49,6 +52,14 @@ const Navbar = (showMobileNavbar = true) => {
       window.location.href = `/search?search=${search}`;
       setSearch("");
     }
+  }
+
+  function FavoritesRoute() {
+    if(!user){
+      setLoginModal(true);
+      return;
+    }
+    window.location.href='/favorites';
   }
 
   return (
@@ -215,7 +226,7 @@ const Navbar = (showMobileNavbar = true) => {
                     Live Mazads
                   </span>
                 </a>
-                <a
+                {/* <a
                   className={
                     "px-3 py-2 nav-item" +
                     (location.pathname === "/popular" ? " active" : "")
@@ -232,14 +243,13 @@ const Navbar = (showMobileNavbar = true) => {
                   >
                     Popular Items
                   </span>
-                </a>
-                {user ? (
+                </a> */}
                   <a
                     className={
                       "px-3 py-2 nav-item" +
                       (location.pathname === "/favorites" ? " active" : "")
                     }
-                    href="/favorites"
+                    onClick={FavoritesRoute}
                   >
                     <span
                       className={
@@ -252,12 +262,20 @@ const Navbar = (showMobileNavbar = true) => {
                       Favorites
                     </span>
                   </a>
-                ) : null}
               </div>
             </div>
           </div>
         </div>
       </div>
+      <Modal centered show={loginModal} onHide={handleLoginModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Login</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>To perform this action you must be logged in</p>
+          <LoginForm {...{ next: window.location.href }} />
+        </Modal.Body>
+      </Modal>
     </>
   );
 };

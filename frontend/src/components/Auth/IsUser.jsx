@@ -1,7 +1,7 @@
 import { Outlet, Navigate } from 'react-router-dom';
 
 const IsUser = () => {
-  let user = JSON.parse(sessionStorage.getItem("user"));
+  let user = JSON.parse(localStorage.getItem("user"));
   return (
     user?.token ? <Outlet /> : <Navigate to='/login' />
   )

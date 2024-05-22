@@ -22,13 +22,15 @@ const Favorites = loadable(() => import("./pages/Favorites.jsx"));
 const NotFound = loadable(() => import("./components/NotFound.jsx"));
 const Payment = loadable(() => import("./pages/Payment.jsx"));
 const CheckOut = loadable(() => import("./pages/CheckOut.jsx"));
+const LiveMazads = loadable(() => import("./pages/LiveMazads.jsx"));
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   
   useEffect(() => {
     const decodeToken = async () => {
-      const user = JSON.parse(sessionStorage.getItem("user"));
+      const user = JSON.parse(localStorage.getItem("user"));
       if (user) {
         try {
           const result = await api.decodeToken();
@@ -36,7 +38,7 @@ function App() {
           setIsAdmin(result.data.isAdmin);
         } catch (error) {
           console.log(error);
-          sessionStorage.clear();
+          localStorage.clear();
           setIsLoggedIn(false);
           setIsAdmin(false);
         }
@@ -54,6 +56,7 @@ function App() {
         <Route exact path="/register" element={<Register />} />
         <Route exact path="/forgot-password" element={<ForgotPassword />} />
         <Route exact path="/reset-password" element={<ResetPassword />} />
+        <Route exact path="/livemazads" element={<LiveMazads />} />
         <Route element={<IsUser/>}>
           <Route element={<Profile />} path="/profile" exact/>
           <Route element={<Profile />} path="/profile/:id" exact/>

@@ -159,7 +159,7 @@ const ViewItem = () => {
   });
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const fetchItem = async () => {
