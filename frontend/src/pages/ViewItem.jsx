@@ -738,14 +738,14 @@ const ViewItem = () => {
       return;
     }
     //  if the highest bid - the current bid is less than the minimum bid, show an error
-    if (lastBid.bidAmount - bidAmount < minimumBid) {
-      enqueueSnackbar({
-        message: "Minimum increment is " + minimumBid,
-        variant: "error",
-      });
-      setBidModal(false);
-      return;
-    }
+    // if (lastBid.bidAmount - bidAmount < minimumBid) {
+    //   enqueueSnackbar({
+    //     message: "Minimum increment is " + minimumBid,
+    //     variant: "error",
+    //   });
+    //   setBidModal(false);
+    //   return;
+    // }
     let res = null;
     let prevLast = lastBid;
     let bidObject = {
