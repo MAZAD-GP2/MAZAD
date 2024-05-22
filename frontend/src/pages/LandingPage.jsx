@@ -90,7 +90,7 @@ const LandingPage = () => {
           Providing an avenue for trading unique items that are local to the area, ensuring a seamless and convenient experience for both buyers and sellers.
           </p>
           <button className="nav-btn" onClick={scrollToCategories}>
-            Our items <i className="fa-solid fa-chevron-down"></i>
+            Categories <i className="fa-solid fa-chevron-down"></i>
           </button>
         </div>
         <div

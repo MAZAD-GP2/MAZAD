@@ -330,5 +330,6 @@
     
     .category-overlay {
       user-select: none;
+      opacity: 1;
     }
   }

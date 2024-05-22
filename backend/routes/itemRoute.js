@@ -1117,18 +1117,20 @@ module.exports.searchItem = async (req, res) => {
     const items = await Item.findAll({
       where: {
         isHidden: false,
-        status: { [Op.not]: ["pending", "killed"] },
         [Op.or]: [
           { name: { [Op.like]: "%" + search + "%" } },
           { "$Tags.name$": { [Op.like]: "%" + search + "%" } },
         ],
       },
       include: [
-        Auction,
-        Category,
         {
-          model: Tag,
+          model: Auction,
+          where: {
+            status: { [Op.not]: ["pending", "killed"] },
+          },
         },
+        Category,
+        Tag,
         Image,
       ],
       order: [["id", "DESC"]],
