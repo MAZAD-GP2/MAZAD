@@ -44,6 +44,7 @@ const Home = () => {
         <div
           id="cards-container"
           className="d-flex flex-row flex-wrap align-items-stretch justify-content-start justify-self-center gap-3 w-100"
+          style={{marginBottom: "100px"}}
         >
           {isFetching ? (
             <div className=" text-center w-100">
