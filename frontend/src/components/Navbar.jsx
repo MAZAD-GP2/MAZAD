@@ -268,7 +268,7 @@ const Navbar = (showMobileNavbar = true) => {
           </div>
         </div>
       </div>
-      <Modal centered show={loginModal} onHide={handleLoginModalClose}>
+      {/* <Modal centered show={loginModal} onHide={handleLoginModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Login</Modal.Title>
         </Modal.Header>
@@ -276,7 +276,7 @@ const Navbar = (showMobileNavbar = true) => {
           <p>To perform this action you must be logged in</p>
           <LoginForm {...{ next: window.location.href }} />
         </Modal.Body>
-      </Modal>
+      </Modal> */}
     </>
   );
 };
