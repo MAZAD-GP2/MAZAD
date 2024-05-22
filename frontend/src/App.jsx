@@ -2,9 +2,9 @@ import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import * as api from "./api/index";
 import loadable from "@loadable/component";
-import Chat from "./pages/Chat.jsx";
 import IsUser from "./components/Auth/IsUser.jsx";
 
+const Chat = loadable(() => import("./pages/Chat.jsx"));
 const Home = loadable(() => import("./pages/Home.jsx"));
 const Register = loadable(() => import("./pages/auth/Register.jsx"));
 const Login = loadable(() => import("./pages/auth/Login.jsx"));
