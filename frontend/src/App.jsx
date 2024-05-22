@@ -21,7 +21,7 @@ const SearchResult = loadable(() => import("./pages/SearchResult.jsx"));
 const Favorites = loadable(() => import("./pages/Favorites.jsx"));
 const NotFound = loadable(() => import("./components/NotFound.jsx"));
 const Payment = loadable(() => import("./pages/Payment.jsx"));
-
+const CheckOut = loadable(() => import("./pages/CheckOut.jsx"));
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -61,7 +61,8 @@ function App() {
           <Route element={<Favorites />} path="/favorites" exact/>
           <Route path="/chat" element={<Chat />} exact/>
           <Route path="/chat/:roomId" element={<Chat />} exact/>
-          <Route path="/payment/:auctionId" element={<Payment />} exact/>
+          <Route path="/payment/:id/:price" element={<Payment />} exact/>
+          <Route path="/checkout/:id" element={<CheckOut />} exact/>
         </Route>
         <Route exact path="/search" element={<SearchResult />} />
         <Route exact path="/category-item/:id" element={<CategoryItems />} />

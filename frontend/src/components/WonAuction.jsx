@@ -117,7 +117,7 @@ const WonAuction = () => {
 
                       <div className="d-flex flex-row justify-content-center align-items-center">
                         <a
-                          href={`/payment/${bid.Auction.id}`}
+                          href={`/checkout/${bid.Auction.id}`}
                           className="btn btn-secondary text-white"
                         >
                           Pay now

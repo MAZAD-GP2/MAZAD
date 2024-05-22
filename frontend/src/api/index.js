@@ -72,7 +72,7 @@ export const getAuctionByItem = (id) => API.get(`/auction/item/${id}`);
 export const addAuction = (data) => API.post("/auction/create", data);
 export const updateAuction = (data) => API.put("/auction/update", data);
 export const removeAuction = (id) => API.delete(`/auction/delete/${id}`);
-
+export const auctionPayment = (id) => API.post(`/auction/payment/${id}`)
 export const toggleShowNumber = (id) => API.post(`/item/toggle-number/${id}`, );
 
 //bid

@@ -3,18 +3,51 @@ const sequelize = require("../config/database");
 const User = require("../models/User");
 const Item = require("../models/Item");
 const Auction = require("../models/Auction");
+const Image = require("../models/Image");
 const Bid = require("../models/Bid");
 const moment = require('moment-timezone');
 
 module.exports.getAuctionById = async (req, res) => {
   try {
-    let { id } = req.params;
-    const auction = Auction.findByPk(id);
-    return res.send(auction);
+    const { id } = req.params;
+    const auction = await Auction.findByPk(id, {
+      include: [
+        {
+          model: Item,
+          attributes: ["name", "description", "id"],
+          include: [
+            {
+              model: Image,
+              attributes: ["imgURL"],
+            },
+          ],
+        },
+      ],
+    });
+    if (!auction) {
+      return res.status(404).send({ message: "Auction not found" });
+    }
+    res.send(auction);
   } catch (err) {
     console.error(err);
   }
 };
+
+module.exports.auctionPayment = async (req, res) => {
+  try {
+    const { id } = req.params;  
+    let auction = await Auction.findByPk(id);
+    auction.isPaid=true;
+    if (!auction) {
+      return res.status(404).send({ message: "Auction not found" });
+    }
+    await auction.save();
+    res.send(auction);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
 module.exports.getAuctionsByUser = async (req, res) => {
   try {

@@ -1115,7 +1115,7 @@ const ViewItem = () => {
                     item.Auction.Bids[0]?.User.id === user.id &&
                     !item.Auction.isPaid ? (
                       <a
-                        href={`/payment/${item.Auction.id}`}
+                        href={`/checkout/${item.Auction.id}`}
                         className="btn btn-secondary text-white p-1 px-3 mt-3 w-25 m-auto"
                       >
                         Pay now
@@ -1556,7 +1556,7 @@ const ViewItem = () => {
                 auctioneer to arrange the payment and delivery
               </p>
               <div className="d-flex flex-row justify-content-center">
-                <a href={`/payment/${item.Auction.id}`} className="btn btn-secondary text-white">
+                <a href={`/checkout/${item.Auction.id}`} className="btn btn-secondary text-white">
                   Proceed to payment
                 </a>
               </div>

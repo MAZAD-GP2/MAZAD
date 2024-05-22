@@ -126,6 +126,7 @@ router
 router
   .route("/auction/delete/:id")
   .delete(verifyToken(true), auctionRoutes.removeAuction);
+router.route("/auction/payment/:id").post(verifyToken(true),auctionRoutes.auctionPayment)
 
 // Bid
 router.route("/bid/:id").get(bidRoutes.getBidById);
