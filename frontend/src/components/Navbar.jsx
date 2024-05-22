@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 import * as api from "../api/index";
 import MobileSearchBar from "./MobileSearchBar";
 import { Modal } from "react-bootstrap";
-import LoginForm from "./LoginForm";
+// import LoginForm from "./LoginForm";
 
 const Navbar = (showMobileNavbar = true) => {
   const [categories, setCategories] = useState([]);
@@ -249,7 +249,8 @@ const Navbar = (showMobileNavbar = true) => {
                       "px-3 py-2 nav-item" +
                       (location.pathname === "/favorites" ? " active" : "")
                     }
-                    onClick={FavoritesRoute}
+                    href="/favorites"
+                    // onClick={FavoritesRoute}
                   >
                     <span
                       className={
