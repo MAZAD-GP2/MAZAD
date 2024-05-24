@@ -738,14 +738,14 @@ const ViewItem = () => {
       return;
     }
     //  if the highest bid - the current bid is less than the minimum bid, show an error
-    // if (lastBid.bidAmount - bidAmount < minimumBid) {
-    //   enqueueSnackbar({
-    //     message: "Minimum increment is " + minimumBid,
-    //     variant: "error",
-    //   });
-    //   setBidModal(false);
-    //   return;
-    // }
+    if (bidAmount - lastBid.bidAmount < minimumBid) {
+      enqueueSnackbar({
+        message: "Minimum increment is " + minimumBid,
+        variant: "error",
+      });
+      setBidModal(false);
+      return;
+    }
     let res = null;
     let prevLast = lastBid;
     let bidObject = {
@@ -1187,7 +1187,16 @@ const ViewItem = () => {
                       </div>
                       <button
                         className="btn btn-secondary text-white p-1 px-3 mt-3 w-25 m-auto"
-                        onClick={handleBidModalShow}
+                        onClick={() =>{
+                          if (bidAmount > lastBid.bidAmount && bidAmount - lastBid.bidAmount >= minimumBid) {
+                            handleBid();
+                          }else{
+                            enqueueSnackbar("Your bid must be greater than the current bid and at least the minimum increment", {
+                              variant: "error",
+                            });
+                          
+                          }
+                        }}
                         disabled={
                           item.Auction.finishTime < new Date() ||
                           item.Auction.startTime > new Date()

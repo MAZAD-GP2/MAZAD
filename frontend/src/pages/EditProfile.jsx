@@ -310,7 +310,6 @@ const EditProfile = () => {
                               />
                             ) : (
                               <>
-                                <i className="fa-regular fa-image"></i>
                                 Upload Profile Picture
                               </>
                             )}

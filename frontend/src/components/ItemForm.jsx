@@ -189,6 +189,37 @@ const ItemForm = ({
       formData.append("showNumber", showNumber);
       formData.append("isHidden", visibility);
 
+      // if the size of the images summed is more than 2mig loop over images and lower theyr resolution
+      
+      let lowered_res_images = [];
+      let size_sum = 0;
+
+      droppedFiles.forEach((file) => {
+        size_sum += file.size;
+      });
+
+      if (size_sum > 2000000) {
+        droppedFiles.forEach((file) => {
+          let lowered_res_image = new Image();
+          lowered_res_image.src = URL.createObjectURL(file);
+          lowered_res_image.onload = function () {
+            let canvas = document.createElement("canvas");
+            let ctx = canvas.getContext("2d");
+            canvas.width = 800;
+            canvas.height = 800;
+            ctx.drawImage(lowered_res_image, 0, 0, 800, 800);
+            canvas.toBlob((blob) => {
+              lowered_res_images.push(
+                new File([blob], file.name, { type: "image/jpeg" })
+              );
+            });
+          };
+        });
+        lowered_res_images.forEach((file) => {
+          formData.append("images", file);
+        });
+      }
+      
       droppedFiles.forEach((file) => {
         formData.append("images", file);
       });
@@ -212,7 +243,7 @@ const ItemForm = ({
             variant: "error",
           });
         } else {
-          enqueueSnackbar("An unexpected error occurred", {
+          enqueueSnackbar("Images are too large.", {
             variant: "error",
           });
         }
