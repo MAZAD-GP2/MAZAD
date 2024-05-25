@@ -679,7 +679,7 @@ const ViewItem = () => {
     }
   };
 
-  const handleMessage = async () => {
+  const handleComment = async () => {
     if (!user) {
       setLoginModal(true);
       return;
@@ -702,7 +702,7 @@ const ViewItem = () => {
     comment.id = res.data.id;
     setComments((prevMessages) => [
       comment,
-      ...prevMessages.slice(1, prevMessages.length - 1),
+      ...prevMessages.slice(1, prevMessages.length),
     ]);
     inputRef.current.value = "";
   };
@@ -1152,8 +1152,7 @@ const ViewItem = () => {
                         <div className="d-flex justify-content-end gap-2">
                           <button
                             onClick={() => {
-                              bidInputRef.current.value =
-                                lastBid.bidAmount + minimumBid;
+                              bidInputRef.current.value = parseFloat(lastBid.bidAmount) + minimumBid;
                               setBidAmount(bidInputRef.current.value);
                             }}
                             className="btn btn-secondary bg-white text-secondary px-2"
@@ -1163,8 +1162,7 @@ const ViewItem = () => {
                           </button>
                           <button
                             onClick={() => {
-                              bidInputRef.current.value =
-                                lastBid.bidAmount + minimumBid + 5;
+                              bidInputRef.current.value = parseFloat(lastBid.bidAmount) + minimumBid + 5;
                               setBidAmount(bidInputRef.current.value);
                             }}
                             className="btn btn-secondary bg-white text-secondary px-2"
@@ -1174,8 +1172,7 @@ const ViewItem = () => {
                           </button>
                           <button
                             onClick={() => {
-                              bidInputRef.current.value =
-                                lastBid.bidAmount + minimumBid + 10;
+                              bidInputRef.current.value = parseFloat(lastBid.bidAmount) + minimumBid + 10;
                               setBidAmount(bidInputRef.current.value);
                             }}
                             className="btn btn-secondary bg-white text-secondary px-2"
@@ -1189,7 +1186,7 @@ const ViewItem = () => {
                         className="btn btn-secondary text-white p-1 px-3 mt-3 w-25 m-auto"
                         onClick={() =>{
                           if (bidAmount > lastBid.bidAmount && bidAmount - lastBid.bidAmount >= minimumBid) {
-                            handleBid();
+                            handleBidModalShow();
                           }else{
                             enqueueSnackbar("Your bid must be greater than the current bid and at least the minimum increment", {
                               variant: "error",
@@ -1305,7 +1302,7 @@ const ViewItem = () => {
                       placeholder="Send a comment"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && e.target.value) {
-                          handleMessage();
+                          handleComment();
                           e.target.value = "";
                         }
                       }}
@@ -1315,7 +1312,7 @@ const ViewItem = () => {
                     <button
                       className="btn btn-secondary"
                       style={{ padding: "3px" }}
-                      onClick={handleMessage}
+                      onClick={handleComment}
                     >
                       <i
                         className="fa-solid fa-arrow-up text-white px-3"
