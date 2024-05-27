@@ -1183,7 +1183,7 @@ const ViewItem = () => {
                         </div>
                       </div>
                       <button
-                        className="btn btn-secondary text-white p-1 px-3 mt-3 w-25 m-auto"
+                        className="btn btn-secondary text-white p-1 px-4 mt-3 w-auto m-auto"
                         onClick={() =>{
                           if (bidAmount > lastBid.bidAmount && bidAmount - lastBid.bidAmount >= minimumBid) {
                             handleBidModalShow();
