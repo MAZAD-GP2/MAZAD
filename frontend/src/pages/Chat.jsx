@@ -350,7 +350,7 @@ export function Chat() {
                           }`}
                         >
                           {msg.senderId === currentUser.id ? (
-                            <div className="d-flex flex-row-reverse align-items-end justify-content-start gap-2 px-lg-3 px-1">
+                            <div className="d-flex flex-row-reverse align-items-end justify-content-start gap-2 px-lg-3 px-1" style={{width: "100%"}}>
                               {currentMessages[index - 1]?.senderId !==
                               msg.senderId ? (
                                 <div className="col-auto hide">
@@ -385,7 +385,7 @@ export function Chat() {
                               </div>
                             </div>
                           ) : (
-                            <div className="d-flex flex-row align-items-end justify-content-start gap-2 px-lg-3 px-1">
+                            <div className="d-flex flex-row align-items-end justify-content-start gap-2 px-lg-3 px-1" style={{ minWidth: 0 }}>
                               {currentMessages[index - 1]?.senderId !==
                               msg.senderId ? (
                                 <div className="col-auto hide">
@@ -406,8 +406,8 @@ export function Chat() {
                                   <div className="profile-message-spacer"></div>
                                 </div>
                               )}
-                              <div className="content-box rounded-top-3 rounded-end-3 p-2 bg-light w-auto">
-                                <div className="content-box-inner d-flex flex-column w-100 h-100">
+                              <div className="content-box rounded-top-3 rounded-end-3 p-2 bg-light w-auto" style={{ minWidth: 0 }}>
+                                <div className="content-box-inner d-flex flex-column h-100">
                                   <span className="content">{msg.content}</span>
                                   <small
                                     className="text-muted text-sm"
