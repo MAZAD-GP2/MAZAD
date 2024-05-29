@@ -77,9 +77,15 @@
   #back-button {
     display: block;
   }
+  body {
+    margin-bottom: 0;
+  }
 }
 
 @media (max-width: 720px) {
+  body {
+    margin-bottom: 0;
+  }
   .room.active {
     background-color: white;
   }

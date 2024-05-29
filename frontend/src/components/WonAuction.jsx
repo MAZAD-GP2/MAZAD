@@ -28,6 +28,7 @@ const WonAuction = () => {
     setCloseConfirmModal(false);
     setShow(false);
   };
+  
   useEffect(() => {
     if (!user) return;
     const fetchCategories = async () => {

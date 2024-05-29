@@ -84,6 +84,9 @@ export function Chat() {
     if (!roomId) {
       setMessageLoading(false);
       return;
+    } else {
+      document.getElementById("chat-rooms").classList.add("hide");
+      document.getElementById("chat-box").classList.remove("hide");
     }
     if (allRooms[roomId]) {
       setCurrentMessages(allRooms[roomId].messages);
@@ -99,7 +102,8 @@ export function Chat() {
           user: response.data.user,
         });
       } catch (error) {
-        console.error(error);
+        setError("Room not found");
+        setMessageLoading(false);
       }
     };
     fetchRoomByUser();
@@ -140,7 +144,6 @@ export function Chat() {
     document.getElementById("chat-rooms").classList.add("hide");
     document.getElementById("chat-box").classList.remove("hide");
     navigate(`/chat/${room.id}`);
-
   };
 
   const handleSendMessage = async () => {
@@ -206,7 +209,7 @@ export function Chat() {
               >
                 {roomsLoading ? (
                   <div className="d-flex flex-column align-items-center justify-content-center gap-2">
-                    <i className=" h1 fa-solid fa-ghost fa-spin text-secondary"></i>
+                    <i className=" h1 fa-solid fa-ghost text-secondary"></i>
                   </div>
                 ) : (
                   <>
@@ -279,7 +282,10 @@ export function Chat() {
               </div>
             </div>
           </div>
-          <div id="chat-box" className="w-100  border rounded shadow h-100 hide">
+          <div
+            id="chat-box"
+            className="w-100  border rounded shadow h-100 hide"
+          >
             <div className="w-100 d-flex flex-column justify-content-between h-100">
               <div
                 id="chat-box-header"
@@ -287,14 +293,14 @@ export function Chat() {
               >
                 {currentRoom.room && (
                   <>
-                      <button
-                        type="button"
-                        className="btn"
-                        id="back-button"
-                        onClick={handleBackButton}
-                      >
-                        <i className="fa-solid fa-chevron-left"></i>
-                      </button>
+                    <button
+                      type="button"
+                      className="btn"
+                      id="back-button"
+                      onClick={handleBackButton}
+                    >
+                      <i className="fa-solid fa-chevron-left"></i>
+                    </button>
                     <div className="d-flex flex-row align-items-center gap-2">
                       <img
                         src={
@@ -320,7 +326,7 @@ export function Chat() {
               >
                 {messageLoading ? (
                   <div className="d-flex flex-column align-items-center justify-content-center gap-2 h-100">
-                    <i className=" h1 fa-solid fa-ghost fa-spin text-secondary"></i>
+                    <i className=" h1 fa-solid fa-ghost text-secondary"></i>
                   </div>
                 ) : (
                   <>
@@ -345,9 +351,9 @@ export function Chat() {
                         >
                           {msg.senderId === currentUser.id ? (
                             <div className="d-flex flex-row-reverse align-items-end justify-content-start gap-2 px-lg-3 px-1">
-                              <div className="col-auto">
-                                {currentMessages[index - 1]?.senderId !==
-                                msg.senderId ? (
+                              {currentMessages[index - 1]?.senderId !==
+                              msg.senderId ? (
+                                <div className="col-auto hide">
                                   <img
                                     src={
                                       currentUser.profilePicture?.replace(
@@ -359,10 +365,12 @@ export function Chat() {
                                     alt="avatar"
                                     className="avatar rounded-circle object-fit-cover"
                                   />
-                                ) : (
+                                </div>
+                              ) : (
+                                <div className="col-auto hide">
                                   <div className="profile-message-spacer"></div>
-                                )}
-                              </div>
+                                </div>
+                              )}
 
                               <div className="content-box rounded-top-3 rounded-start-3 p-2 w-auto">
                                 <div className="content-box-inner d-flex flex-column w-100 h-100">
@@ -378,9 +386,9 @@ export function Chat() {
                             </div>
                           ) : (
                             <div className="d-flex flex-row align-items-end justify-content-start gap-2 px-lg-3 px-1">
-                              <div className="col-auto">
-                                {currentMessages[index - 1]?.senderId !==
-                                msg.senderId ? (
+                              {currentMessages[index - 1]?.senderId !==
+                              msg.senderId ? (
+                                <div className="col-auto hide">
                                   <img
                                     src={
                                       currentRoom.user?.profilePicture?.replace(
@@ -392,10 +400,12 @@ export function Chat() {
                                     alt="avatar"
                                     className="avatar rounded-circle object-fit-cover"
                                   />
-                                ) : (
+                                </div>
+                              ) : (
+                                <div className="col-auto hide">
                                   <div className="profile-message-spacer"></div>
-                                )}
-                              </div>
+                                </div>
+                              )}
                               <div className="content-box rounded-top-3 rounded-end-3 p-2 bg-light w-auto">
                                 <div className="content-box-inner d-flex flex-column w-100 h-100">
                                   <span className="content">{msg.content}</span>
@@ -415,29 +425,31 @@ export function Chat() {
                   </>
                 )}
               </div>
-              <div
-                id="chat-box-input"
-                className="d-flex flex-row align-items-center gap-2 justify-content-between p-2 border-top border-2 border-gray align-self-end w-100"
-              >
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Type a message"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && e.target.value.trim()) {
-                      handleSendMessage();
-                    }
-                  }}
-                />
-                <button
-                  className="btn btn-primary"
-                  onClick={() => handleSendMessage()}
+              {currentRoom.room && (
+                <div
+                  id="chat-box-input"
+                  className="d-flex flex-row align-items-center gap-2 justify-content-between p-2 border-top border-2 border-gray align-self-end w-100"
                 >
-                  Send
-                </button>
-              </div>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Type a message"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && e.target.value.trim()) {
+                        handleSendMessage();
+                      }
+                    }}
+                  />
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleSendMessage()}
+                  >
+                    Send
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -54,14 +54,6 @@ const Navbar = (showMobileNavbar = true) => {
     }
   }
 
-  function FavoritesRoute() {
-    if(!user){
-      setLoginModal(true);
-      return;
-    }
-    window.location.href='/favorites';
-  }
-
   return (
     <>
       {showMobileNavbar && (
@@ -107,7 +99,6 @@ const Navbar = (showMobileNavbar = true) => {
                   </div>
                   {user ? (
                     <div className="create-item-pfp justify-end">
-                      
                       <a
                         className="col-auto align-content-center px-2 rounded-5 add-item"
                         href="/chat"
@@ -244,25 +235,25 @@ const Navbar = (showMobileNavbar = true) => {
                     Popular Items
                   </span>
                 </a> */}
-                  <a
+                <a
+                  className={
+                    "px-3 py-2 nav-item" +
+                    (location.pathname === "/favorites" ? " active" : "")
+                  }
+                  href="/favorites"
+                  // onClick={FavoritesRoute}
+                >
+                  <span
                     className={
-                      "px-3 py-2 nav-item" +
-                      (location.pathname === "/favorites" ? " active" : "")
+                      "link d-inline-block w-auto" +
+                      (location.pathname === "/favorites"
+                        ? " active-nav-link"
+                        : "")
                     }
-                    href="/favorites"
-                    // onClick={FavoritesRoute}
                   >
-                    <span
-                      className={
-                        "link d-inline-block w-auto" +
-                        (location.pathname === "/favorites"
-                          ? " active-nav-link"
-                          : "")
-                      }
-                    >
-                      Favorites
-                    </span>
-                  </a>
+                    Favorites
+                  </span>
+                </a>
               </div>
             </div>
           </div>

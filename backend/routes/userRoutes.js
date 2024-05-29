@@ -413,6 +413,8 @@ module.exports.getUnpaidAuctions = async (req, res) => {
       where: {
         userId: userId,
       },
+      limit: 1,
+      order: [["id", "DESC"]],
       include: [
         {
           model: Auction,
