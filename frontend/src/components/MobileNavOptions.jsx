@@ -18,7 +18,7 @@ function MobileNavOptions({ show, toggle }) {
             </div>
             <div className="sub-nav-item">
               <a href="/#:~:text=Our%20items-,Categories,-Mazad%20offers%20a" className="small text-center">
-                Catagories
+                Categories
               </a>
             </div>
             <div className="sub-nav-item">

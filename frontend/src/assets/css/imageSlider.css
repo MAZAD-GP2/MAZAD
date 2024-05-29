@@ -1,52 +1,53 @@
-/* imageSlider.css */
-.image-slider-container {
-  position: relative;
-  width: fit-content;
-}
-
-.main-image {
+.mySwiper {
   width: 100%;
-}
-
-.img-slider-img {
-  display: block;
-  border-radius: 10px;
-  height:100%;
-  width: 100%;
-  object-fit: contain;
-}
-
-.img-slider-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: white;
   height: 100%;
-  width: 7%;
+}
+
+.swiper-slide {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: .25s;
 }
 
-.img-slider-btn {
-  background-color: rgba(0, 0, 0, 0.3); /* RGBA values for white */
+.swiper-slide img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 5px;
+  object-fit: cover;
+  user-select: none;
 }
 
-.img-slider-btn:hover {
-  background-color: rgba(0, 0, 0, 0.5); /* RGBA values for white */
-}
-.img-slider-btn.left {
-  left: 0px;
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  color: black; /* Change arrow color to black */
 }
 
-.img-slider-btn.right {
-  right: 0px;
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
+.swiper-pagination-bullet {
+  color: black;
+}
+
+@media (max-width: 932px) {
+  .swiper-pagination {
+    display: block; /* Show pagination bullets on screens <= 932px */
+  }
+
+  .swiper-pagination-bullet {
+    background: var(--primary-green) !important;
+  }
+
+  .swiper-button-next::after,
+  .swiper-button-prev::after {
+    display: none; /* Hide navigation arrows on screens <= 932px */
+  }
+}
+
+@media (min-width: 933px) {
+  .swiper-pagination {
+    display: none; /* Hide pagination bullets on screens > 932px */
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    display: block; /* Show navigation arrows on screens > 932px */
+  }
 }
