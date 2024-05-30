@@ -298,7 +298,7 @@ module.exports.getItemById = async (req, res) => {
       });
       item.dataValues.isInterested = interest ? true : false;
     }
-    
+
     return res.send({ item });
   } catch (error) {
     return res.send(error);
@@ -650,24 +650,47 @@ module.exports.userHideItem = async (req, res) => {
   try {
     const itemId = req.params.id;
     const userId = req.currentUser.id;
-
-    await Item.update(
-      { isHidden: true },
-      {
-        where: {
-          id: itemId,
-          userId: userId,
+    const user = await User.findByPk(userId);
+    let t = await sequelize.transaction();
+    let item = null;
+    if (user.isAdmin != true) {
+      item = await Item.update(
+        { isHidden: true },
+        {
+          where: {
+            id: itemId,
+            userId: userId,
+          },
         },
-      }
-    );
+        { transaction: t }
+      );
+    } else {
+      item = await Item.update(
+        { isHidden: true },
+        {
+          where: {
+            id: itemId,
+          },
+        },
+        { transaction: t }
+      );
+    }
+
+    if (!item) {
+      return res.status(404).send("Item not found");
+    }
+
     await Auction.update(
       { status: "user_hidden" },
       {
         where: {
           itemId: itemId,
         },
-      }
+      },
+      { transaction: t }
     );
+
+    t.commit();
     return res.send("successfully");
   } catch (err) {
     return res.send(err);

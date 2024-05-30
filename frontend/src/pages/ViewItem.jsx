@@ -506,8 +506,8 @@ const ViewItem = () => {
         enqueueSnackbar("Item hidden successfully", { variant: "success" });
         setTimeout(() => {
           window.location.href = user.isAdmin
-            ? "/user/"
-            : "/user/" + item.User.id;
+            ? "/profile/"
+            : "/profile/" + item.User.id;
         }, 2000);
       })
       .catch((error) => {

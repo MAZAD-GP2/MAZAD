@@ -71,17 +71,17 @@ const ItemForm = ({
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const jordanTime = new Date().toLocaleString("en-US", {
-        timeZone: "Asia/Amman",
-        dateStyle: "short",
-        timeStyle: "long",
-      });
-      setLiveTime(jordanTime);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const jordanTime = new Date().toLocaleString("en-US", {
+  //       timeZone: "Asia/Amman",
+  //       dateStyle: "short",
+  //       timeStyle: "long",
+  //     });
+  //     setLiveTime(jordanTime);
+  //   }, 1000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
@@ -174,7 +174,7 @@ const ItemForm = ({
       //   )
       // );
       // fk it for now
-      
+
       // Create a FormData object
       const formData = new FormData();
       formData.append("name", name);
@@ -190,7 +190,7 @@ const ItemForm = ({
       formData.append("isHidden", visibility);
 
       // if the size of the images summed is more than 2mig loop over images and lower theyr resolution
-      
+
       let lowered_res_images = [];
       let size_sum = 0;
 
@@ -219,7 +219,7 @@ const ItemForm = ({
           formData.append("images", file);
         });
       }
-      
+
       droppedFiles.forEach((file) => {
         formData.append("images", file);
       });
@@ -234,8 +234,7 @@ const ItemForm = ({
         enqueueSnackbar("Added item", { variant: "success" });
         setName("");
         setDescription("");
-        window.location.href =
-          visibility === true ? `/item/${response.data.id}` : `/profile`;
+        window.location.href = "/profile/";
       } catch (error) {
         // Handle errors
         if (error.response?.data?.message) {
@@ -574,7 +573,7 @@ const ItemForm = ({
               />
             </div>
           </div>
-          <small className="text-muted row ms-1">*Later than: {liveTime}</small>
+          {/* <small className="text-muted row ms-1">*Later than: {liveTime}</small> */}
           <small className="text-muted row ms-1">
             At least 1 hour, not more that 7 days
           </small>
@@ -737,7 +736,8 @@ const ItemForm = ({
             />
             <div className="d-flex flex-row justify-content-start">
               <small className="form-text text-muted">
-                limited to ({currentDescriptionLength - 1}/1000) At least 5 characters
+                limited to ({currentDescriptionLength - 1}/1000) At least 5
+                characters
               </small>
             </div>
           </div>

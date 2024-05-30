@@ -17,7 +17,13 @@ const RecentItems = ({ id, sessionUser, setAuctionCount }) => {
         setItems(response.data.items);
         const total = Math.ceil(response.data.count / limit);
         setTotalPages(total);
-        setAuctionCount(response.data.count);
+        // setAuctionCount(response.data.count);
+        // loop over and only count auctions where status is new
+        for (let i = 0; i < response.data.items.length; i++) {
+          if (response.data.items[i].Auction.status === "new") {
+            setAuctionCount((prev) => prev + 1);
+          }
+        }
 
         if (total === 0) {
           setPage(0);

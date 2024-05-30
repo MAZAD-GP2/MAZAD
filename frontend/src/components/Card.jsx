@@ -7,6 +7,7 @@ import { Modal } from "react-bootstrap";
 import LoginForm from "./LoginForm";
 import ImageSlider from "./ImageSlider";
 import SimpleImageSlider from "react-simple-image-slider";
+import { enqueueSnackbar } from "notistack";
 
 const Card = ({ item, removeItemFromFavorites }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -15,7 +16,13 @@ const Card = ({ item, removeItemFromFavorites }) => {
   const [loginModal, setLoginModal] = useState(false);
   const handleLoginModalClose = () => setLoginModal(false);
 
-  function handleCardClick() {
+  function handleCardClick(item) {
+    if (item.Auction.status === "pending") {
+      enqueueSnackbar("Item is pending review", {
+        variant: "warning",
+      });
+      return;
+    }
     window.location.href = `/item/${item.id}`;
   }
 
@@ -115,12 +122,12 @@ const Card = ({ item, removeItemFromFavorites }) => {
           className="image "
           src={item.Images[0].imgURL.replace("upload/", "upload/w_600/")}
           alt="Card image cap"
-          onClick={handleCardClick}
+          onClick={() => handleCardClick(item)}
         />
       </div>
       {/* <ImageSlider images={item.Images} /> */}
 
-      {/* <div style={{ maxHeight: "300px", cursor: "pointer" }} onClick={handleCardClick}>
+      {/* <div style={{ maxHeight: "300px", cursor: "pointer" }} onClick={handleCardClick(item)}>
         <SimpleImageSlider
           width="100%"
           height={300}
@@ -151,14 +158,16 @@ const Card = ({ item, removeItemFromFavorites }) => {
           </div>
           <div className="date d-flex justify-content-evenly align-items-center w-100 border border-secondary rounded-5">
             <small className="text-muted text-center">
-              {formatDateStartTime(
-                item.Auction.startTime,
-                item.Auction.finishTime
-              )}
+              {item.Auction.status == "new"
+                ? formatDateStartTime(
+                    item.Auction.startTime,
+                    item.Auction.finishTime
+                  )
+                : "Inactive"}
             </small>
             <div> - </div>
             <small className="text-muted text-center">
-              {formatDateFinishTime(item.Auction.finishTime)}
+              {item.Auction.status == "new"?(formatDateFinishTime(item.Auction.finishTime)):("Inactive")}
             </small>
             {/* <small className="text-muted"> */}
             {/* <span>Currently at: </span> */}
@@ -190,7 +199,7 @@ const Card = ({ item, removeItemFromFavorites }) => {
                   return (
                     <h5
                       className="card-title text-truncate"
-                      onClick={handleCardClick}
+                      onClick={() => handleCardClick(item)}
                     >
                       {item.name}
                     </h5>
@@ -209,7 +218,10 @@ const Card = ({ item, removeItemFromFavorites }) => {
               <small className="text-muted">{interestsCount}</small>
             </div>
           </div>
-          <span className="card-text description" onClick={handleCardClick}>
+          <span
+            className="card-text description"
+            onClick={() => handleCardClick(item)}
+          >
             {item.description.length > 150
               ? sanitizeHtml(
                   item.description

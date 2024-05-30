@@ -51,9 +51,9 @@ const MobileNavbar = () => {
                 location.pathname.includes("/add-item") ? "active" : ""
               }`}
             >
+            <a href="/add-item" className="small text-center d-flex flex-column gap-2">
               <FontAwesomeIcon icon="add" />
-              <a href="/add-item" className="small text-center">
-                New Mazad
+              New Mazad
               </a>
             </div> */}
             {user ? (
@@ -62,8 +62,8 @@ const MobileNavbar = () => {
                   location.pathname.includes("/profile") ? "active" : ""
                 }`}
               >
-                <i className="fa fa-user"></i>
-                <a href="/Profile" className="small text-center">
+                <a href="/Profile" className="small text-center d-flex flex-column gap-2">
+                  <i className="fa fa-user"></i>
                   Profile
                 </a>
               </div>
@@ -73,8 +73,8 @@ const MobileNavbar = () => {
                   location.pathname.includes("/login") ? "active" : ""
                 }`}
               >
-                <i className="fa fa-user"></i>
-                <a href="/login" className="small text-center">
+                <a href="/login" className="small text-center d-flex flex-column gap-2">
+                  <i className="fa fa-user"></i>
                   Login
                 </a>
               </div>
